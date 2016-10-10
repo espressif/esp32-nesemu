@@ -7,7 +7,7 @@ to full speed, albeit with some framedrop due to the way the display is driven.
 Warning
 -------
 
-This is a proof-of-concept and not an official 
+This is a proof-of-concept and not an official application note. As such, this code is entirely unsupported by Espressif.
 
 
 Compiling
