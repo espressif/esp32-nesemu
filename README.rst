@@ -21,18 +21,20 @@ Display
 -------
 
 To display the NES output, please connect a 320x240 ili9341-based SPI display to the ESP32 in this way:
-=====  =====
-Pin    GPIO
-=====  =====
-MISO   25
-MOSI   23
-CLK    19
-CS     22
-DC     21
-RST    18
-BCKL   5 (backlight enable)
-=====  =====
 
+    =====  =======================
+    Pin    GPIO
+    =====  =======================
+    MISO   25
+    MOSI   23
+    CLK    19
+    CS     22
+    DC     21
+    RST    18
+    BCKL   5
+    =====  =======================
+
+(BCKL = backlight enable)
 
 Also connect the power supply and ground. For now, the LCD is controlled using a SPI peripheral, fed using the 2nd CPU. This is less than ideal; feeding
 the SPI controller using DMA is better, but was left out due to this being a proof of concept.
@@ -42,14 +44,15 @@ Controller
 ----------
 
 To control the NES, connect a Playstation 1 or 2 controller as such:
-=====  =====
-Pin    GPIO
-=====  =====
-CLK    14
-DAT    27
-ATT    16
-CMD    2
-=====  =====
+
+    =====  =====
+    Pin    GPIO
+    =====  =====
+    CLK    14
+    DAT    27
+    ATT    16
+    CMD    2
+    =====  =====
 
 Also connect the power and ground lines. Most PS1/PS2 controllers work fine from a 3.3V power supply, if a 5V one is unavailable.
 
