@@ -1,31 +1,22 @@
-/* vim: set tabstop=3 expandtab:
-**
-** Nofrendo (c) 1998-2000 Matthew Conte (matt@conte.com)
-**
-**
-** This program is free software; you can redistribute it and/or
-** modify it under the terms of version 2 of the GNU Library General 
-** Public License as published by the Free Software Foundation.
-**
-** This program is distributed in the hope that it will be useful, 
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-** Library General Public License for more details.  To obtain a 
-** copy of the GNU Library General Public License, write to the Free 
-** Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-**
-** Any permitted reproduction of these routines, in whole or in part,
-** must bear this legend.
-**
-**
-** sdl.c
-**
-** $Id: sdl.c,v 1.2 2001/04/27 14:37:11 neil Exp $
-**
-*/
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/timers.h>
+#include <freertos/task.h>
+#include <freertos/queue.h>
+//Nes stuff wants to define this as well...
 #undef false
 #undef true
 #undef bool
@@ -47,7 +38,7 @@
 
 #include <driver/spi_lcd.h>
 
-
+#include <psxcontroller.h>
 
 #define  DEFAULT_SAMPLERATE   22050
 #define  DEFAULT_BPS          8
@@ -127,12 +118,12 @@ static int set_mode(int width, int height);
 static void set_palette(rgb_t *pal);
 static void clear(uint8 color);
 static bitmap_t *lock_write(void);
-static uint16_t fb[1];
 static void free_write(int num_dirties, rect_t *dirty_rects);
 static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects);
+static char fb[1]; //dummy
 
 uint16 line[320];
-
+QueueHandle_t vidQueue;
 
 viddriver_t sdlDriver =
 {
@@ -221,15 +212,24 @@ static void free_write(int num_dirties, rect_t *dirty_rects)
 
 
 static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects) {
-	int x, y;
-	for (y=0; y<DEFAULT_HEIGHT; y++) {
-		for (x=0; x<DEFAULT_WIDTH; x++) {
-			line[x]=myPalette[(unsigned char)bmp->line[y][x]];
-		}
-		ili9341_send_data((320-DEFAULT_WIDTH)/2, y+((240-DEFAULT_HEIGHT)/2), DEFAULT_WIDTH, 1, line);
-	}
+	xQueueSend(vidQueue, &bmp, 0);
 }
 
+
+//This runs on core 1.
+static void videoTask(void *arg) {
+	int x, y;
+	bitmap_t *bmp=NULL;
+	while(1) {
+		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
+		for (y=0; y<DEFAULT_HEIGHT; y++) {
+			for (x=0; x<DEFAULT_WIDTH; x++) {
+				line[x]=myPalette[(unsigned char)bmp->line[y][x]];
+			}
+			ili9341_send_data((320-DEFAULT_WIDTH)/2, y+((240-DEFAULT_HEIGHT)/2), DEFAULT_WIDTH, 1, line);
+		}
+	}
+}
 
 
 /*
@@ -238,11 +238,30 @@ static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects) {
 
 static void osd_initinput()
 {
+	psxcontrollerInit();
 }
 
 void osd_getinput(void)
 {
-//            func_event(code);
+	const int ev[16]={
+			event_joypad1_select,0,0,event_joypad1_start,event_joypad1_up,event_joypad1_right,event_joypad1_down,event_joypad1_left,
+			0,0,0,0,event_soft_reset,event_joypad1_a,event_joypad1_b,event_hard_reset
+		};
+	static int oldb=0xffff;
+	int b=psxReadInput();
+	int chg=b^oldb;
+	int x;
+	oldb=b;
+	event_t evh;
+//	printf("Input: %x\n", b);
+	for (x=0; x<16; x++) {
+		if (chg&1) {
+			evh=event_get(ev[x]);
+			if (evh) evh((b&1)?INP_STATE_BREAK:INP_STATE_MAKE);
+		}
+		chg>>=1;
+		b>>=1;
+	}
 }
 
 static void osd_freeinput(void)
@@ -284,7 +303,10 @@ int osd_init()
 	ili9341_init();
 	memset(line, 0, 320);
 	for (y=0; y<240; y++) ili9341_send_data(0, y, 320, 1, line);
+	vidQueue=xQueueCreate(1, sizeof(bitmap_t *));
+   xTaskCreatePinnedToCore(&videoTask, "videoTask", 2048, NULL, 5, NULL, 1);
    osd_initinput();
+
 
    return 0;
 }

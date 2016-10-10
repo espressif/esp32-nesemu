@@ -243,7 +243,8 @@ static void spi_master_init()
     spi_attr_t hSpiAttr;
 	hSpiAttr.mode     = SpiMode_Master;
     hSpiAttr.subMode  = SpiSubMode_0;
-	hSpiAttr.speed    = 1;//SpiSpeed_20MHz;
+//	hSpiAttr.speed    = SpiSpeed_20MHz; //In theory, this is the maximum the LCD can work with (20MHz)
+	hSpiAttr.speed    = 2;				//...but overclocking to 40MHz works as well.
     hSpiAttr.bitOrder = SpiBitOrder_MSBFirst;
 	hSpiAttr.halfMode = SpiWorkMode_Half;
     spi_init(SPI_NUM, &hSpiAttr);
