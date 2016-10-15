@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include "sdkconfig.h"
 #include "rom/ets_sys.h"
+#include "rom/gpio.h"
 #include "soc/gpio_reg.h"
 #include "soc/gpio_sig_map.h"
 #include "soc/gpio_struct.h"
