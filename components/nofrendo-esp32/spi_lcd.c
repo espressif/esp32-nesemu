@@ -283,21 +283,22 @@ static void spi_master_init()
     }
 }
 
+#define U16x2toU32(m,l) ((((uint32_t)(l>>8|(l&0xFF)<<8))<<16)|(m>>8|(m&0xFF)<<8))
+
 void ili9341_send_data(int x, int y, int width, int height, const uint16_t *data) {
-#define U16x2toU32(a,b) ((((uint32_t)(b>>8|(b&0xFF)<<8))<<16)|(a>>8|(a&0xFF)<<8))
     int i, l;
     uint16_t x1, y1;
     uint32_t xv, yv, dc, bv;
-    x1 = x+(width-1);
-    xv = U16x2toU32(x,x1);
-    y1 = y+(height-1);
-    yv = U16x2toU32(y,y1);
     l = height*width;
-    dc = (1 << PIN_NUM_DC);
+    x1 = x+(width-1);//287
+    y1 = y+(height-1);//y
+    xv = U16x2toU32(x,x1);//32,287
+    yv = U16x2toU32(y,y1);//y,y
     
     // x = 32, y = 8 - 231, width = 256, height = 1
-    //ets_printf("%u.%u %ux%u\n", x, y, width, height);
-    
+    //ets_printf("%08X\n", xv);
+
+    dc = (1 << PIN_NUM_DC);
     GPIO.out_w1tc = dc;
     SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 7, SPI_USR_MOSI_DBITLEN_S);
     WRITE_PERI_REG((SPI_W0_REG(SPI_NUM)), 0x2A);
@@ -338,6 +339,69 @@ void ili9341_send_data(int x, int y, int width, int height, const uint16_t *data
         l-=32;
         data+=32;
     }
+}
+
+extern uint16_t myPalette[];
+
+void ili9341_write_frame(const uint16_t xs, const uint16_t ys, const uint16_t width, const uint16_t height, const uint8_t * data[]){
+    int x, y;
+    int i;
+    uint16_t x1, y1;
+    uint32_t xv, yv, dc, bv;
+    uint32_t temp[16];
+    dc = (1 << PIN_NUM_DC);
+    
+    for (y=0; y<height; y++) {
+        //start line
+        x1 = xs+(width-1);
+        y1 = ys+y+(height-1);
+        xv = U16x2toU32(xs,x1);
+        yv = U16x2toU32((ys+y),y1);
+        
+        while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+        GPIO.out_w1tc = dc;
+        SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 7, SPI_USR_MOSI_DBITLEN_S);
+        WRITE_PERI_REG((SPI_W0_REG(SPI_NUM)), 0x2A);
+        SET_PERI_REG_MASK(SPI_CMD_REG(SPI_NUM), SPI_USR);
+        while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+        GPIO.out_w1ts = dc;
+        SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 31, SPI_USR_MOSI_DBITLEN_S);
+        WRITE_PERI_REG((SPI_W0_REG(SPI_NUM)), xv);
+        SET_PERI_REG_MASK(SPI_CMD_REG(SPI_NUM), SPI_USR);
+        while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+        GPIO.out_w1tc = dc;
+        SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 7, SPI_USR_MOSI_DBITLEN_S);
+        WRITE_PERI_REG((SPI_W0_REG(SPI_NUM)), 0x2B);
+        SET_PERI_REG_MASK(SPI_CMD_REG(SPI_NUM), SPI_USR);
+        while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+        GPIO.out_w1ts = dc;
+        SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 31, SPI_USR_MOSI_DBITLEN_S);
+        WRITE_PERI_REG((SPI_W0_REG(SPI_NUM)), yv);
+        SET_PERI_REG_MASK(SPI_CMD_REG(SPI_NUM), SPI_USR);
+        while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+        GPIO.out_w1tc = dc;
+        SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 7, SPI_USR_MOSI_DBITLEN_S);
+        WRITE_PERI_REG((SPI_W0_REG(SPI_NUM)), 0x2C);
+        SET_PERI_REG_MASK(SPI_CMD_REG(SPI_NUM), SPI_USR);
+        while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+        
+        x = 0;
+        GPIO.out_w1ts = dc;
+        SET_PERI_REG_BITS(SPI_MOSI_DLEN_REG(SPI_NUM), SPI_USR_MOSI_DBITLEN, 511, SPI_USR_MOSI_DBITLEN_S);
+        while (x<width) {
+            for (i=0; i<16; i++) {
+                x1 = myPalette[(unsigned char)(data[y][x])]; x++;
+                y1 = myPalette[(unsigned char)(data[y][x])]; x++;
+                temp[i] = U16x2toU32(x1,y1);
+            }
+            while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
+            for (i=0; i<16; i++) {
+                WRITE_PERI_REG((SPI_W0_REG(SPI_NUM) + (i << 2)), temp[i]);
+            }
+            SET_PERI_REG_MASK(SPI_CMD_REG(SPI_NUM), SPI_USR);
+        }
+    }
+    while (READ_PERI_REG(SPI_CMD_REG(SPI_NUM))&SPI_USR);
 }
 
 void ili9341_init()

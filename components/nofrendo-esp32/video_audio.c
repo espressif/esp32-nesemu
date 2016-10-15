@@ -220,14 +220,12 @@ static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects) {
 static void videoTask(void *arg) {
 	int x, y;
 	bitmap_t *bmp=NULL;
-	while(1) {
+	x = (320-DEFAULT_WIDTH)/2;
+    y = ((240-DEFAULT_HEIGHT)/2);
+    while(1) {
+		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
-		for (y=0; y<DEFAULT_HEIGHT; y++) {
-			for (x=0; x<DEFAULT_WIDTH; x++) {
-				line[x]=myPalette[(unsigned char)bmp->line[y][x]];
-			}
-			ili9341_send_data((320-DEFAULT_WIDTH)/2, y+((240-DEFAULT_HEIGHT)/2), DEFAULT_WIDTH, 1, line);
-		}
+		ili9341_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
 	}
 }
 
