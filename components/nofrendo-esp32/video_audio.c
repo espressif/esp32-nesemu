@@ -122,7 +122,6 @@ static void free_write(int num_dirties, rect_t *dirty_rects);
 static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects);
 static char fb[1]; //dummy
 
-uint16 line[320];
 QueueHandle_t vidQueue;
 
 viddriver_t sdlDriver =
@@ -277,8 +276,8 @@ void osd_getmouse(int *x, int *y, int *button)
 /* this is at the bottom, to eliminate warnings */
 void osd_shutdown()
 {
-   osd_stopsound();
-   osd_freeinput();
+	osd_stopsound();
+	osd_freeinput();
 }
 
 static int logprint(const char *string)
@@ -292,19 +291,15 @@ static int logprint(const char *string)
 
 int osd_init()
 {
-	int y;
-   log_chain_logfunc(logprint);
+	log_chain_logfunc(logprint);
 
-   if (osd_init_sound())
-      return -1;
+	if (osd_init_sound())
+		return -1;
 
 	ili9341_init();
-	memset(line, 0, 320);
-	for (y=0; y<240; y++) ili9341_send_data(0, y, 320, 1, line);
+	ili9341_write_frame(0,0,320,240,NULL);
 	vidQueue=xQueueCreate(1, sizeof(bitmap_t *));
-   xTaskCreatePinnedToCore(&videoTask, "videoTask", 2048, NULL, 5, NULL, 1);
-   osd_initinput();
-
-
-   return 0;
+	xTaskCreatePinnedToCore(&videoTask, "videoTask", 2048, NULL, 5, NULL, 1);
+	osd_initinput();
+	return 0;
 }
