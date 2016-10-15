@@ -36,7 +36,7 @@
 #include <osd.h>
 #include <stdint.h>
 
-#include <driver/spi_lcd.h>
+#include <spi_lcd.h>
 
 #include <psxcontroller.h>
 
