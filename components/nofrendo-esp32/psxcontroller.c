@@ -47,7 +47,7 @@ static int psxSendRecv(int send) {
 #endif
 
 	GPIO.out_w1tc=(1<<PSX_ATT);
-	for (delay=0; delay<50; delay++);
+	for (delay=0; delay<100; delay++);
 	for (x=0; x<8; x++) {
 		if (send&1) {
 			GPIO.out_w1ts=(1<<PSX_CMD);
@@ -55,9 +55,9 @@ static int psxSendRecv(int send) {
 			GPIO.out_w1tc=(1<<PSX_CMD);
 		}
 		DELAY();
-		for (delay=0; delay<50; delay++);
+		for (delay=0; delay<100; delay++);
 		GPIO.out_w1tc=(1<<PSX_CLK);
-		for (delay=0; delay<50; delay++);
+		for (delay=0; delay<100; delay++);
 		GPIO.out_w1ts=(1<<PSX_CLK);
 		ret>>=1;
 		send>>=1;
@@ -111,10 +111,10 @@ void psxcontrollerInit() {
 	//Send a few dummy bytes to clean the pipes.
 	psxSendRecv(0);
 	psxDone();
-	for (delay=0; delay<500; delay++);
+	for (delay=0; delay<500; delay++) DELAY();
 	psxSendRecv(0);
 	psxDone();
-	for (delay=0; delay<500; delay++);
+	for (delay=0; delay<500; delay++) DELAY();
 	//Try and detect the type of controller, so we can give the user some diagnostics.
 	psxSendRecv(0x01);
 	t=psxSendRecv(0x00);
