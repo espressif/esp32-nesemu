@@ -222,7 +222,9 @@ static void videoTask(void *arg) {
 	x = (320-DEFAULT_WIDTH)/2;
     y = ((240-DEFAULT_HEIGHT)/2);
     while(1) {
+#if ! CONFIG_LCD_SPI_FULL_SPEED
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
+#endif
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
 		ili9341_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
 	}
