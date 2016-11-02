@@ -37,10 +37,10 @@ static int (*log_func)(const char *string) = NULL;
 #ifdef NOFRENDO_DEBUG
 int log_init(void)
 {
-   errorlog = fopen("errorlog.txt", "wt");
+   /*errorlog = fopen("errorlog.txt", "wt");
    if (NULL == errorlog)
       return (-1);
-
+   */
    return 0;
 }
 
@@ -62,7 +62,7 @@ int log_print(const char *string)
       log_func(string);
    
    /* Log it to disk, as well */
-   fputs(string, errorlog);
+   //fputs(string, errorlog);
 
    return 0;
 }
@@ -81,7 +81,7 @@ int log_printf(const char *format, ... )
       log_func(buffer);
    }
 
-   vfprintf(errorlog, format, arg);
+   //vfprintf(errorlog, format, arg);
    va_end(arg);
 
    return 0; /* should be number of chars written */
