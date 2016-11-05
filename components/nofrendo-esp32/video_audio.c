@@ -222,7 +222,9 @@ static void videoTask(void *arg) {
 	x = (320-DEFAULT_WIDTH)/2;
     y = ((240-DEFAULT_HEIGHT)/2);
     while(1) {
+#if ! CONFIG_LCD_SPI_FULL_SPEED
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
+#endif
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
 		ili9341_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
 	}
@@ -241,8 +243,22 @@ static void osd_initinput()
 void osd_getinput(void)
 {
 	const int ev[16]={
-			event_joypad1_select,0,0,event_joypad1_start,event_joypad1_up,event_joypad1_right,event_joypad1_down,event_joypad1_left,
-			0,0,0,0,event_soft_reset,event_joypad1_a,event_joypad1_b,event_hard_reset
+			event_joypad1_select, 	//Select
+			0,						//Left Stick
+			0,						//Right Stick
+			event_joypad1_start,	//Start
+			event_joypad1_up,		//DPad Up
+			event_joypad1_right,	//DPad Right
+			event_joypad1_down,		//DPad Down
+			event_joypad1_left,		//DPad Left
+			0,						//L2
+			0,						//R2
+			0,						//L1
+			0,						//R1
+			event_soft_reset,		//Triangle
+			event_joypad1_a,		//Circle
+			event_joypad1_b,		//Cross
+			event_hard_reset		//Square
 		};
 	static int oldb=0xffff;
 	int b=psxReadInput();

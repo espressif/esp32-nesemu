@@ -1,4 +1,4 @@
-menu "LCD SPI Pins"
+menu "ESP32 NES Emulator"
 
 config LCD_USE_FAST_PINS
    bool "Use fast SPI pins"
@@ -21,6 +21,12 @@ config LCD_USE_FAST_PINS
           DC   21
           RST  18
           BCKL 5
+
+config LCD_SPI_FULL_SPEED
+   bool "Run LCD SPI at 80MHz 60FPS"
+   default "n"
+   help
+      When enabled LCD is able to keep up with the emulator at full 60 frames per second
 
 
 endmenu

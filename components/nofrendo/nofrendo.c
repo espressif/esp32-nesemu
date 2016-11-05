@@ -226,8 +226,8 @@ int main_loop(const char *filename, system_t type)
    /* register shutdown, in case of assertions, etc. */
 //   atexit(shutdown_everything);
 
-   if (config.open())
-      return -1;
+   //if (config.open())
+   //   return -1;
 
    if (osd_init())
       return -1;
