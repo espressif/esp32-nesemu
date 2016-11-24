@@ -10,6 +10,4 @@
 COMPONENT_ADD_INCLUDEDIRS := cpu libsnss nes sndhrdw .
 COMPONENT_SRCDIRS := cpu libsnss nes sndhrdw mappers .
 
-include $(IDF_PATH)/make/component_common.mk
-
 CFLAGS += -Wno-error=char-subscripts -Wno-error=attributes -DNOFRENDO_DEBUG

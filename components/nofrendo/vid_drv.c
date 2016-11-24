@@ -428,6 +428,7 @@ int vid_init(int width, int height, viddriver_t *osd_driver)
                  osd_driver->name, width, height);
       return -1;
    }
+	log_printf("vid_init done\n");
 
    return 0;
 }

@@ -238,6 +238,7 @@ int main_loop(const char *filename, system_t type)
    osd_getvideoinfo(&video);
    if (vid_init(video.default_width, video.default_height, video.driver))
       return -1;
+	printf("vid_init done\n");
 
    console.nextfilename = strdup(filename);
    console.nexttype = type;

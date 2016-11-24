@@ -30,16 +30,16 @@
 #include <log.h>
 
 
-static FILE *errorlog = NULL;
+//static FILE *errorlog = NULL;
 static int (*log_func)(const char *string) = NULL;
 
 /* first up: debug versions of calls */
 #ifdef NOFRENDO_DEBUG
 int log_init(void)
 {
-   errorlog = fopen("errorlog.txt", "wt");
-   if (NULL == errorlog)
-      return (-1);
+//   errorlog = fopen("errorlog.txt", "wt");
+//   if (NULL == errorlog)
+//      return (-1);
 
    return 0;
 }
@@ -51,8 +51,8 @@ void log_shutdown(void)
    mem_checkleaks();
    mem_cleanup();
 
-   if (NULL != errorlog)
-      fclose(errorlog);
+//   if (NULL != errorlog)
+//      fclose(errorlog);
 }
 
 int log_print(const char *string)
@@ -62,7 +62,8 @@ int log_print(const char *string)
       log_func(string);
    
    /* Log it to disk, as well */
-   fputs(string, errorlog);
+//   fputs(string, errorlog);
+//	printf("%s\n", string);
 
    return 0;
 }
@@ -81,7 +82,7 @@ int log_printf(const char *format, ... )
       log_func(buffer);
    }
 
-   vfprintf(errorlog, format, arg);
+//   vfprintf(errorlog, format, arg);
    va_end(arg);
 
    return 0; /* should be number of chars written */
