@@ -50,8 +50,18 @@
 #define LCD_SEL_DATA()  GPIO.out_w1ts = (1 << PIN_NUM_DC) // High to send data
 #define LCD_RST_SET()   GPIO.out_w1ts = (1 << PIN_NUM_RST) 
 #define LCD_RST_CLR()   GPIO.out_w1tc = (1 << PIN_NUM_RST)
+
+/* you have to choice if you use the newer ESP32 WROVER KIT Version */
+/* ESP32 WROVER KIT V1 ( red ) */
+/* LED Backlight active high */
 #define LCD_BKG_ON()    GPIO.out_w1ts = (1 << PIN_NUM_BCKL) // Backlight ON
-#define LCD_BKG_OFF()   GPIO.out_w1tc = (1 << PIN_NUM_BCKL) //Backlight OFF
+#define LCD_BKG_OFF()   GPIO.out_w1tc = (1 << PIN_NUM_BCKL) // Backlight OFF
+
+/* alternat */ 
+/* ESP32 WROVER KIT V2 ( black ) */
+/* LED Backlight active low */
+// #define LCD_BKG_ON()  GPIO_out_w1tc = (1 << PIN_NUM_BCKL) // Backlight ON
+// #define LCD_BKG_OFF() GPIO_out_w1ts = (1 << PIN_NUM_BCKL) // Backlight OFF
 
 
 #define SPI_NUM  0x3
