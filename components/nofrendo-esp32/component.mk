@@ -1,10 +1,10 @@
 #
 # Component Makefile
 #
-# This Makefile should, at the very least, just include $(SDK_PATH)/make/component.mk. By default, 
-# this will take the sources in this directory, compile them and link them into 
-# lib(subdirectory_name).a in the build directory. This behaviour is entirely configurable,
-# please read the SDK documents if you need to do this.
+# This Makefile can be left empty. By default, it will take the sources in the
+# src/ directory, compile them and link them into lib(subdirectory_name).a
+# in the build directory. This behaviour is entirely configurable,
+# please read the ESP-IDF documents if you need to do this.
 #
 
 COMPONENT_DEPENDS := nofrendo
