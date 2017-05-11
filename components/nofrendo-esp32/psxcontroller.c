@@ -22,14 +22,17 @@
 #include "driver/gpio.h"
 #include "soc/gpio_struct.h"
 #include "psxcontroller.h"
+#include "sdkconfig.h"
 
-#define PSX_CLK 14
-#define PSX_DAT 27
-#define PSX_ATT 16
-#define PSX_CMD 2
+#define PSX_CLK CONFIG_HW_PSX_CLK
+#define PSX_DAT CONFIG_HW_PSX_DAT
+#define PSX_ATT CONFIG_HW_PSX_ATT
+#define PSX_CMD CONFIG_HW_PSX_CMD
 
 #define DELAY() asm("nop; nop; nop; nop;nop; nop; nop; nop;nop; nop; nop; nop;nop; nop; nop; nop;")
 
+
+#if CONFIG_HW_PSX_ENA
 
 /* Sends and receives a byte from/to the PSX controller using SPI */
 static int psxSendRecv(int send) {
@@ -107,7 +110,6 @@ void psxcontrollerInit() {
 	gpio_config(&gpioconf[0]);
 	gpio_config(&gpioconf[1]);
 	
-	PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO27_U);
 	//Send a few dummy bytes to clean the pipes.
 	psxSendRecv(0);
 	psxDone();
@@ -126,3 +128,16 @@ void psxcontrollerInit() {
 	}
 }
 
+
+#else
+
+int psxReadInput() {
+	return 0xFFFF;
+}
+
+
+void psxcontrollerInit() {
+	printf("PSX controller disabled in menuconfig; no input enabled.\n");
+}
+
+#endif

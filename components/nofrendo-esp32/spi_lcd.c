@@ -26,41 +26,30 @@
 #include "freertos/task.h"
 #include "spi_lcd.h"
 
-#if CONFIG_LCD_USE_FAST_PINS
-#define PIN_NUM_MISO 19
-#define PIN_NUM_MOSI 23
-#define PIN_NUM_CLK  18
-#define PIN_NUM_CS   5
-
-#define PIN_NUM_DC   21
-#define PIN_NUM_RST  22
-#define PIN_NUM_BCKL 25
-#else
-#define PIN_NUM_MISO 25
-#define PIN_NUM_MOSI 23
-#define PIN_NUM_CLK  19
-#define PIN_NUM_CS   22
-
-#define PIN_NUM_DC   21
-#define PIN_NUM_RST  18
-#define PIN_NUM_BCKL 5
-#endif
-
+#define PIN_NUM_MISO CONFIG_HW_LCD_MISO_GPIO
+#define PIN_NUM_MOSI CONFIG_HW_LCD_MOSI_GPIO
+#define PIN_NUM_CLK  CONFIG_HW_LCD_CLK_GPIO
+#define PIN_NUM_CS   CONFIG_HW_LCD_CS_GPIO
+#define PIN_NUM_DC   CONFIG_HW_LCD_DC_GPIO
+#define PIN_NUM_RST  CONFIG_HW_LCD_RESET_GPIO
+#define PIN_NUM_BCKL CONFIG_HW_LCD_BL_GPIO
 #define LCD_SEL_CMD()   GPIO.out_w1tc = (1 << PIN_NUM_DC) // Low to send command 
 #define LCD_SEL_DATA()  GPIO.out_w1ts = (1 << PIN_NUM_DC) // High to send data
 #define LCD_RST_SET()   GPIO.out_w1ts = (1 << PIN_NUM_RST) 
 #define LCD_RST_CLR()   GPIO.out_w1tc = (1 << PIN_NUM_RST)
 
-#ifdef CONFIG_WROVER_KIT_V1
-#define LCD_BKG_ON()    GPIO.out_w1ts = (1 << PIN_NUM_BCKL) // Backlight ON
-#define LCD_BKG_OFF()   GPIO.out_w1tc = (1 << PIN_NUM_BCKL) // Backlight OFF
-#else
+#if CONFIG_HW_INV_BL
 #define LCD_BKG_ON()    GPIO.out_w1tc = (1 << PIN_NUM_BCKL) // Backlight ON
-#define LCD_BKG_OFF()   GPIO.out_w1ts = (1 << PIN_NUM_BCKL) // Backlight OFF
+#define LCD_BKG_OFF()   GPIO.out_w1ts = (1 << PIN_NUM_BCKL) //Backlight OFF
+#else
+#define LCD_BKG_ON()    GPIO.out_w1ts = (1 << PIN_NUM_BCKL) // Backlight ON
+#define LCD_BKG_OFF()   GPIO.out_w1tc = (1 << PIN_NUM_BCKL) //Backlight OFF
 #endif
 
-
 #define SPI_NUM  0x3
+
+#define LCD_TYPE_ILI 0
+#define LCD_TYPE_ST 1
 
 
 static void spi_write_byte(const uint8_t data){
@@ -96,6 +85,8 @@ static void  ILI9341_INITIAL ()
     LCD_RST_SET();
     ets_delay_us(200000);                                                             
 
+
+#if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ILI)
     //************* Start Initial Sequence **********//
     LCD_WriteCommand(0xCF);
     LCD_WriteData(0x00);
@@ -216,37 +207,105 @@ static void  ILI9341_INITIAL ()
     //LCD_WriteData(0x01);
     //LCD_WriteData(0x30);
 
+#endif
+#if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST)
+
+//212
+//122
+    LCD_WriteCommand(0x36);
+    LCD_WriteData((1<<5)|(1<<6)); //MV 1, MX 1
+
+    LCD_WriteCommand(0x3A);
+    LCD_WriteData(0x55);
+
+    LCD_WriteCommand(0xB2);
+    LCD_WriteData(0x0c);
+    LCD_WriteData(0x0c);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x33);
+    LCD_WriteData(0x33);
+
+    LCD_WriteCommand(0xB7);
+    LCD_WriteData(0x35);
+
+    LCD_WriteCommand(0xBB);
+    LCD_WriteData(0x2B);
+
+    LCD_WriteCommand(0xC0);
+    LCD_WriteData(0x2C);
+
+    LCD_WriteCommand(0xC2);
+    LCD_WriteData(0x01);
+    LCD_WriteData(0xFF);
+
+    LCD_WriteCommand(0xC3);
+    LCD_WriteData(0x11);
+
+    LCD_WriteCommand(0xC4);
+    LCD_WriteData(0x20);
+
+    LCD_WriteCommand(0xC6);
+    LCD_WriteData(0x0f);
+
+    LCD_WriteCommand(0xD0);
+    LCD_WriteData(0xA4);
+    LCD_WriteData(0xA1);
+
+    LCD_WriteCommand(0xE0);
+    LCD_WriteData(0xD0);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x05);
+    LCD_WriteData(0x0E);
+    LCD_WriteData(0x15);
+    LCD_WriteData(0x0D);
+    LCD_WriteData(0x37);
+    LCD_WriteData(0x43);
+    LCD_WriteData(0x47);
+    LCD_WriteData(0x09);
+    LCD_WriteData(0x15);
+    LCD_WriteData(0x12);
+    LCD_WriteData(0x16);
+    LCD_WriteData(0x19);
+
+    LCD_WriteCommand(0xE1);
+    LCD_WriteData(0xD0);
+    LCD_WriteData(0x00);
+    LCD_WriteData(0x05);
+    LCD_WriteData(0x0D);
+    LCD_WriteData(0x0C);
+    LCD_WriteData(0x06);
+    LCD_WriteData(0x2D);
+    LCD_WriteData(0x44);
+    LCD_WriteData(0x40);
+    LCD_WriteData(0x0E);
+    LCD_WriteData(0x1C);
+    LCD_WriteData(0x18);
+    LCD_WriteData(0x16);
+    LCD_WriteData(0x19);
+
+#endif
+
+
     LCD_WriteCommand(0x11);    //Exit Sleep
     ets_delay_us(100000);
     LCD_WriteCommand(0x29);    //Display on
     ets_delay_us(100000);
+
+
 }
 //.............LCD API END----------
 
 static void ili_gpio_init()
 {
-#if CONFIG_LCD_USE_FAST_PINS
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO21_U,2);   //DC PIN
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO22_U,2);   //RESET PIN
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO25_U,2);   //BKL PIN
-    WRITE_PERI_REG(GPIO_ENABLE_W1TS_REG, BIT21|BIT22|BIT25);
-#else
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO21_U,2);   //DC PIN
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO18_U,2);   //RESET PIN
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO5_U,2);    //BKL PIN
     WRITE_PERI_REG(GPIO_ENABLE_W1TS_REG, BIT21|BIT18|BIT5);
-#endif
 }
 
 static void spi_master_init()
 {
     ets_printf("lcd spi pin mux init ...\r\n");
-#if CONFIG_LCD_USE_FAST_PINS
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO19_U,1);
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO23_U,1);
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO18_U,1);
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO5_U,1);
-#else
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO19_U,2);
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO23_U,2);
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO22_U,2);
@@ -258,7 +317,6 @@ static void spi_master_init()
     gpio_matrix_out(PIN_NUM_MOSI, VSPID_OUT_IDX,0,0);
     gpio_matrix_out(PIN_NUM_CLK, VSPICLK_OUT_IDX,0,0);
     gpio_matrix_out(PIN_NUM_CS, VSPICS0_OUT_IDX,0,0);
-#endif
     ets_printf("Hspi config\r\n");
 
     CLEAR_PERI_REG_MASK(SPI_SLAVE_REG(SPI_NUM), SPI_TRANS_DONE << 5);

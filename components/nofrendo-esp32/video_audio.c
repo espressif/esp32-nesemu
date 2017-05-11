@@ -35,14 +35,14 @@
 #include <nesinput.h>
 #include <osd.h>
 #include <stdint.h>
-
+#include "driver/i2s.h"
+#include "sdkconfig.h"
 #include <spi_lcd.h>
 
 #include <psxcontroller.h>
 
-#define  DEFAULT_SAMPLERATE   22050
-#define  DEFAULT_BPS          8
-#define  DEFAULT_FRAGSIZE     1024
+#define  DEFAULT_SAMPLERATE   22100
+#define  DEFAULT_FRAGSIZE     128
 
 #define  DEFAULT_WIDTH        256
 #define  DEFAULT_HEIGHT       NES_VISIBLE_HEIGHT
@@ -63,21 +63,28 @@ int osd_installtimer(int frequency, void *func, int funcsize, void *counter, int
 /*
 ** Audio
 */
-static int sound_bps = DEFAULT_BPS;
-static int sound_samplerate = DEFAULT_SAMPLERATE;
-static int sound_fragsize = DEFAULT_FRAGSIZE;
-static unsigned char *audioBuffer = NULL;
 static void (*audio_callback)(void *buffer, int length) = NULL;
+#if CONFIG_SOUND_ENA
+QueueHandle_t queue;
+static uint16_t *audio_frame;
+#endif
 
-/* this is the callback that SDL calls to obtain more audio data */
-static void sdl_audio_player(void *udata, unsigned char *stream, int len)
-{
-   /* SDL requests buffer fills in terms of bytes, not samples */
-   if (16 == sound_bps)
-      len /= 2;
-
-   if (audio_callback)
-      audio_callback(stream, len);
+static void do_audio_frame() {
+#if CONFIG_SOUND_ENA
+	int left=DEFAULT_SAMPLERATE/NES_REFRESH_RATE;
+	while(left) {
+		int n=DEFAULT_FRAGSIZE;
+		if (n>left) n=left;
+		audio_callback(audio_frame, n); //get more data
+		//16 bit mono -> 32-bit (16 bit r+l)
+		for (int i=n-1; i>=0; i--) {
+			audio_frame[i*2+1]=audio_frame[i];
+			audio_frame[i*2]=audio_frame[i];
+		}
+		i2s_write_bytes(0, audio_frame, 4*n, portMAX_DELAY);
+		left-=n;
+	}
+#endif
 }
 
 void osd_setsound(void (*playfunc)(void *buffer, int length))
@@ -91,21 +98,41 @@ static void osd_stopsound(void)
    audio_callback = NULL;
 }
 
+
 static int osd_init_sound(void)
 {
-   sound_bps = DEFAULT_BPS;
-   sound_samplerate = DEFAULT_SAMPLERATE;
-   sound_fragsize = DEFAULT_FRAGSIZE;
+#if CONFIG_SOUND_ENA
+	audio_frame=malloc(4*DEFAULT_FRAGSIZE);
+	i2s_config_t cfg={
+		.mode=I2S_MODE_DAC_BUILT_IN|I2S_MODE_TX|I2S_MODE_MASTER,
+		.sample_rate=DEFAULT_SAMPLERATE,
+		.bits_per_sample=I2S_BITS_PER_SAMPLE_16BIT,
+		.channel_format=I2S_CHANNEL_FMT_RIGHT_LEFT,
+		.communication_format=I2S_COMM_FORMAT_I2S_MSB,
+		.intr_alloc_flags=0,
+		.dma_buf_count=4,
+		.dma_buf_len=512
+	};
+	i2s_driver_install(0, &cfg, 4, &queue);
+	i2s_set_pin(0, NULL);
+	i2s_set_dac_mode(I2S_DAC_CHANNEL_LEFT_EN); 
 
-   audio_callback = NULL;
+	//I2S enables *both* DAC channels; we only need DAC1.
+	//ToDo: still needed now I2S supports set_dac_mode?
+	CLEAR_PERI_REG_MASK(RTC_IO_PAD_DAC1_REG, RTC_IO_PDAC1_DAC_XPD_FORCE_M);
+	CLEAR_PERI_REG_MASK(RTC_IO_PAD_DAC1_REG, RTC_IO_PDAC1_XPD_DAC_M);
 
-   return 0;
+#endif
+
+	audio_callback = NULL;
+
+	return 0;
 }
 
 void osd_getsoundinfo(sndinfo_t *info)
 {
    info->sample_rate = DEFAULT_SAMPLERATE;
-   info->bps = DEFAULT_FRAGSIZE;
+   info->bps = 16;
 }
 
 /*
@@ -212,6 +239,7 @@ static void free_write(int num_dirties, rect_t *dirty_rects)
 
 static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects) {
 	xQueueSend(vidQueue, &bmp, 0);
+	do_audio_frame();
 }
 
 
