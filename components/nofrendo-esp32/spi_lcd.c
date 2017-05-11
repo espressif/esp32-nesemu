@@ -250,7 +250,7 @@ static void spi_master_init()
     ets_printf("lcd spi signal init\r\n");
     gpio_matrix_in(PIN_NUM_MISO, VSPIQ_IN_IDX,0);
     gpio_matrix_out(PIN_NUM_MOSI, VSPID_OUT_IDX,0,0);
-    gpio_matrix_out(PIN_NUM_CLK, VSPICLK_OUT_MUX_IDX,0,0);
+    gpio_matrix_out(PIN_NUM_CLK, VSPICLK_OUT_IDX,0,0);
     gpio_matrix_out(PIN_NUM_CS, VSPICS0_OUT_IDX,0,0);
 #endif
     ets_printf("Hspi config\r\n");
