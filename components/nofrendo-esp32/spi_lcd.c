@@ -24,6 +24,7 @@
 #include "soc/spi_reg.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "driver/periph_ctrl.h"
 #include "spi_lcd.h"
 
 #define PIN_NUM_MISO CONFIG_HW_LCD_MISO_GPIO
@@ -305,6 +306,9 @@ static void ili_gpio_init()
 
 static void spi_master_init()
 {
+    periph_module_enable(PERIPH_VSPI_MODULE);
+    periph_module_enable(PERIPH_SPI_DMA_MODULE);
+
     ets_printf("lcd spi pin mux init ...\r\n");
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO19_U,2);
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO23_U,2);

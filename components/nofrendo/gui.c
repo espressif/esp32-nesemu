@@ -74,7 +74,7 @@ void gui_savesnap(void)
    if (osd_makesnapname(filename, PATH_MAX) < 0)
       return;
 
-   if (pcx_write(filename, nes->vidbuf, nes->ppu->curpal)) 
+   if (pcx_write(filename, vid_getbuffer(), nes->ppu->curpal)) 
       return;
 
    gui_sendmsg(GUI_GREEN, "Screen saved to %s", filename);
