@@ -42,36 +42,41 @@ config HW_LCD_TYPE
 	default 0 if HW_LCD_TYPE_ILI
 	default 1 if HW_LCD_TYPE_ST
 
+config HW_LCD_MISO_GPIO_CUST
+	int "LCD MISO pin"
+	depends on HW_CUSTOM
+	range 1 35
+	default 25
 
 config HW_LCD_MOSI_GPIO_CUST
 	int "LCD MOSI pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 25
+	default 23
 
 config HW_LCD_CLK_GPIO_CUST
 	int "LCD CLK pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 23
+	default 19
 
 config HW_LCD_CS_GPIO_CUST
 	int "LCD CS pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 19
+	default 22
 
 config HW_LCD_DC_GPIO_CUST
 	int "LCD DC pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 22
+	default 21
 
 config HW_LCD_RESET_GPIO_CUST
 	int "LCD RESET pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 21
+	default 18
 
 config HW_LCD_BL_GPIO_CUST
 	int "LCD Backlight Enable pin"

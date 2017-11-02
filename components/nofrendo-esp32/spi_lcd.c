@@ -24,6 +24,7 @@
 #include "soc/spi_reg.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
 #include "spi_lcd.h"
 
@@ -298,10 +299,10 @@ static void  ILI9341_INITIAL ()
 
 static void ili_gpio_init()
 {
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO21_U,2);   //DC PIN
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO18_U,2);   //RESET PIN
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO5_U,2);    //BKL PIN
-    WRITE_PERI_REG(GPIO_ENABLE_W1TS_REG, BIT21|BIT18|BIT5);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_DC], 2);   //DC PIN
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_RST], 2);   //RESET PIN
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_BCKL], 2);    //BKL PIN
+    WRITE_PERI_REG(GPIO_ENABLE_W1TS_REG, BIT(PIN_NUM_DC)|BIT(PIN_NUM_RST)|BIT(PIN_NUM_BCKL));
 }
 
 static void spi_master_init()
@@ -310,11 +311,11 @@ static void spi_master_init()
     periph_module_enable(PERIPH_SPI_DMA_MODULE);
 
     ets_printf("lcd spi pin mux init ...\r\n");
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO19_U,2);
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO23_U,2);
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO22_U,2);
-    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO25_U,2);
-    WRITE_PERI_REG(GPIO_ENABLE_W1TS_REG, BIT19|BIT23|BIT22);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_MISO], 2);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_MOSI], 2);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_CLK], 2);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[PIN_NUM_CS], 2);
+    WRITE_PERI_REG(GPIO_ENABLE_W1TS_REG, BIT(PIN_NUM_MOSI)|BIT(PIN_NUM_CLK)|BIT(PIN_NUM_CS));
 
     ets_printf("lcd spi signal init\r\n");
     gpio_matrix_in(PIN_NUM_MISO, VSPIQ_IN_IDX,0);
