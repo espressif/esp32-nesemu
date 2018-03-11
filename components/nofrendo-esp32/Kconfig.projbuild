@@ -48,6 +48,12 @@ config HW_LCD_MOSI_GPIO_CUST
 	depends on HW_CUSTOM
 	range 1 35
 	default 25
+	
+config HW_LCD_MISO_GPIO_CUST
+	int "LCD MISO pin"
+	depends on HW_CUSTOM
+	range 1 35
+	default 26
 
 config HW_LCD_CLK_GPIO_CUST
 	int "LCD CLK pin"
