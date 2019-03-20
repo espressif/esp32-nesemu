@@ -787,7 +787,7 @@ typedef struct obj_s
 static void ppu_renderoam(uint8 *vidbuf, int scanline)
 {
    uint8 *buf_ptr;
-   uint32 vram_offset, savecol[2];
+   uint32 vram_offset, savecol[2] = {0};
    int sprite_num, spritecount;
    obj_t *sprite_ptr;
    uint8 sprite_height;

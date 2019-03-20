@@ -2,7 +2,7 @@ menu "Nofrendo ESP32-specific configuration"
 
 choice NOFRENDO_HARDWARE
 	prompt "Hardware to run on"
-	default ESP_WROVER_KIT_V2_ILI
+	default ESP_WROVER_KIT_V2
 	help
 		This emulator can run on various types of hardware. Select what you have here.
 
@@ -11,6 +11,9 @@ config HW_WROVERKIT_V1
 
 config HW_WROVERKIT_V2
 	bool "ESP_Wrover_Kit v2 (black PCB)"
+
+config HW_M5STACK
+	bool "M5Stack"
 
 config HW_CUSTOM
 	bool "Custom hardware"
@@ -41,43 +44,49 @@ config HW_LCD_TYPE
 	default 0 if HW_WROVERKIT_V1
 	default 0 if HW_LCD_TYPE_ILI
 	default 1 if HW_LCD_TYPE_ST
+	default 2 if HW_M5STACK
 
+config HW_LCD_MISO_GPIO_CUST
+	int "LCD MISO pin"
+	depends on HW_CUSTOM
+	range 1 35
+	default 19
 
 config HW_LCD_MOSI_GPIO_CUST
 	int "LCD MOSI pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 25
+	default 23
 
 config HW_LCD_CLK_GPIO_CUST
 	int "LCD CLK pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 23
+	default 18
 
 config HW_LCD_CS_GPIO_CUST
 	int "LCD CS pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 19
+	default 14
 
 config HW_LCD_DC_GPIO_CUST
 	int "LCD DC pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 22
+	default 27
 
-config HW_LCD_RESET_GPIO_CUST
-	int "LCD RESET pin"
+config HW_LCD_RST_GPIO_CUST
+	int "LCD RST pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 21
+	default 33
 
 config HW_LCD_BL_GPIO_CUST
 	int "LCD Backlight Enable pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 5
+	default 32
 
 config HW_INV_BL_CUST
 	bool "Invert backlight output"
@@ -90,41 +99,49 @@ config HW_INV_BL
 	default HW_INBV_BL_CUST if HW_CUSTOM
 	default n if HW_WROVERKIT_V1
 	default y if HW_WROVERKIT_V2
+	default n if HW_M5STACK
 
 config HW_LCD_MISO_GPIO
 	int
 	default HW_LCD_MISO_GPIO_CUST if HW_CUSTOM
 	default 25 if HW_WROVERKIT
+	default 19 if HW_M5STACK
 
 config HW_LCD_MOSI_GPIO
 	int
 	default HW_LCD_MOSI_GPIO_CUST if HW_CUSTOM
 	default 23 if HW_WROVERKIT
+	default 23 if HW_M5STACK
 
 config HW_LCD_CLK_GPIO
 	int
 	default HW_LCD_CLK_GPIO_CUST if HW_CUSTOM
 	default 19 if HW_WROVERKIT
+	default 18 if HW_M5STACK
 
 config HW_LCD_CS_GPIO
 	int
 	default HW_LCD_CS_GPIO_CUST if HW_CUSTOM
 	default 22 if HW_WROVERKIT
+	default 14 if HW_M5STACK
 
 config HW_LCD_DC_GPIO
 	int
 	default HW_LCD_DC_GPIO_CUST if HW_CUSTOM
 	default 21 if HW_WROVERKIT
+	default 27 if HW_M5STACK
 
-config HW_LCD_RESET_GPIO
+config HW_LCD_RST_GPIO
 	int
-	default HW_LCD_RESET_GPIO_CUST if HW_CUSTOM
+	default HW_LCD_RST_GPIO_CUST if HW_CUSTOM
 	default 18 if HW_WROVERKIT
+	default 33 if HW_M5STACK
 
 config HW_LCD_BL_GPIO
 	int
 	default HW_LCD_BL_GPIO_CUST if HW_CUSTOM
 	default 5 if HW_WROVERKIT
+	default 32 if HW_M5STACK
 
 
 config SOUND_ENA

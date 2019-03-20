@@ -66,8 +66,9 @@ int osd_installtimer(int frequency, void *func, int funcsize, void *counter, int
 static void (*audio_callback)(void *buffer, int length) = NULL;
 #if CONFIG_SOUND_ENA
 QueueHandle_t queue;
-static uint16_t *audio_frame;
+static int16_t *audio_frame;
 #endif
+
 
 static void do_audio_frame() {
 
@@ -79,10 +80,11 @@ static void do_audio_frame() {
 		audio_callback(audio_frame, n); //get more data
 		//16 bit mono -> 32-bit (16 bit r+l)
 		for (int i=n-1; i>=0; i--) {
-			audio_frame[i*2+1]=audio_frame[i];
-			audio_frame[i*2]=audio_frame[i];
+			audio_frame[i] = audio_frame[i] + 0x8000;
+			// audio_frame[i*2+1] = audio_frame[i] + 0x8000;
+			// audio_frame[i*2] = audio_frame[i] + 0x8000;
 		}
-		i2s_write_bytes(0, audio_frame, 4*n, portMAX_DELAY);
+		i2s_write_bytes(0, (const char *)audio_frame, 2*n, portMAX_DELAY);
 		left-=n;
 	}
 #endif
@@ -103,26 +105,26 @@ static void osd_stopsound(void)
 static int osd_init_sound(void)
 {
 #if CONFIG_SOUND_ENA
-	audio_frame=malloc(4*DEFAULT_FRAGSIZE);
-	i2s_config_t cfg={
-		.mode=I2S_MODE_DAC_BUILT_IN|I2S_MODE_TX|I2S_MODE_MASTER,
-		.sample_rate=DEFAULT_SAMPLERATE,
-		.bits_per_sample=I2S_BITS_PER_SAMPLE_16BIT,
-		.channel_format=I2S_CHANNEL_FMT_RIGHT_LEFT,
-		.communication_format=I2S_COMM_FORMAT_I2S_MSB,
-		.intr_alloc_flags=0,
-		.dma_buf_count=4,
-		.dma_buf_len=512
+	audio_frame = malloc(2 * DEFAULT_FRAGSIZE);
+	i2s_config_t cfg = {
+		.mode = I2S_MODE_DAC_BUILT_IN | I2S_MODE_TX | I2S_MODE_MASTER,
+		.sample_rate = DEFAULT_SAMPLERATE,
+		.bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+		.channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
+		.communication_format = I2S_COMM_FORMAT_I2S_MSB,
+		.intr_alloc_flags = 0,
+		.dma_buf_count = 2,
+		.dma_buf_len = 512
 	};
-	i2s_driver_install(0, &cfg, 4, &queue);
+	i2s_driver_install(0, &cfg, 2, &queue);
 	i2s_set_pin(0, NULL);
-	i2s_set_dac_mode(I2S_DAC_CHANNEL_LEFT_EN); 
+	// i2s_set_dac_mode(I2S_DAC_CHANNEL_LEFT_EN); 
+	i2s_set_dac_mode(I2S_DAC_CHANNEL_RIGHT_EN); 
 
 	//I2S enables *both* DAC channels; we only need DAC1.
 	//ToDo: still needed now I2S supports set_dac_mode?
-	CLEAR_PERI_REG_MASK(RTC_IO_PAD_DAC1_REG, RTC_IO_PDAC1_DAC_XPD_FORCE_M);
-	CLEAR_PERI_REG_MASK(RTC_IO_PAD_DAC1_REG, RTC_IO_PDAC1_XPD_DAC_M);
-
+	// CLEAR_PERI_REG_MASK(RTC_IO_PAD_DAC2_REG, RTC_IO_PDAC2_DAC_XPD_FORCE_M);
+	// CLEAR_PERI_REG_MASK(RTC_IO_PAD_DAC2_REG, RTC_IO_PDAC2_XPD_DAC_M);
 #endif
 
 	audio_callback = NULL;
@@ -253,7 +255,7 @@ static void videoTask(void *arg) {
     while(1) {
 //		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
-		ili9341_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
+		lcd_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
 	}
 }
 
@@ -279,7 +281,7 @@ void osd_getinput(void)
 	int x;
 	oldb=b;
 	event_t evh;
-//	printf("Input: %x\n", b);
+	// printf("Input: %x\n", b);
 	for (x=0; x<16; x++) {
 		if (chg&1) {
 			evh=event_get(ev[x]);
@@ -325,8 +327,8 @@ int osd_init()
 	if (osd_init_sound())
 		return -1;
 
-	ili9341_init();
-	ili9341_write_frame(0,0,320,240,NULL);
+	lcd_init();
+	lcd_write_frame(0,0,320,240,NULL);
 	vidQueue=xQueueCreate(1, sizeof(bitmap_t *));
 	xTaskCreatePinnedToCore(&videoTask, "videoTask", 2048, NULL, 5, NULL, 1);
 	osd_initinput();
