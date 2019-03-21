@@ -37,6 +37,7 @@
 #define PIN_NUM_DC CONFIG_HW_LCD_DC_GPIO
 #define PIN_NUM_RST CONFIG_HW_LCD_RST_GPIO
 #define PIN_NUM_BL CONFIG_HW_LCD_BL_GPIO
+#define SPI_SPD CONFIG_HW_LCD_CLOCK_SPEED
 
 #define SPI_NUM 0x3
 
@@ -121,6 +122,9 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0x26, {0x01}, 1},
     {0xE0, {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00}, 15},
     {0XE1, {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F}, 15},
+#endif
+#ifdef CONFIG_HW_LCD_IPS_CUST
+    {0x21, {0}, 0x80},
 #endif
     {0x11, {0}, 0x80},
     {0x29, {0}, 0x80},
@@ -319,8 +323,7 @@ void lcd_init()
         .quadwp_io_num = -1,
         .quadhd_io_num = -1};
     spi_device_interface_config_t devcfg = {
-        // .clock_speed_hz=10*1000*1000,               //Clock out at 10 MHz
-        .clock_speed_hz = 40 * 1000 * 1000,      //Clock out at 10 MHz
+        .clock_speed_hz = SPI_SPD * 1000 * 1000, //Clock out at 10 MHz
         .mode = 0,                               //SPI mode 0
         .spics_io_num = PIN_NUM_CS,              //CS pin
         .queue_size = 7,                         //We want to be able to queue 7 transactions at a time

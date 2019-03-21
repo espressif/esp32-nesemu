@@ -93,6 +93,17 @@ config HW_INV_BL_CUST
 	default n
 	depends on HW_CUSTOM
 
+config HW_LCD_IPS_CUST
+	bool "IPS type LCD (inverted color)"
+	default n
+	depends on HW_CUSTOM
+
+config HW_LCD_CLOCK_SPEED_CUST
+	int "LCD Backlight Enable pin"
+	depends on HW_CUSTOM
+	range 10 40
+	default 27
+
 
 config HW_INV_BL
 	bool
@@ -143,6 +154,11 @@ config HW_LCD_BL_GPIO
 	default 5 if HW_WROVERKIT
 	default 32 if HW_M5STACK
 
+config HW_LCD_CLOCK_SPEED
+	int
+	default HW_LCD_CLOCK_SPEED_CUST if HW_CUSTOM
+	default 27 if HW_WROVERKIT
+	default 40 if HW_M5STACK
 
 config SOUND_ENA
 	bool "Analog audio on GPIO26"
