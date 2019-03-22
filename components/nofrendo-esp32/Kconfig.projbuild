@@ -99,7 +99,7 @@ config HW_LCD_IPS_CUST
 	depends on HW_CUSTOM
 
 config HW_LCD_CLOCK_SPEED_CUST
-	int "LCD Backlight Enable pin"
+	int "LCD SPI clock speed"
 	depends on HW_CUSTOM
 	range 10 80
 	default 40
