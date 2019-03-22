@@ -74,13 +74,13 @@ config HW_LCD_DC_GPIO_CUST
 	int "LCD DC pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 16
+	default 21
 
 config HW_LCD_RST_GPIO_CUST
 	int "LCD RST pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 17
+	default 22
 
 config HW_LCD_BL_GPIO_CUST
 	int "LCD Backlight Enable pin"
