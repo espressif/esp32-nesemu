@@ -199,6 +199,7 @@ void lcd_spi_pre_transfer_callback(spi_transaction_t *t)
 
 void lcd_setBrightness(int duty)
 {
+#if (PIN_NUM_BL > 0)
 #define LEDC_HS_TIMER LEDC_TIMER_0
 #define LEDC_HS_MODE LEDC_HIGH_SPEED_MODE
 #define LEDC_HS_CH0_CHANNEL LEDC_CHANNEL_0
@@ -222,8 +223,13 @@ void lcd_setBrightness(int duty)
             .timer_sel = LEDC_HS_TIMER};
     ledc_channel_config(&ledc_channel);
 
+#ifdef HW_INV_BL
+    ledc_set_duty(ledc_channel.speed_mode, ledc_channel.channel, 1023 - duty);
+#else
     ledc_set_duty(ledc_channel.speed_mode, ledc_channel.channel, duty);
+#endif
     ledc_update_duty(ledc_channel.speed_mode, ledc_channel.channel);
+#endif
 }
 
 #define U16x2toU32(m, l) ((((uint32_t)(l >> 8 | (l & 0xFF) << 8)) << 16) | (m >> 8 | (m & 0xFF) << 8))

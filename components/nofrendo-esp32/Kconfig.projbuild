@@ -68,25 +68,25 @@ config HW_LCD_CS_GPIO_CUST
 	int "LCD CS pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 14
+	default 5
 
 config HW_LCD_DC_GPIO_CUST
 	int "LCD DC pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 27
+	default 16
 
 config HW_LCD_RST_GPIO_CUST
 	int "LCD RST pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 33
+	default 17
 
 config HW_LCD_BL_GPIO_CUST
 	int "LCD Backlight Enable pin"
 	depends on HW_CUSTOM
-	range 1 35
-	default 32
+	range 0 35
+	default 0
 
 config HW_INV_BL_CUST
 	bool "Invert backlight output"
@@ -101,8 +101,8 @@ config HW_LCD_IPS_CUST
 config HW_LCD_CLOCK_SPEED_CUST
 	int "LCD Backlight Enable pin"
 	depends on HW_CUSTOM
-	range 10 40
-	default 27
+	range 10 80
+	default 40
 
 
 config HW_INV_BL
