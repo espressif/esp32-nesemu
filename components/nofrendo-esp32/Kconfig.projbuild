@@ -85,8 +85,8 @@ config HW_LCD_RST_GPIO_CUST
 config HW_LCD_BL_GPIO_CUST
 	int "LCD Backlight Enable pin"
 	depends on HW_CUSTOM
-	range 0 35
-	default 0
+	range -1 35
+	default -1
 
 config HW_INV_BL_CUST
 	bool "Invert backlight output"
@@ -167,35 +167,93 @@ config SOUND_ENA
 		ESP32 will output 0-3.3V analog audio signal on GPIO26.
 
 
-config HW_PSX_ENA
-	bool "Enable PSX controller input"
-	default y
+choice HW_CONTROLLER_SEL
+	prompt "Controller type"
+	default HW_CONTROLLER_GPIO
 	help
-		If you connect a PSX/PS2 controller to the following GPIOs, you can control the NES.
+		Connect buttons to the following GPIOs to control the NES;
+		Or connect a PSX/PS2 controller to the following GPIOs.
+
+config HW_CONTROLLER_GPIO
+	bool "GPIO controller"
+
+config HW_CONTROLLER_PSX
+	bool "PSX controller"
+
+endchoice
 
 
 config HW_PSX_CLK
 	int "PSX controller CLK GPIO pin"
-	depends on HW_PSX_ENA
+	depends on HW_CONTROLLER_PSX
 	range 1 35
 	default 14
 
 config HW_PSX_DAT
 	int "PSX controller DATa GPIO pin"
-	depends on HW_PSX_ENA
+	depends on HW_CONTROLLER_PSX
 	range 1 35
 	default 27
 
 config HW_PSX_ATT
 	int "PSX controller ATTention GPIO pin"
-	depends on HW_PSX_ENA
+	depends on HW_CONTROLLER_PSX
 	range 1 35
 	default 16
 
 config HW_PSX_CMD
 	int "PSX controller CoMmanD GPIO pin"
-	depends on HW_PSX_ENA
+	depends on HW_CONTROLLER_PSX
 	range 1 35
 	default 2
+
+
+config HW_GPIO_UP
+	int "GPIO controller UP button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 12
+
+config HW_GPIO_DOWN
+	int "GPIO controller DOWN button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 13
+
+config HW_GPIO_LEFT
+	int "GPIO controller LEFT button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 14
+
+config HW_GPIO_RIGHT
+	int "GPIO controller RIGHT button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 15
+
+config HW_GPIO_SELECT
+	int "GPIO controller SELECT button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 4
+
+config HW_GPIO_START
+	int "GPIO controller START button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 27
+
+config HW_GPIO_A
+	int "GPIO controller A button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 32
+
+config HW_GPIO_B
+	int "GPIO controller B button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 33
+	default 33
 
 endmenu
