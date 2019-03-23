@@ -199,7 +199,7 @@ void lcd_spi_pre_transfer_callback(spi_transaction_t *t)
 
 void lcd_setBrightness(int duty)
 {
-#if (PIN_NUM_BL > 0)
+#if (PIN_NUM_BL >= 0)
 #define LEDC_HS_TIMER LEDC_TIMER_0
 #define LEDC_HS_MODE LEDC_HIGH_SPEED_MODE
 #define LEDC_HS_CH0_CHANNEL LEDC_CHANNEL_0

@@ -39,7 +39,11 @@
 #include "sdkconfig.h"
 #include <spi_lcd.h>
 
+#ifdef CONFIG_HW_CONTROLLER_GPIO
+#include <gpiocontroller.h>
+#else
 #include <psxcontroller.h>
+#endif
 
 #define  DEFAULT_SAMPLERATE   22100
 #define  DEFAULT_FRAGSIZE     128
@@ -266,7 +270,11 @@ static void videoTask(void *arg) {
 
 static void osd_initinput()
 {
+#ifdef CONFIG_HW_CONTROLLER_GPIO
+	gpiocontrollerInit();
+#else
 	psxcontrollerInit();
+#endif
 }
 
 void osd_getinput(void)
@@ -276,7 +284,11 @@ void osd_getinput(void)
 			0,0,0,0,event_soft_reset,event_joypad1_a,event_joypad1_b,event_hard_reset
 		};
 	static int oldb=0xffff;
+#ifdef CONFIG_HW_CONTROLLER_GPIO
+	int b=gpioReadInput();
+#else
 	int b=psxReadInput();
+#endif
 	int chg=b^oldb;
 	int x;
 	oldb=b;

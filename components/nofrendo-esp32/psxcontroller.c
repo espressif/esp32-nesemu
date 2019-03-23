@@ -31,8 +31,7 @@
 
 #define DELAY() asm("nop; nop; nop; nop;nop; nop; nop; nop;nop; nop; nop; nop;nop; nop; nop; nop;")
 
-
-#if CONFIG_HW_PSX_ENA
+#ifdef CONFIG_HW_CONTROLLER_PSX
 
 /* Sends and receives a byte from/to the PSX controller using SPI */
 static int psxSendRecv(int send) {
@@ -128,13 +127,11 @@ void psxcontrollerInit() {
 	}
 }
 
-
 #else
 
 int psxReadInput() {
 	return 0xFFFF;
 }
-
 
 void psxcontrollerInit() {
 	printf("PSX controller disabled in menuconfig; no input enabled.\n");
