@@ -49,8 +49,8 @@ config HW_LCD_TYPE
 config HW_LCD_MISO_GPIO_CUST
 	int "LCD MISO pin"
 	depends on HW_CUSTOM
-	range 1 35
-	default 19
+	range -1 35
+	default -1
 
 config HW_LCD_MOSI_GPIO_CUST
 	int "LCD MOSI pin"
@@ -212,48 +212,48 @@ config HW_GPIO_UP
 	int "GPIO controller UP button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 12
+	default 33
 
 config HW_GPIO_DOWN
 	int "GPIO controller DOWN button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 13
+	default 32
 
 config HW_GPIO_LEFT
 	int "GPIO controller LEFT button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 14
+	default 27
 
 config HW_GPIO_RIGHT
 	int "GPIO controller RIGHT button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 15
+	default 22
 
 config HW_GPIO_SELECT
 	int "GPIO controller SELECT button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 4
+	default 19
 
 config HW_GPIO_START
 	int "GPIO controller START button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 27
+	default 12
 
 config HW_GPIO_A
 	int "GPIO controller A button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 32
+	default 4
 
 config HW_GPIO_B
 	int "GPIO controller B button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 33
+	default 0
 
 endmenu
