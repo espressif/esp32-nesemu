@@ -6,6 +6,8 @@
 #include <esp_log.h>
 #include "sdkconfig.h"
 
+#ifdef CONFIG_HW_CONTROLLER_GPIO
+
 // Set buttons with pins
 #define UP      CONFIG_HW_GPIO_UP
 #define DOWN    CONFIG_HW_GPIO_DOWN
@@ -15,8 +17,6 @@
 #define START   CONFIG_HW_GPIO_START
 #define A       CONFIG_HW_GPIO_A
 #define B       CONFIG_HW_GPIO_B
-
-#ifdef CONFIG_HW_CONTROLLER_GPIO
 
 int gpioReadInput()
 {
@@ -56,13 +56,12 @@ void gpiocontrollerInit()
 
 #else
 
-int gpioReadInput() {
-	return 0xFFFF;
-}
-
-
 void gpiocontrollerInit() {
 	printf("GPIO controller disabled in menuconfig; no input enabled.\n");
+}
+
+int gpioReadInput() {
+	return 0xFFFF;
 }
 
 #endif

@@ -129,12 +129,12 @@ void psxcontrollerInit() {
 
 #else
 
-int psxReadInput() {
-	return 0xFFFF;
-}
-
 void psxcontrollerInit() {
 	printf("PSX controller disabled in menuconfig; no input enabled.\n");
+}
+
+int psxReadInput() {
+	return 0xFFFF;
 }
 
 #endif

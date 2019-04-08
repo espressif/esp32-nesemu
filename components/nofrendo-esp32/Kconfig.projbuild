@@ -2,7 +2,7 @@ menu "Nofrendo ESP32-specific configuration"
 
 choice NOFRENDO_HARDWARE
 	prompt "Hardware to run on"
-	default ESP_WROVER_KIT_V2
+	default HW_M5STACK
 	help
 		This emulator can run on various types of hardware. Select what you have here.
 
@@ -162,14 +162,14 @@ config HW_LCD_CLOCK_SPEED
 
 config SOUND_ENA
 	bool "Analog audio on GPIO26"
-	default n
+	default y
 	help 
 		ESP32 will output 0-3.3V analog audio signal on GPIO26.
 
 
 choice HW_CONTROLLER_SEL
 	prompt "Controller type"
-	default HW_CONTROLLER_GPIO
+	default HW_CONTROLLER_I2C_GP
 	help
 		Connect buttons to the following GPIOs to control the NES;
 		Or connect a PSX/PS2 controller to the following GPIOs.
@@ -179,6 +179,12 @@ config HW_CONTROLLER_GPIO
 
 config HW_CONTROLLER_PSX
 	bool "PSX controller"
+
+config HW_CONTROLLER_I2C_GP
+	bool "I2C Gamepad"
+
+config HW_CONTROLLER_I2C_KB
+	bool "I2C Keyboard"
 
 endchoice
 

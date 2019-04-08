@@ -39,10 +39,14 @@
 #include "sdkconfig.h"
 #include <spi_lcd.h>
 
-#ifdef CONFIG_HW_CONTROLLER_GPIO
+#if defined CONFIG_HW_CONTROLLER_GPIO
 #include <gpiocontroller.h>
-#else
+#elif defined CONFIG_HW_CONTROLLER_PSX
 #include <psxcontroller.h>
+#elif defined CONFIG_HW_CONTROLLER_I2C_GP
+#include <i2c_gpcontroller.h>
+#elif defined CONFIG_HW_CONTROLLER_I2C_KB
+#include <i2c_kbcontroller.h>
 #endif
 
 #define  DEFAULT_SAMPLERATE   22100
@@ -270,10 +274,14 @@ static void videoTask(void *arg) {
 
 static void osd_initinput()
 {
-#ifdef CONFIG_HW_CONTROLLER_GPIO
+#if defined CONFIG_HW_CONTROLLER_GPIO
 	gpiocontrollerInit();
-#else
+#elif defined CONFIG_HW_CONTROLLER_PSX
 	psxcontrollerInit();
+#elif defined CONFIG_HW_CONTROLLER_I2C_GP
+	i2c_gpcontrollerInit();
+#elif defined CONFIG_HW_CONTROLLER_I2C_KB
+	i2c_kbcontrollerInit();
 #endif
 }
 
@@ -284,10 +292,14 @@ void osd_getinput(void)
 			0,0,0,0,event_soft_reset,event_joypad1_a,event_joypad1_b,event_hard_reset
 		};
 	static int oldb=0xffff;
-#ifdef CONFIG_HW_CONTROLLER_GPIO
+#if defined CONFIG_HW_CONTROLLER_GPIO
 	int b=gpioReadInput();
-#else
+#elif defined CONFIG_HW_CONTROLLER_PSX
 	int b=psxReadInput();
+#elif defined CONFIG_HW_CONTROLLER_I2C_GP
+	int b=i2c_gpReadInput();
+#elif defined CONFIG_HW_CONTROLLER_I2C_KB
+	int b=i2c_kbReadInput();
 #endif
 	int chg=b^oldb;
 	int x;
