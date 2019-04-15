@@ -73,14 +73,14 @@ config HW_LCD_CS_GPIO_CUST
 config HW_LCD_DC_GPIO_CUST
 	int "LCD DC pin"
 	depends on HW_CUSTOM
-	range 1 35
-	default 21
+	range 1 32
+	default 27
 
 config HW_LCD_RST_GPIO_CUST
 	int "LCD RST pin"
 	depends on HW_CUSTOM
 	range 1 35
-	default 22
+	default 33
 
 config HW_LCD_BL_GPIO_CUST
 	int "LCD Backlight Enable pin"
@@ -218,48 +218,48 @@ config HW_GPIO_UP
 	int "GPIO controller UP button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 33
+	default 22
 
 config HW_GPIO_DOWN
 	int "GPIO controller DOWN button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 32
+	default 21
 
 config HW_GPIO_LEFT
 	int "GPIO controller LEFT button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 27
+	default 19
 
 config HW_GPIO_RIGHT
 	int "GPIO controller RIGHT button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 22
+	default 4
 
 config HW_GPIO_SELECT
 	int "GPIO controller SELECT button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 19
+	default 0
 
 config HW_GPIO_START
 	int "GPIO controller START button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 12
+	default 2
 
 config HW_GPIO_A
 	int "GPIO controller A button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 4
+	default 12
 
 config HW_GPIO_B
 	int "GPIO controller B button"
 	depends on HW_CONTROLLER_GPIO
 	range 0 33
-	default 0
+	default 32
 
 endmenu
