@@ -8,7 +8,7 @@
 #define I2C_GAMEPAD_NUM             I2C_NUM_0        /*!< I2C port number for master dev */
 #define I2C_GAMEPAD_TX_BUF_DISABLE  0                /*!< I2C master do not need buffer */
 #define I2C_GAMEPAD_RX_BUF_DISABLE  0                /*!< I2C master do not need buffer */
-#define I2C_GAMEPAD_FREQ_HZ         100000           /*!< I2C master clock frequency */
+#define I2C_GAMEPAD_FREQ_HZ         50000            /*!< I2C master clock frequency */
 #define I2C_GAMEPAD_ADDR            0x08
 
 #define READ_BIT                           I2C_MASTER_READ  /*!< I2C master read */
