@@ -2,7 +2,7 @@ menu "Nofrendo ESP32-specific configuration"
 
 choice NOFRENDO_HARDWARE
 	prompt "Hardware to run on"
-	default HW_M5STACK
+	default HW_ODROID_GO
 	help
 		This emulator can run on various types of hardware. Select what you have here.
 
@@ -15,6 +15,9 @@ config HW_WROVERKIT_V2
 config HW_M5STACK
 	bool "M5Stack"
 
+config HW_ODROID_GO
+	bool "Odroid-Go"
+
 config HW_CUSTOM
 	bool "Custom hardware"
 
@@ -22,7 +25,7 @@ endchoice
 
 choice HW_LCD_TYPE_SEL
 	prompt "LCD type"
-	depends on HW_CUSTOM || HW_WROVERKIT_V2
+	depends on HW_CUSTOM || HW_WROVERKIT_V2 || HW_ODROID_GO
 
 config HW_LCD_TYPE_ILI
 	bool "ILI9341 LCD"
@@ -31,6 +34,11 @@ config HW_LCD_TYPE_ST
 	bool "ST7789V LCD"
 
 endchoice
+
+config HW_LCD_IPS
+	bool "IPS type LCD (inverted color)"
+	depends on HW_CUSTOM || HW_WROVERKIT_V2 || HW_ODROID_GO
+	default n
 
 config HW_WROVERKIT
 	bool
@@ -93,8 +101,8 @@ config HW_INV_BL_CUST
 	default n
 	depends on HW_CUSTOM
 
-config HW_LCD_IPS_CUST
-	bool "IPS type LCD (inverted color)"
+config HW_LCD_ROTATE_180_CUST
+	bool "Rotate LCD 180 degree"
 	default n
 	depends on HW_CUSTOM
 
@@ -105,60 +113,77 @@ config HW_LCD_CLOCK_SPEED_CUST
 	default 40
 
 
-config HW_INV_BL
-	bool
-	default HW_INBV_BL_CUST if HW_CUSTOM
-	default n if HW_WROVERKIT_V1
-	default y if HW_WROVERKIT_V2
-	default n if HW_M5STACK
-
 config HW_LCD_MISO_GPIO
 	int
 	default HW_LCD_MISO_GPIO_CUST if HW_CUSTOM
 	default 25 if HW_WROVERKIT
 	default 19 if HW_M5STACK
+	default 19 if HW_ODROID_GO
 
 config HW_LCD_MOSI_GPIO
 	int
 	default HW_LCD_MOSI_GPIO_CUST if HW_CUSTOM
 	default 23 if HW_WROVERKIT
 	default 23 if HW_M5STACK
+	default 23 if HW_ODROID_GO
 
 config HW_LCD_CLK_GPIO
 	int
 	default HW_LCD_CLK_GPIO_CUST if HW_CUSTOM
 	default 19 if HW_WROVERKIT
 	default 18 if HW_M5STACK
+	default 18 if HW_ODROID_GO
 
 config HW_LCD_CS_GPIO
 	int
 	default HW_LCD_CS_GPIO_CUST if HW_CUSTOM
 	default 22 if HW_WROVERKIT
 	default 14 if HW_M5STACK
+	default 5 if HW_ODROID_GO
 
 config HW_LCD_DC_GPIO
 	int
 	default HW_LCD_DC_GPIO_CUST if HW_CUSTOM
 	default 21 if HW_WROVERKIT
 	default 27 if HW_M5STACK
+	default 21 if HW_ODROID_GO
 
 config HW_LCD_RST_GPIO
 	int
 	default HW_LCD_RST_GPIO_CUST if HW_CUSTOM
 	default 18 if HW_WROVERKIT
 	default 33 if HW_M5STACK
+	default -1 if HW_ODROID_GO
 
 config HW_LCD_BL_GPIO
 	int
 	default HW_LCD_BL_GPIO_CUST if HW_CUSTOM
 	default 5 if HW_WROVERKIT
 	default 32 if HW_M5STACK
+	default 14 if HW_ODROID_GO
+
+config HW_INV_BL
+	bool
+	default HW_INBV_BL_CUST if HW_CUSTOM
+	default n if HW_WROVERKIT_V1
+	default y if HW_WROVERKIT_V2
+	default n if HW_M5STACK
+	default n if HW_ODROID_GO
+
+config HW_LCD_ROTATE_180
+	bool
+	default HW_LCD_ROTATE_180_CUST if HW_CUSTOM
+	default n if HW_WROVERKIT_V1
+	default n if HW_WROVERKIT_V2
+	default n if HW_M5STACK
+	default n if HW_ODROID_GO
 
 config HW_LCD_CLOCK_SPEED
 	int
 	default HW_LCD_CLOCK_SPEED_CUST if HW_CUSTOM
 	default 27 if HW_WROVERKIT
 	default 40 if HW_M5STACK
+	default 40 if HW_ODROID_GO
 
 config SOUND_ENA
 	bool "Analog audio on GPIO26"
@@ -169,6 +194,7 @@ config SOUND_ENA
 
 choice HW_CONTROLLER_SEL
 	prompt "Controller type"
+	default HW_CONTROLLER_GPIO if HW_ODROID_GO
 	default HW_CONTROLLER_I2C_GP
 	help
 		Connect buttons to the following GPIOs to control the NES;
@@ -192,74 +218,82 @@ endchoice
 config HW_PSX_CLK
 	int "PSX controller CLK GPIO pin"
 	depends on HW_CONTROLLER_PSX
-	range 1 35
+	range 1 39
 	default 14
 
 config HW_PSX_DAT
 	int "PSX controller DATa GPIO pin"
 	depends on HW_CONTROLLER_PSX
-	range 1 35
+	range 1 39
 	default 27
 
 config HW_PSX_ATT
 	int "PSX controller ATTention GPIO pin"
 	depends on HW_CONTROLLER_PSX
-	range 1 35
+	range 1 39
 	default 16
 
 config HW_PSX_CMD
 	int "PSX controller CoMmanD GPIO pin"
 	depends on HW_CONTROLLER_PSX
-	range 1 35
+	range 1 39
 	default 2
 
 
 config HW_GPIO_UP
 	int "GPIO controller UP button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 35 if HW_ODROID_GO
 	default 22
 
 config HW_GPIO_DOWN
 	int "GPIO controller DOWN button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 35 if HW_ODROID_GO
 	default 21
 
 config HW_GPIO_LEFT
 	int "GPIO controller LEFT button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 34 if HW_ODROID_GO
 	default 19
 
 config HW_GPIO_RIGHT
 	int "GPIO controller RIGHT button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 34 if HW_ODROID_GO
 	default 4
 
 config HW_GPIO_SELECT
 	int "GPIO controller SELECT button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 27 if HW_ODROID_GO
 	default 0
 
 config HW_GPIO_START
 	int "GPIO controller START button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 39 if HW_ODROID_GO
 	default 2
 
 config HW_GPIO_A
 	int "GPIO controller A button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 32 if HW_ODROID_GO
 	default 12
 
 config HW_GPIO_B
 	int "GPIO controller B button"
 	depends on HW_CONTROLLER_GPIO
-	range 0 33
+	range 0 39
+	default 33 if HW_ODROID_GO
 	default 32
 
 endmenu
