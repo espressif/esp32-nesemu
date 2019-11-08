@@ -74,7 +74,7 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xC1, {0x11}, 1}, // Power control, SAP[2:0];BT[3:0]
     {0xC5, {0x35, 0x3E}, 2}, // VCM control
     {0xC7, {0xBE}, 1}, // VCM control2, was B1h
-#ifdef HW_LCD_ROTATE_180
+#ifdef CONFIG_HW_LCD_ROTATE_180
     {0x36, {(1<<7)|(1<<6)|(1<<5)|(1<<3)}, 1}, // MY | MX | MV | BGR
 #else
     {0x36, {(1<<5)|(1<<3)}, 1}, // MV | BGR
@@ -92,7 +92,7 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xB6, {0x0A, 0x82, 0x27, 0x00}, 4}, // Display Function Control, 8 82 27
 #endif
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST)
-#ifdef HW_LCD_ROTATE_180
+#ifdef CONFIG_HW_LCD_ROTATE_180
     {0x36, {(1<<6)|(1<<5)}, 1}, // MX | MV | RGB
 #else
     {0x36, {(1<<7)|(1<<5)}, 1}, // MY | MV | RGB
@@ -122,7 +122,7 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xC1, {0x10}, 1},
     {0xC5, {0x3e, 0x28}, 2},
     {0xC7, {0x86}, 1},
-#ifdef HW_LCD_ROTATE_180
+#ifdef CONFIG_HW_LCD_ROTATE_180
     {0x36, {(1<<7)|(1<<6)|(1<<3)}, 1}, // MY | MX | BGR
 #else
     {0x36, {(1<<3)}, 1}, // BGR
