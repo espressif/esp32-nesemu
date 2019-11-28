@@ -92,8 +92,9 @@ static void do_audio_frame() {
 			// audio_frame[i*2+1] = audio_frame[i] + 0x8000;
 			// audio_frame[i*2] = audio_frame[i] + 0x8000;
 		}
-		i2s_write_bytes(0, (const char *)audio_frame, 2*n, portMAX_DELAY);
-		left-=n;
+		size_t i2s_bytes_write;
+		i2s_write(0, (const char *)audio_frame, 2*n, &i2s_bytes_write, portMAX_DELAY);
+		left -= i2s_bytes_write / 2;
 	}
 #endif
 }
