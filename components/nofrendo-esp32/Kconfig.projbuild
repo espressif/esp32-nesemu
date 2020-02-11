@@ -37,14 +37,19 @@ endchoice
 
 config HW_LCD_IPS
 	bool "IPS type LCD (inverted color)"
-	depends on HW_CUSTOM || HW_WROVERKIT_V2 || HW_ODROID_GO
-	default n
+	default n if HW_WROVERKIT_V1
+	default n if HW_WROVERKIT_V2
+    default n if HW_M5STACK
+	default n HW_ODROID_GO
+	default n if HW_CUSTOM
 
 config HW_WROVERKIT
 	bool
-	default n if HW_CUSTOM
 	default y if HW_WROVERKIT_V1
 	default y if HW_WROVERKIT_V2
+    default n if HW_M5STACK
+	default n HW_ODROID_GO
+	default n if HW_CUSTOM
 
 
 config HW_LCD_TYPE
@@ -53,6 +58,7 @@ config HW_LCD_TYPE
 	default 0 if HW_LCD_TYPE_ILI
 	default 1 if HW_LCD_TYPE_ST
 	default 2 if HW_M5STACK
+	default 0 if HW_CUSTOM
 
 config HW_LCD_MISO_GPIO_CUST
 	int "LCD MISO pin"
