@@ -40,7 +40,7 @@ config HW_LCD_IPS
 	default n if HW_WROVERKIT_V1
 	default n if HW_WROVERKIT_V2
     default n if HW_M5STACK
-	default n HW_ODROID_GO
+	default n if HW_ODROID_GO
 	default n if HW_CUSTOM
 
 config HW_WROVERKIT
@@ -48,7 +48,7 @@ config HW_WROVERKIT
 	default y if HW_WROVERKIT_V1
 	default y if HW_WROVERKIT_V2
     default n if HW_M5STACK
-	default n HW_ODROID_GO
+	default n if HW_ODROID_GO
 	default n if HW_CUSTOM
 
 
