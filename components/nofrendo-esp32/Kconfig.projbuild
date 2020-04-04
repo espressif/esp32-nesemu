@@ -27,11 +27,14 @@ choice HW_LCD_TYPE_SEL
 	prompt "LCD type"
 	depends on HW_CUSTOM || HW_WROVERKIT_V2 || HW_ODROID_GO
 
-config HW_LCD_TYPE_ILI
+config HW_LCD_TYPE_ILI9341
 	bool "ILI9341 LCD"
 
-config HW_LCD_TYPE_ST
+config HW_LCD_TYPE_ST7789
 	bool "ST7789V LCD"
+
+config HW_LCD_TYPE_ST7796
+	bool "ST7796 LCD"
 
 endchoice
 
@@ -55,10 +58,10 @@ config HW_WROVERKIT
 config HW_LCD_TYPE
 	int
 	default 0 if HW_WROVERKIT_V1
-	default 0 if HW_LCD_TYPE_ILI
-	default 1 if HW_LCD_TYPE_ST
-	default 2 if HW_M5STACK
-	default 0 if HW_CUSTOM
+	default 0 if HW_LCD_TYPE_ILI9341
+	default 1 if HW_M5STACK
+	default 2 if HW_LCD_TYPE_ST7789
+	default 3 if HW_LCD_TYPE_ST7796
 
 config HW_LCD_MISO_GPIO_CUST
 	int "LCD MISO pin"
