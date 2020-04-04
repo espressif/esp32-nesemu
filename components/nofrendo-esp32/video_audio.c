@@ -120,7 +120,7 @@ static int osd_init_sound(void)
 		.sample_rate = DEFAULT_SAMPLERATE,
 		.bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
 		.channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
-		.communication_format = I2S_COMM_FORMAT_I2S_MSB,
+		.communication_format = I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB,
 		.intr_alloc_flags = 0,
 		.dma_buf_count = 2,
 		.dma_buf_len = 512
