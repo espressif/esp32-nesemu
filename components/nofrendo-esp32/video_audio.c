@@ -21,7 +21,6 @@
 #undef true
 #undef bool
 
-
 #include <math.h>
 #include <string.h>
 #include <noftypes.h>
@@ -49,12 +48,11 @@
 #include <i2c_kbcontroller.h>
 #endif
 
-#define  DEFAULT_SAMPLERATE   22100
-#define  DEFAULT_FRAGSIZE     128
+#define DEFAULT_SAMPLERATE 22100
+#define DEFAULT_FRAGSIZE 128
 
-#define  DEFAULT_WIDTH        256
-#define  DEFAULT_HEIGHT       NES_VISIBLE_HEIGHT
-
+#define DEFAULT_WIDTH 256
+#define DEFAULT_HEIGHT NES_VISIBLE_HEIGHT
 
 TimerHandle_t timer;
 
@@ -62,11 +60,10 @@ TimerHandle_t timer;
 int osd_installtimer(int frequency, void *func, int funcsize, void *counter, int countersize)
 {
 	printf("Timer install, freq=%d\n", frequency);
-	timer=xTimerCreate("nes",configTICK_RATE_HZ/frequency, pdTRUE, NULL, func);
+	timer = xTimerCreate("nes", configTICK_RATE_HZ / frequency, pdTRUE, NULL, func);
 	xTimerStart(timer, 0);
-   return 0;
+	return 0;
 }
-
 
 /*
 ** Audio
@@ -77,23 +74,26 @@ QueueHandle_t queue;
 static int16_t *audio_frame;
 #endif
 
-
-static void do_audio_frame() {
+static void do_audio_frame()
+{
 
 #if CONFIG_SOUND_ENA
-	int left=DEFAULT_SAMPLERATE/NES_REFRESH_RATE;
-	while(left) {
-		int n=DEFAULT_FRAGSIZE;
-		if (n>left) n=left;
+	int left = DEFAULT_SAMPLERATE / NES_REFRESH_RATE;
+	while (left)
+	{
+		int n = DEFAULT_FRAGSIZE;
+		if (n > left)
+			n = left;
 		audio_callback(audio_frame, n); //get more data
 		//16 bit mono -> 32-bit (16 bit r+l)
-		for (int i=n-1; i>=0; i--) {
+		for (int i = n - 1; i >= 0; i--)
+		{
 			audio_frame[i] = audio_frame[i] + 0x8000;
 			// audio_frame[i*2+1] = audio_frame[i] + 0x8000;
 			// audio_frame[i*2] = audio_frame[i] + 0x8000;
 		}
 		size_t i2s_bytes_write;
-		i2s_write(0, (const char *)audio_frame, 2*n, &i2s_bytes_write, portMAX_DELAY);
+		i2s_write(0, (const char *)audio_frame, 2 * n, &i2s_bytes_write, portMAX_DELAY);
 		left -= i2s_bytes_write / 2;
 	}
 #endif
@@ -101,15 +101,14 @@ static void do_audio_frame() {
 
 void osd_setsound(void (*playfunc)(void *buffer, int length))
 {
-   //Indicates we should call playfunc() to get more data.
-   audio_callback = playfunc;
+	//Indicates we should call playfunc() to get more data.
+	audio_callback = playfunc;
 }
 
 static void osd_stopsound(void)
 {
-   audio_callback = NULL;
+	audio_callback = NULL;
 }
-
 
 static int osd_init_sound(void)
 {
@@ -123,12 +122,12 @@ static int osd_init_sound(void)
 		.communication_format = I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB,
 		.intr_alloc_flags = 0,
 		.dma_buf_count = 2,
-		.dma_buf_len = 512
+		.dma_buf_len = 512,
 	};
 	i2s_driver_install(0, &cfg, 2, &queue);
 	i2s_set_pin(0, NULL);
-	// i2s_set_dac_mode(I2S_DAC_CHANNEL_LEFT_EN); 
-	i2s_set_dac_mode(I2S_DAC_CHANNEL_RIGHT_EN); 
+	// i2s_set_dac_mode(I2S_DAC_CHANNEL_LEFT_EN);
+	i2s_set_dac_mode(I2S_DAC_CHANNEL_RIGHT_EN);
 
 	//I2S enables *both* DAC channels; we only need DAC1.
 	//ToDo: still needed now I2S supports set_dac_mode?
@@ -143,8 +142,8 @@ static int osd_init_sound(void)
 
 void osd_getsoundinfo(sndinfo_t *info)
 {
-   info->sample_rate = DEFAULT_SAMPLERATE;
-   info->bps = 16;
+	info->sample_rate = DEFAULT_SAMPLERATE;
+	info->bps = 16;
 }
 
 /*
@@ -164,27 +163,26 @@ static char fb[1]; //dummy
 QueueHandle_t vidQueue;
 
 viddriver_t sdlDriver =
-{
-   "Simple DirectMedia Layer",         /* name */
-   init,          /* init */
-   shutdown,      /* shutdown */
-   set_mode,      /* set_mode */
-   set_palette,   /* set_palette */
-   clear,         /* clear */
-   lock_write,    /* lock_write */
-   free_write,    /* free_write */
-   custom_blit,   /* custom_blit */
-   false          /* invalidate flag */
+	{
+		"Simple DirectMedia Layer", /* name */
+		init,						/* init */
+		shutdown,					/* shutdown */
+		set_mode,					/* set_mode */
+		set_palette,				/* set_palette */
+		clear,						/* clear */
+		lock_write,					/* lock_write */
+		free_write,					/* free_write */
+		custom_blit,				/* custom_blit */
+		false						/* invalidate flag */
 };
-
 
 bitmap_t *myBitmap;
 
 void osd_getvideoinfo(vidinfo_t *info)
 {
-   info->default_width = DEFAULT_WIDTH;
-   info->default_height = DEFAULT_HEIGHT;
-   info->driver = &sdlDriver;
+	info->default_width = DEFAULT_WIDTH;
+	info->default_height = DEFAULT_HEIGHT;
+	info->driver = &sdlDriver;
 }
 
 /* flip between full screen and windowed */
@@ -205,7 +203,7 @@ static void shutdown(void)
 /* set a video mode */
 static int set_mode(int width, int height)
 {
-   return 0;
+	return 0;
 }
 
 uint16 myPalette[256];
@@ -215,59 +213,56 @@ static void set_palette(rgb_t *pal)
 {
 	uint16 c;
 
-   int i;
+	int i;
 
-   for (i = 0; i < 256; i++)
-   {
-      c=(pal[i].b>>3)+((pal[i].g>>2)<<5)+((pal[i].r>>3)<<11);
-      //myPalette[i]=(c>>8)|((c&0xff)<<8);
-      myPalette[i]=c;
-   }
-
+	for (i = 0; i < 256; i++)
+	{
+		c = (pal[i].b >> 3) + ((pal[i].g >> 2) << 5) + ((pal[i].r >> 3) << 11);
+		//myPalette[i]=(c>>8)|((c&0xff)<<8);
+		myPalette[i] = c;
+	}
 }
 
 /* clear all frames to a particular color */
 static void clear(uint8 color)
 {
-//   SDL_FillRect(mySurface, 0, color);
+	//   SDL_FillRect(mySurface, 0, color);
 }
-
-
 
 /* acquire the directbuffer for writing */
 static bitmap_t *lock_write(void)
 {
-//   SDL_LockSurface(mySurface);
-   myBitmap = bmp_createhw((uint8*)fb, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH*2);
-   return myBitmap;
+	//   SDL_LockSurface(mySurface);
+	myBitmap = bmp_createhw((uint8 *)fb, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH * 2);
+	return myBitmap;
 }
 
 /* release the resource */
 static void free_write(int num_dirties, rect_t *dirty_rects)
 {
-   bmp_destroy(&myBitmap);
+	bmp_destroy(&myBitmap);
 }
 
-
-static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects) {
+static void custom_blit(bitmap_t *bmp, int num_dirties, rect_t *dirty_rects)
+{
 	xQueueSend(vidQueue, &bmp, 0);
 	do_audio_frame();
 }
 
-
 //This runs on core 1.
-static void videoTask(void *arg) {
+static void videoTask(void *arg)
+{
 	int x, y;
-	bitmap_t *bmp=NULL;
-	x = (320-DEFAULT_WIDTH)/2;
-    y = ((240-DEFAULT_HEIGHT)/2);
-    while(1) {
-//		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
+	bitmap_t *bmp = NULL;
+	x = (320 - DEFAULT_WIDTH) / 2;
+	y = ((240 - DEFAULT_HEIGHT) / 2);
+	while (1)
+	{
+		//		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
 		lcd_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
 	}
 }
-
 
 /*
 ** Input
@@ -288,32 +283,34 @@ static void osd_initinput()
 
 void osd_getinput(void)
 {
-	const int ev[16]={
-			event_joypad1_select,0,0,event_joypad1_start,event_joypad1_up,event_joypad1_right,event_joypad1_down,event_joypad1_left,
-			0,0,0,0,event_soft_reset,event_joypad1_a,event_joypad1_b,event_hard_reset
-		};
-	static int oldb=0xffff;
+	const int ev[16] = {
+		event_joypad1_select, 0, 0, event_joypad1_start, event_joypad1_up, event_joypad1_right, event_joypad1_down, event_joypad1_left,
+		0, 0, 0, 0, event_soft_reset, event_joypad1_a, event_joypad1_b, event_hard_reset};
+	static int oldb = 0xffff;
 #if defined CONFIG_HW_CONTROLLER_GPIO
-	int b=gpioReadInput();
+	int b = gpioReadInput();
 #elif defined CONFIG_HW_CONTROLLER_PSX
-	int b=psxReadInput();
+	int b = psxReadInput();
 #elif defined CONFIG_HW_CONTROLLER_I2C_GP
-	int b=i2c_gpReadInput();
+	int b = i2c_gpReadInput();
 #elif defined CONFIG_HW_CONTROLLER_I2C_KB
-	int b=i2c_kbReadInput();
+	int b = i2c_kbReadInput();
 #endif
-	int chg=b^oldb;
+	int chg = b ^ oldb;
 	int x;
-	oldb=b;
+	oldb = b;
 	event_t evh;
 	// printf("Input: %x\n", b);
-	for (x=0; x<16; x++) {
-		if (chg&1) {
-			evh=event_get(ev[x]);
-			if (evh) evh((b&1)?INP_STATE_BREAK:INP_STATE_MAKE);
+	for (x = 0; x < 16; x++)
+	{
+		if (chg & 1)
+		{
+			evh = event_get(ev[x]);
+			if (evh)
+				evh((b & 1) ? INP_STATE_BREAK : INP_STATE_MAKE);
 		}
-		chg>>=1;
-		b>>=1;
+		chg >>= 1;
+		b >>= 1;
 	}
 }
 
@@ -338,7 +335,7 @@ void osd_shutdown()
 
 static int logprint(const char *string)
 {
-   return printf("%s", string);
+	return printf("%s", string);
 }
 
 /*
@@ -353,8 +350,8 @@ int osd_init()
 		return -1;
 
 	lcd_init();
-	lcd_write_frame(0,0,320,240,NULL);
-	vidQueue=xQueueCreate(1, sizeof(bitmap_t *));
+	lcd_write_frame(0, 0, 320, 240, NULL);
+	vidQueue = xQueueCreate(1, sizeof(bitmap_t *));
 	xTaskCreatePinnedToCore(&videoTask, "videoTask", 2048, NULL, 5, NULL, 1);
 	osd_initinput();
 	return 0;

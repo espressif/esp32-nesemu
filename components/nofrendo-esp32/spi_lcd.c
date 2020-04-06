@@ -48,8 +48,13 @@
 
 #define LCD_SEL_CMD() gpio_set_level(PIN_NUM_DC, 0)  // Low to send command
 #define LCD_SEL_DATA() gpio_set_level(PIN_NUM_DC, 1) // High to send data
+#if (PIN_NUM_RST > -1)
 #define LCD_RST_SET() gpio_set_level(PIN_NUM_RST, 1)
 #define LCD_RST_CLR() gpio_set_level(PIN_NUM_RST, 0)
+#else
+#define LCD_RST_SET()
+#define LCD_RST_CLR()
+#endif
 
 /*
  The LCD needs a bunch of command/argument values to be initialized. They are stored in this struct.
@@ -71,19 +76,19 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xCB, {0x39, 0x2C, 0x00, 0x34, 0x02}, 5},
     {0xF7, {0x20}, 1},
     {0xEA, {0x00, 0x00}, 2},
-    {0xC0, {0x26}, 1}, // Power control, VRH[5:0]
-    {0xC1, {0x11}, 1}, // Power control, SAP[2:0];BT[3:0]
+    {0xC0, {0x26}, 1},       // Power control, VRH[5:0]
+    {0xC1, {0x11}, 1},       // Power control, SAP[2:0];BT[3:0]
     {0xC5, {0x35, 0x3E}, 2}, // VCM control
-    {0xC7, {0xBE}, 1}, // VCM control2, was B1h
+    {0xC7, {0xBE}, 1},       // VCM control2, was B1h
 #ifdef CONFIG_HW_LCD_ROTATE_180
-    {0x36, {(1<<7)|(1<<6)|(1<<5)|(1<<3)}, 1}, // MY | MX | MV | BGR
+    {0x36, {(1 << 7) | (1 << 6) | (1 << 5) | (1 << 3)}, 1}, // MY | MX | MV | BGR
 #else
-    {0x36, {(1<<5)|(1<<3)}, 1}, // MV | BGR
+    {0x36, {(1 << 5) | (1 << 3)}, 1},                       // MV | BGR
 #endif
     {0x3A, {0x55}, 1},
     {0xB1, {0x00, 0x1B}, 2},
-    {0xF2, {0x08}, 1}, // 3Gamma Function Disable
-    {0x26, {0x01}, 1}, // Gamma curve selected
+    {0xF2, {0x08}, 1},                                                                                      // 3Gamma Function Disable
+    {0x26, {0x01}, 1},                                                                                      // Gamma curve selected
     {0xE0, {0x1F, 0x1A, 0x18, 0x0A, 0x0F, 0x06, 0x45, 0X87, 0x32, 0x0A, 0x07, 0x02, 0x07, 0x05, 0x00}, 15}, // Set Gamma
     {0XE1, {0x00, 0x25, 0x27, 0x05, 0x10, 0x09, 0x3A, 0x78, 0x4D, 0x05, 0x18, 0x0D, 0x38, 0x3A, 0x1F}, 15}, // Set Gamma
     {0x2A, {0x00, 0x00, 0x00, 0xEF}, 4},
@@ -106,9 +111,9 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xC5, {0x3e, 0x28}, 2},
     {0xC7, {0x86}, 1},
 #ifdef CONFIG_HW_LCD_ROTATE_180
-    {0x36, {(1<<7)|(1<<6)|(1<<3)}, 1}, // MY | MX | BGR
+    {0x36, {(1 << 7) | (1 << 6) | (1 << 3)}, 1}, // MY | MX | BGR
 #else
-    {0x36, {(1<<3)}, 1}, // BGR
+    {0x36, {(1 << 3)}, 1},                                  // BGR
 #endif
     {0x3A, {0x55}, 1},
     {0xB1, {0x00, 0x1B}, 2},
@@ -121,9 +126,9 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
 
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7789)
 #ifdef CONFIG_HW_LCD_ROTATE_180
-    {0x36, {(1<<6)|(1<<5)}, 1}, // MX | MV | RGB
+    {0x36, {(1 << 6) | (1 << 5)}, 1}, // MX | MV | RGB
 #else
-    {0x36, {(1<<7)|(1<<5)}, 1}, // MY | MV | RGB
+    {0x36, {(1 << 7) | (1 << 5)}, 1},                       // MY | MV | RGB
 #endif
     {0x3A, {0x55}, 1},
     {0xB2, {0x0c, 0x0c, 0x00, 0x33, 0x33}, 5},
@@ -141,32 +146,32 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
 
 #if (CONFIG_HW_LCD_TYPE == LCD_TYPE_ST7796)
 #ifdef CONFIG_HW_LCD_ROTATE_180
-    {0x36, {(1<<5)|(1<<3)}, 1}, // MV | BGR
+    {0x36, {(1 << 5) | (1 << 3)}, 1}, // MV | BGR
 #else
-    {0x36, {(1<<7)|(1<<6)|(1<<5)|(1<<3)}, 1}, // MY | MX | MV | BGR
+    {0x36, {(1 << 7) | (1 << 6) | (1 << 5) | (1 << 3)}, 1}, // MY | MX | MV | BGR
 #endif
-  {0xF0, {0xC3}, 1},
-  {0xF0, {0x96}, 1},
-  {0x3A, {0x05}, 1},
-  {0xB0, {0x80}, 1},
-  {0xB6, {0x00, 0x02}, 2},
-  {0xB5, {0x02, 0x03, 0x00, 0x04}, 4},
-  {0xB1, {0x80, 0x10}, 2},
-  {0xB4, {0x00}, 1},
-  {0xB7, {0xC6}, 1},
-  {0xC5, {0x24}, 1},
-  {0xE4, {0x31}, 1},
-  {0xE8, {0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33}, 8},
-  {0xC2, {0}, 0},
-  {0xA7, {0}, 0},
+    {0xF0, {0xC3}, 1},
+    {0xF0, {0x96}, 1},
+    {0x3A, {0x05}, 1},
+    {0xB0, {0x80}, 1},
+    {0xB6, {0x00, 0x02}, 2},
+    {0xB5, {0x02, 0x03, 0x00, 0x04}, 4},
+    {0xB1, {0x80, 0x10}, 2},
+    {0xB4, {0x00}, 1},
+    {0xB7, {0xC6}, 1},
+    {0xC5, {0x24}, 1},
+    {0xE4, {0x31}, 1},
+    {0xE8, {0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33}, 8},
+    {0xC2, {0}, 0},
+    {0xA7, {0}, 0},
 
-  {0xE0, {0xF0, 0x09, 0x13, 0x12, 0x12, 0x2B, 0x3C, 0x44, 0x4B, 0x1B, 0x18, 0x17, 0x1D, 0x21}, 14},
+    {0xE0, {0xF0, 0x09, 0x13, 0x12, 0x12, 0x2B, 0x3C, 0x44, 0x4B, 0x1B, 0x18, 0x17, 0x1D, 0x21}, 14},
 
-  {0XE1, {0xF0, 0x09, 0x13, 0x0C, 0x0D, 0x27, 0x3B, 0x44, 0x4D, 0x0B, 0x17, 0x17, 0x1D, 0x21}, 14},
+    {0XE1, {0xF0, 0x09, 0x13, 0x0C, 0x0D, 0x27, 0x3B, 0x44, 0x4D, 0x0B, 0x17, 0x17, 0x1D, 0x21}, 14},
 
-  {0xF0, {0xC3}, 1},
-  {0xF0, {0x69}, 1},
-  {0X13, {0}, 0},
+    {0xF0, {0xC3}, 1},
+    {0xF0, {0x69}, 1},
+    {0X13, {0}, 0},
 #endif
 
 #if (CONFIG_HW_LCD_IPS == 1)
@@ -211,7 +216,9 @@ void lcd_gpio_init()
 {
     //Initialize non-SPI GPIOs
     gpio_set_direction(PIN_NUM_DC, GPIO_MODE_OUTPUT);
+#if (PIN_NUM_RST > -1)
     gpio_set_direction(PIN_NUM_RST, GPIO_MODE_OUTPUT);
+#endif
 
     //Reset the display
     LCD_RST_CLR();
@@ -246,35 +253,34 @@ void lcd_spi_pre_transfer_callback(spi_transaction_t *t)
 void lcd_setBrightness(int duty)
 {
 #if (PIN_NUM_BL > -1)
+#if (CONFIG_HW_INV_BL == 1)
+    duty = 1023 - duty;
+#endif
 #define LEDC_HS_TIMER LEDC_TIMER_0
 #define LEDC_HS_MODE LEDC_HIGH_SPEED_MODE
-#define LEDC_HS_CH0_CHANNEL LEDC_CHANNEL_0
+#define LEDC_HS_CHANNEL LEDC_CHANNEL_0
 #define LEDC_TEST_DUTY (10)
 
     ledc_timer_config_t ledc_timer = {
-        .bit_num = LEDC_TIMER_10_BIT, // resolution of PWM duty
-        .freq_hz = 5000,              // frequency of PWM signal
-        .speed_mode = LEDC_HS_MODE,   // timer mode
-        .timer_num = LEDC_HS_TIMER    // timer index
+        .speed_mode = LEDC_HS_MODE,           // timer mode
+        .duty_resolution = LEDC_TIMER_10_BIT, // resolution of PWM duty
+        .timer_num = LEDC_HS_TIMER,           // timer index
+        .freq_hz = 5000,                      // frequency of PWM signal
+        .clk_cfg = LEDC_USE_APB_CLK,
     };
     // Set configuration of timer0 for high speed channels
     ledc_timer_config(&ledc_timer);
 
     ledc_channel_config_t ledc_channel =
         {
-            .channel = LEDC_HS_CH0_CHANNEL,
-            .duty = 0,
+            .channel = LEDC_HS_CHANNEL,
+            .duty = duty,
             .gpio_num = PIN_NUM_BL,
             .speed_mode = LEDC_HS_MODE,
             .timer_sel = LEDC_HS_TIMER};
     ledc_channel_config(&ledc_channel);
-
-#ifdef HW_INV_BL
-    ledc_set_duty(ledc_channel.speed_mode, ledc_channel.channel, 1023 - duty);
-#else
-    ledc_set_duty(ledc_channel.speed_mode, ledc_channel.channel, duty);
-#endif
-    ledc_update_duty(ledc_channel.speed_mode, ledc_channel.channel);
+    // ledc_set_duty(ledc_channel.speed_mode, ledc_channel.channel, duty);
+    // ledc_update_duty(ledc_channel.speed_mode, ledc_channel.channel);
 #endif
 }
 
@@ -383,11 +389,11 @@ void lcd_init()
     };
     //Initialize the SPI bus
     ret = spi_bus_initialize(VSPI_HOST, &buscfg, 1);
-    assert(ret==ESP_OK);
+    assert(ret == ESP_OK);
 
     //Attach the LCD to the SPI bus
     ret = spi_bus_add_device(VSPI_HOST, &devcfg, &spi);
-    assert(ret==ESP_OK);
+    assert(ret == ESP_OK);
 
     //Initialize GPIO
     lcd_gpio_init();
