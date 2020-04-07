@@ -277,6 +277,20 @@ config HW_GPIO_RIGHT
 	default 34 if HW_ODROID_GO
 	default 4
 
+config HW_GPIO_MENU
+	int "GPIO controller MENU button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 39
+	default 13 if HW_ODROID_GO
+	default -1
+
+config HW_GPIO_AUDIO
+	int "GPIO controller AUDIO button"
+	depends on HW_CONTROLLER_GPIO
+	range 0 39
+	default 0 if HW_ODROID_GO
+	default -1
+
 config HW_GPIO_SELECT
 	int "GPIO controller SELECT button"
 	depends on HW_CONTROLLER_GPIO
