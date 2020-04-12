@@ -195,10 +195,10 @@ config HW_LCD_CLOCK_SPEED
 	default 40 if HW_ODROID_GO
 
 config SOUND_ENA
-	bool "Analog audio on GPIO26"
+	bool "Analog audio"
 	default y
 	help 
-		ESP32 will output 0-3.3V analog audio signal on GPIO26.
+		ESP32 will output 0-3.3V analog audio signal on GPIO 25 and 26.
 
 
 choice HW_CONTROLLER_SEL
