@@ -81,9 +81,9 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xC5, {0x35, 0x3E}, 2}, // VCM control
     {0xC7, {0xBE}, 1},       // VCM control2, was B1h
 #ifdef CONFIG_HW_LCD_ROTATE_180
-    {0x36, {(1 << 7) | (1 << 6) | (1 << 5) | (1 << 3)}, 1}, // MY | MX | MV | BGR
-#else
     {0x36, {(1 << 5) | (1 << 3)}, 1},                       // MV | BGR
+#else
+    {0x36, {(1 << 7) | (1 << 6) | (1 << 5) | (1 << 3)}, 1}, // MY | MX | MV | BGR
 #endif
     {0x3A, {0x55}, 1},
     {0xB1, {0x00, 0x1B}, 2},
