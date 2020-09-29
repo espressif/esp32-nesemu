@@ -1,3 +1,5 @@
+#pragma GCC optimize ("O3")
+
 /*
 ** Nofrendo (c) 1998-2000 Matthew Conte (matt@conte.com)
 **
