@@ -27,6 +27,14 @@
 #include <nes_mmc.h>
 
 /* mapper 2: UNROM */
+static void map2_init()
+{
+    int last_bank = mmc_getinfo()->rom_banks - 1;
+    printf("map2_init. last_bank=%d\n", last_bank);
+    mmc_bankrom(16, 0xc000, last_bank);
+    mmc_bankrom(16, 0x8000, 0);
+}
+
 static void map2_write(uint32 address, uint8 value)
 {
    UNUSED(address);
@@ -44,7 +52,7 @@ mapintf_t map2_intf =
 {
    2, /* mapper number */
    "UNROM", /* mapper name */
-   NULL, /* init routine */
+   map2_init, /* init routine */
    NULL, /* vblank callback */
    NULL, /* hblank callback */
    NULL, /* get state (snss) */

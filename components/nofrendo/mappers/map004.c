@@ -138,6 +138,11 @@ static void map4_write(uint32 address, uint8 value)
       break;
 
    default:
+      //printf("map004: unhandled write: address=%p, value=0x%x\n", (void*)address, value);
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
       break;
    }
 

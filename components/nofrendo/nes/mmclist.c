@@ -36,6 +36,7 @@ extern mapintf_t map5_intf;
 extern mapintf_t map7_intf;
 extern mapintf_t map8_intf;
 extern mapintf_t map9_intf;
+extern mapintf_t map10_intf;
 extern mapintf_t map11_intf;
 extern mapintf_t map15_intf;
 extern mapintf_t map16_intf;
