@@ -360,7 +360,7 @@ static void gui_tickdec(void)
    if (hertz_ticks >= (10 * gui_refresh))
    {
       hertz_ticks -= (10 * gui_refresh);
-      mem_checkblocks(); 
+      // mem_checkblocks(); 
    }
 #endif
 
