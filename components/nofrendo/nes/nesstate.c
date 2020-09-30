@@ -341,7 +341,7 @@ int state_save(void)
 {
    SNSS_FILE *snssFile;
    SNSS_RETURN_CODE status;
-   char fn[PATH_MAX + 1], ext[5];
+   // char fn[PATH_MAX + 1], ext[5];
    nes_t *machine;
 
    /* get the pointer to our NES machine context */
@@ -349,11 +349,12 @@ int state_save(void)
    ASSERT(machine);
    
    /* build our filename using the image's name and the slot number */
-   strncpy(fn, machine->rominfo->filename, PATH_MAX - 4);
+   // strncpy(fn, machine->rominfo->filename, PATH_MAX - 4);
    
-   ASSERT(state_slot >= FIRST_STATE_SLOT && state_slot <= LAST_STATE_SLOT);
-   sprintf(ext, ".ss%d", state_slot);
-   osd_newextension(fn, ext);
+   // ASSERT(state_slot >= FIRST_STATE_SLOT && state_slot <= LAST_STATE_SLOT);
+   // sprintf(ext, ".ss%d", state_slot);
+   // osd_newextension(fn, ext);
+   char *fn = "/spiffs/state.sav";
 
    /* open our state file for writing */
    status = SNSS_OpenFile(&snssFile, fn, SNSS_OPEN_WRITE);
@@ -415,7 +416,7 @@ int state_load(void)
    SNSS_FILE *snssFile;
    SNSS_RETURN_CODE status;
    SNSS_BLOCK_TYPE block_type;
-   char fn[PATH_MAX + 1], ext[5];
+   // char fn[PATH_MAX + 1], ext[5];
    unsigned int i;
    nes_t *machine;
 
@@ -424,11 +425,12 @@ int state_load(void)
    ASSERT(machine);
 
    /* build the state name using the ROM's name and the slot number */
-   strncpy(fn, machine->rominfo->filename, PATH_MAX - 4);
+   // strncpy(fn, machine->rominfo->filename, PATH_MAX - 4);
 
-   ASSERT(state_slot >= FIRST_STATE_SLOT && state_slot <= LAST_STATE_SLOT);
-   sprintf(ext, ".ss%d", state_slot);
-   osd_newextension(fn, ext);
+   // ASSERT(state_slot >= FIRST_STATE_SLOT && state_slot <= LAST_STATE_SLOT);
+   // sprintf(ext, ".ss%d", state_slot);
+   // osd_newextension(fn, ext);
+   char *fn = "/spiffs/state.sav";
    
    /* open our file for writing */
    status = SNSS_OpenFile(&snssFile, fn, SNSS_OPEN_READ);

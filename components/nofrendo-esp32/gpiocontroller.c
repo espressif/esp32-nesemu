@@ -84,7 +84,7 @@ static esp_adc_cal_characteristics_t characteristics;
 
 int gpioReadInput()
 {
-  int u, d, l, r, s, t, a, b;
+  int u, d, l, r, s, t, a, b, m, i;
 #ifdef ANALOG_JOYSTICK
   int joyX = adc1_get_raw(X_CHANNEL);
   int joyY = adc1_get_raw(Y_CHANNEL);
@@ -129,8 +129,10 @@ int gpioReadInput()
   t = gpio_get_level(START);
   a = gpio_get_level(A);
   b = gpio_get_level(B);
+  m = gpio_get_level(MENU);
+  i = gpio_get_level(AUDIO);
 
-  return 0xFFFF ^ ((!u << 4) | (!d << 6) | (!l << 7) | (!r << 5) | (!s << 0) | (!t << 3) | (!a << 13) | (!b << 14));
+  return 0xFFFF ^ ((!u << 4) | (!d << 6) | (!l << 7) | (!r << 5) | (!s << 0) | (!t << 3) | (!a << 13) | (!b << 14) | (!m << 1) | (!i << 2));
 }
 
 void gpiocontrollerInit()
