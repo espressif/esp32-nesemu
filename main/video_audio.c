@@ -28,7 +28,6 @@
 #include "bitmap.h"
 #include "event.h"
 #include "noftypes.h"
-#include "nofconfig.h"
 #include "gui.h"
 #include "log.h"
 #include "nes.h"
@@ -40,6 +39,7 @@
 
 #include "controller.h"
 
+#include "nofconfig.h"
 #include "sdkconfig.h"
 
 #define DEFAULT_SAMPLERATE 32000
