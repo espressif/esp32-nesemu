@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <math.h>
+#include <string.h>
+
+#include <driver/i2s.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/timers.h>
 #include <freertos/task.h>
@@ -21,24 +25,22 @@
 #undef true
 #undef bool
 
-#include <math.h>
-#include <string.h>
-#include <noftypes.h>
-#include <bitmap.h>
-#include <nofconfig.h>
-#include <event.h>
-#include <gui.h>
-#include <log.h>
-#include <nes.h>
-#include <nes_pal.h>
-#include <nesinput.h>
-#include <osd.h>
-#include <stdint.h>
-#include <driver/i2s.h>
-#include "sdkconfig.h"
+#include "bitmap.h"
+#include "event.h"
+#include "noftypes.h"
+#include "nofconfig.h"
+#include "gui.h"
+#include "log.h"
+#include "nes.h"
+#include "nes_pal.h"
+#include "nesinput.h"
+#include "osd.h"
+#include "stdint.h"
 #include "spi_lcd.h"
 
 #include "controller.h"
+
+#include "sdkconfig.h"
 
 #define DEFAULT_SAMPLERATE 32000
 #define DEFAULT_FRAGSIZE 128
@@ -82,8 +84,8 @@ static void do_audio_frame()
 		{
 			// audio_frame[i] = audio_frame[i] + 0x8000;
 			int16_t a = (audio_frame[i] >> 3);
-			audio_frame[i*2+1] = 0x8000 + a;
-			audio_frame[i*2] = 0x8000 - a;
+			audio_frame[i * 2 + 1] = 0x8000 + a;
+			audio_frame[i * 2] = 0x8000 - a;
 		}
 		size_t i2s_bytes_write;
 		i2s_write(I2S_NUM_0, (const char *)audio_frame, 4 * n, &i2s_bytes_write, portMAX_DELAY);
@@ -116,8 +118,7 @@ static int osd_init_sound(void)
 		.intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
 		.dma_buf_count = 6,
 		.dma_buf_len = 512,
-		.use_apll = false
-	};
+		.use_apll = false};
 	i2s_driver_install(I2S_NUM_0, &cfg, 2, &queue);
 	i2s_set_pin(I2S_NUM_0, NULL);
 	i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);

@@ -6,29 +6,30 @@
 **
 ** $Id: osd.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 **
+
 */
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
-       
-#include <noftypes.h>
-#include <nofconfig.h>
-#include <log.h>
-#include <osd.h>
-#include <nofrendo.h>
 
-#include <version.h>
+#include "errno.h"
+#include "fcntl.h"
+#include "limits.h"
+#include "log.h"
+#include "nofconfig.h"
+#include "nofrendo.h"
+#include "noftypes.h"
+#include "osd.h"
+#include "signal.h"
+#include "unistd.h"
+#include "version.h"
 
-char configfilename[]="na";
+char configfilename[] = "na";
 
 /* This is os-specific part of main() */
 int osd_main(int argc, char *argv[])

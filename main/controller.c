@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "stdio.h"
+#include <stdio.h>
 
-#include "driver/adc.h"
-#include "driver/gpio.h"
-#include "esp_adc_cal.h"
-#include "esp_log.h"
-#include "esp_system.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
-#include "freertos/task.h"
-#include "soc/adc_channel.h"
-#include "soc/gpio_struct.h"
+#include <driver/adc.h>
+#include <driver/gpio.h>
+#include <esp_adc_cal.h>
+#include <esp_log.h>
+#include <esp_system.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
+#include <freertos/semphr.h>
+#include <freertos/task.h>
+#include <soc/adc_channel.h>
+#include <soc/gpio_struct.h>
 
 #include "sdkconfig.h"
 
@@ -187,11 +187,12 @@ int controller_read_input()
 #define DELAY() asm("nop; nop; nop; nop;nop; nop; nop; nop;nop; nop; nop; nop;nop; nop; nop; nop;")
 
 /* Sends and receives a byte from/to the PSX controller using SPI */
-static int psxSendRecv(int send) {
-	int x;
-	int ret=0;
-	volatile int delay;
-	
+static int psxSendRecv(int send)
+{
+  int x;
+  int ret = 0;
+  volatile int delay;
+
 #if 0
 	while(1) {
 		GPIO.out_w1ts=(1<<PSX_CMD);
@@ -201,111 +202,122 @@ static int psxSendRecv(int send) {
 	}
 #endif
 
-	GPIO.out_w1tc=(1<<PSX_ATT);
-	for (delay=0; delay<100; delay++);
-	for (x=0; x<8; x++) {
-		if (send&1) {
-			GPIO.out_w1ts=(1<<PSX_CMD);
-		} else {
-			GPIO.out_w1tc=(1<<PSX_CMD);
-		}
-		DELAY();
-		for (delay=0; delay<100; delay++);
-		GPIO.out_w1tc=(1<<PSX_CLK);
-		for (delay=0; delay<100; delay++);
-		GPIO.out_w1ts=(1<<PSX_CLK);
-		ret>>=1;
-		send>>=1;
-		if (GPIO.in&(1<<PSX_DAT)) ret|=128;
-	}
-	return ret;
+  GPIO.out_w1tc = (1 << PSX_ATT);
+  for (delay = 0; delay < 100; delay++)
+    ;
+  for (x = 0; x < 8; x++)
+  {
+    if (send & 1)
+    {
+      GPIO.out_w1ts = (1 << PSX_CMD);
+    }
+    else
+    {
+      GPIO.out_w1tc = (1 << PSX_CMD);
+    }
+    DELAY();
+    for (delay = 0; delay < 100; delay++)
+      ;
+    GPIO.out_w1tc = (1 << PSX_CLK);
+    for (delay = 0; delay < 100; delay++)
+      ;
+    GPIO.out_w1ts = (1 << PSX_CLK);
+    ret >>= 1;
+    send >>= 1;
+    if (GPIO.in & (1 << PSX_DAT))
+      ret |= 128;
+  }
+  return ret;
 }
 
-static void psxDone() {
-	DELAY();
-	GPIO_REG_WRITE(GPIO_OUT_W1TS_REG, (1<<PSX_ATT));
+static void psxDone()
+{
+  DELAY();
+  GPIO_REG_WRITE(GPIO_OUT_W1TS_REG, (1 << PSX_ATT));
 }
 
-void controller_init() {
-	volatile int delay;
-	int t;
-	gpio_config_t gpioconf[2]={
-		{
-			.pin_bit_mask=(1<<PSX_CLK)|(1<<PSX_CMD)|(1<<PSX_ATT), 
-			.mode=GPIO_MODE_OUTPUT, 
-			.pull_up_en=GPIO_PULLUP_DISABLE, 
-			.pull_down_en=GPIO_PULLDOWN_DISABLE, 
-			.intr_type=GPIO_PIN_INTR_DISABLE
-		},{
-			.pin_bit_mask=(1<<PSX_DAT), 
-			.mode=GPIO_MODE_INPUT, 
-			.pull_up_en=GPIO_PULLUP_ENABLE, 
-			.pull_down_en=GPIO_PULLDOWN_DISABLE, 
-			.intr_type=GPIO_PIN_INTR_DISABLE
-		}
-	};
-	gpio_config(&gpioconf[0]);
-	gpio_config(&gpioconf[1]);
-	
-	//Send a few dummy bytes to clean the pipes.
-	psxSendRecv(0);
-	psxDone();
-	for (delay=0; delay<500; delay++) DELAY();
-	psxSendRecv(0);
-	psxDone();
-	for (delay=0; delay<500; delay++) DELAY();
-	//Try and detect the type of controller, so we can give the user some diagnostics.
-	psxSendRecv(0x01);
-	t=psxSendRecv(0x00);
-	psxDone();
-	if (t==0 || t==0xff) {
-		printf("No PSX/PS2 controller detected (0x%X). You will not be able to control the game.\n", t);
-	} else {
-		printf("PSX controller type 0x%X\n", t);
-	}
+void controller_init()
+{
+  volatile int delay;
+  int t;
+  gpio_config_t gpioconf[2] = {
+      {.pin_bit_mask = (1 << PSX_CLK) | (1 << PSX_CMD) | (1 << PSX_ATT),
+       .mode = GPIO_MODE_OUTPUT,
+       .pull_up_en = GPIO_PULLUP_DISABLE,
+       .pull_down_en = GPIO_PULLDOWN_DISABLE,
+       .intr_type = GPIO_PIN_INTR_DISABLE},
+      {.pin_bit_mask = (1 << PSX_DAT),
+       .mode = GPIO_MODE_INPUT,
+       .pull_up_en = GPIO_PULLUP_ENABLE,
+       .pull_down_en = GPIO_PULLDOWN_DISABLE,
+       .intr_type = GPIO_PIN_INTR_DISABLE}};
+  gpio_config(&gpioconf[0]);
+  gpio_config(&gpioconf[1]);
+
+  //Send a few dummy bytes to clean the pipes.
+  psxSendRecv(0);
+  psxDone();
+  for (delay = 0; delay < 500; delay++)
+    DELAY();
+  psxSendRecv(0);
+  psxDone();
+  for (delay = 0; delay < 500; delay++)
+    DELAY();
+  //Try and detect the type of controller, so we can give the user some diagnostics.
+  psxSendRecv(0x01);
+  t = psxSendRecv(0x00);
+  psxDone();
+  if (t == 0 || t == 0xff)
+  {
+    printf("No PSX/PS2 controller detected (0x%X). You will not be able to control the game.\n", t);
+  }
+  else
+  {
+    printf("PSX controller type 0x%X\n", t);
+  }
 }
 
-int controller_read_input() {
-	int b1, b2;
+int controller_read_input()
+{
+  int b1, b2;
 
-	psxSendRecv(0x01); //wake up
-	psxSendRecv(0x42); //get data
-	psxSendRecv(0xff); //should return 0x5a
-	b1=psxSendRecv(0xff); //buttons byte 1
-	b2=psxSendRecv(0xff); //buttons byte 2
-	psxDone();
-	return (b2<<8)|b1;
-
+  psxSendRecv(0x01);      //wake up
+  psxSendRecv(0x42);      //get data
+  psxSendRecv(0xff);      //should return 0x5a
+  b1 = psxSendRecv(0xff); //buttons byte 1
+  b2 = psxSendRecv(0xff); //buttons byte 2
+  psxDone();
+  return (b2 << 8) | b1;
 }
 
 #elif defined(CONFIG_HW_CONTROLLER_I2C_GP)
 
-#define I2C_GAMEPAD_SCL_IO          22               /*!< gpio number for I2C master clock */
-#define I2C_GAMEPAD_SDA_IO          21               /*!< gpio number for I2C master data  */
-#define I2C_GAMEPAD_NUM             I2C_NUM_0        /*!< I2C port number for master dev */
-#define I2C_GAMEPAD_TX_BUF_DISABLE  0                /*!< I2C master do not need buffer */
-#define I2C_GAMEPAD_RX_BUF_DISABLE  0                /*!< I2C master do not need buffer */
-#define I2C_GAMEPAD_FREQ_HZ         50000            /*!< I2C master clock frequency */
-#define I2C_GAMEPAD_ADDR            0x08
+#define I2C_GAMEPAD_SCL_IO 22        /*!< gpio number for I2C master clock */
+#define I2C_GAMEPAD_SDA_IO 21        /*!< gpio number for I2C master data  */
+#define I2C_GAMEPAD_NUM I2C_NUM_0    /*!< I2C port number for master dev */
+#define I2C_GAMEPAD_TX_BUF_DISABLE 0 /*!< I2C master do not need buffer */
+#define I2C_GAMEPAD_RX_BUF_DISABLE 0 /*!< I2C master do not need buffer */
+#define I2C_GAMEPAD_FREQ_HZ 50000    /*!< I2C master clock frequency */
+#define I2C_GAMEPAD_ADDR 0x08
 
-#define READ_BIT                           I2C_MASTER_READ  /*!< I2C master read */
-#define ACK_CHECK_EN                       0x1              /*!< I2C master will check ack from slave*/
-#define NACK_VAL                           0x1              /*!< I2C nack value */
+#define READ_BIT I2C_MASTER_READ /*!< I2C master read */
+#define ACK_CHECK_EN 0x1         /*!< I2C master will check ack from slave*/
+#define NACK_VAL 0x1             /*!< I2C nack value */
 
 void controller_init()
 {
-    int i2c_master_port = I2C_GAMEPAD_NUM;
-    i2c_config_t conf;
-    conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = I2C_GAMEPAD_SDA_IO;
-    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.scl_io_num = I2C_GAMEPAD_SCL_IO;
-    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = I2C_GAMEPAD_FREQ_HZ;
-    i2c_param_config(i2c_master_port, &conf);
-    i2c_driver_install(i2c_master_port, conf.mode,
-                       I2C_GAMEPAD_RX_BUF_DISABLE,
-                       I2C_GAMEPAD_TX_BUF_DISABLE, 0);
+  int i2c_master_port = I2C_GAMEPAD_NUM;
+  i2c_config_t conf;
+  conf.mode = I2C_MODE_MASTER;
+  conf.sda_io_num = I2C_GAMEPAD_SDA_IO;
+  conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
+  conf.scl_io_num = I2C_GAMEPAD_SCL_IO;
+  conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
+  conf.master.clk_speed = I2C_GAMEPAD_FREQ_HZ;
+  i2c_param_config(i2c_master_port, &conf);
+  i2c_driver_install(i2c_master_port, conf.mode,
+                     I2C_GAMEPAD_RX_BUF_DISABLE,
+                     I2C_GAMEPAD_TX_BUF_DISABLE, 0);
 }
 
 /**
@@ -323,34 +335,27 @@ void controller_init()
  */
 int controller_read_input()
 {
-    uint8_t data;
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (I2C_GAMEPAD_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
-    i2c_master_read_byte(cmd, &data, NACK_VAL);
-    i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(I2C_GAMEPAD_NUM, cmd, 1000 / portTICK_RATE_MS);
-    i2c_cmd_link_delete(cmd);
-    if (ret == 0) {
-        printf("I2C read %d, return %d\n", data, ret);
+  uint8_t data;
+  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+  i2c_master_start(cmd);
+  i2c_master_write_byte(cmd, (I2C_GAMEPAD_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
+  i2c_master_read_byte(cmd, &data, NACK_VAL);
+  i2c_master_stop(cmd);
+  esp_err_t ret = i2c_master_cmd_begin(I2C_GAMEPAD_NUM, cmd, 1000 / portTICK_RATE_MS);
+  i2c_cmd_link_delete(cmd);
+  if (ret == 0)
+  {
+    printf("I2C read %d, return %d\n", data, ret);
 
-        return 0xFFFF ^ (
-        (((0x01 & data) > 0) << 4)
-        | (((0x02 & data) > 0) << 6)
-        | (((0x04 & data) > 0) << 7)
-        | (((0x08 & data) > 0) << 5)
-        | (((0x10 & data) > 0) << 0)
-        | (((0x20 & data) > 0) << 3)
-        | (((0x40 & data) > 0) << 13)
-        | (((0x80 & data) > 0) << 14)
-      );
-    } else {
-        return 0xFFFF;
-    }
+    return 0xFFFF ^ ((((0x01 & data) > 0) << 4) | (((0x02 & data) > 0) << 6) | (((0x04 & data) > 0) << 7) | (((0x08 & data) > 0) << 5) | (((0x10 & data) > 0) << 0) | (((0x20 & data) > 0) << 3) | (((0x40 & data) > 0) << 13) | (((0x80 & data) > 0) << 14));
+  }
+  else
+  {
+    return 0xFFFF;
+  }
 }
 
 #elif defined(CONFIG_HW_CONTROLLER_I2C_M5KB)
-
 
 #define I2C_KEYBOARD_SCL_IO 22        /*!< gpio number for I2C master clock */
 #define I2C_KEYBOARD_SDA_IO 21        /*!< gpio number for I2C master data  */
@@ -366,18 +371,18 @@ int controller_read_input()
 
 void controller_init()
 {
-    int i2c_master_port = I2C_KEYBOARD_NUM;
-    i2c_config_t conf;
-    conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = I2C_KEYBOARD_SDA_IO;
-    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.scl_io_num = I2C_KEYBOARD_SCL_IO;
-    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = I2C_KEYBOARD_FREQ_HZ;
-    i2c_param_config(i2c_master_port, &conf);
-    i2c_driver_install(i2c_master_port, conf.mode,
-                       I2C_KEYBOARD_RX_BUF_DISABLE,
-                       I2C_KEYBOARD_TX_BUF_DISABLE, 0);
+  int i2c_master_port = I2C_KEYBOARD_NUM;
+  i2c_config_t conf;
+  conf.mode = I2C_MODE_MASTER;
+  conf.sda_io_num = I2C_KEYBOARD_SDA_IO;
+  conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
+  conf.scl_io_num = I2C_KEYBOARD_SCL_IO;
+  conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
+  conf.master.clk_speed = I2C_KEYBOARD_FREQ_HZ;
+  i2c_param_config(i2c_master_port, &conf);
+  i2c_driver_install(i2c_master_port, conf.mode,
+                     I2C_KEYBOARD_RX_BUF_DISABLE,
+                     I2C_KEYBOARD_TX_BUF_DISABLE, 0);
 }
 
 /**
@@ -395,47 +400,48 @@ void controller_init()
  */
 int controller_read_input()
 {
-    uint8_t data;
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (I2C_KEYBOARD_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
-    i2c_master_read_byte(cmd, &data, NACK_VAL);
-    i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(I2C_KEYBOARD_NUM, cmd, 1000 / portTICK_RATE_MS);
-    i2c_cmd_link_delete(cmd);
-    if ((ret == 0) && (data > 0)) {
-        printf("I2C read %d, return %d\n", data, ret);
+  uint8_t data;
+  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+  i2c_master_start(cmd);
+  i2c_master_write_byte(cmd, (I2C_KEYBOARD_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
+  i2c_master_read_byte(cmd, &data, NACK_VAL);
+  i2c_master_stop(cmd);
+  esp_err_t ret = i2c_master_cmd_begin(I2C_KEYBOARD_NUM, cmd, 1000 / portTICK_RATE_MS);
+  i2c_cmd_link_delete(cmd);
+  if ((ret == 0) && (data > 0))
+  {
+    printf("I2C read %d, return %d\n", data, ret);
 
-        switch (data)
-        {
-        case 181: // up
-            return 0xFFFF ^ (1 << 4);
-            break;
-        case 182: // down
-            return 0xFFFF ^ (1 << 6);
-            break;
-        case 180: // left
-            return 0xFFFF ^ (1 << 7);
-            break;
-        case 183: // right
-            return 0xFFFF ^ (1 << 5);
-            break;
-        case 32: // space -> select
-            return 0xFFFF ^ (1 << 0);
-            break;
-        case 13: // enter -> start
-            return 0xFFFF ^ (1 << 3);
-            break;
-        case 108: // L -> A
-            return 0xFFFF ^ (1 << 13);
-            break;
-        case 107: // K -> B
-            return 0xFFFF ^ (1 << 14);
-            break;
-        }
+    switch (data)
+    {
+    case 181: // up
+      return 0xFFFF ^ (1 << 4);
+      break;
+    case 182: // down
+      return 0xFFFF ^ (1 << 6);
+      break;
+    case 180: // left
+      return 0xFFFF ^ (1 << 7);
+      break;
+    case 183: // right
+      return 0xFFFF ^ (1 << 5);
+      break;
+    case 32: // space -> select
+      return 0xFFFF ^ (1 << 0);
+      break;
+    case 13: // enter -> start
+      return 0xFFFF ^ (1 << 3);
+      break;
+    case 108: // L -> A
+      return 0xFFFF ^ (1 << 13);
+      break;
+    case 107: // K -> B
+      return 0xFFFF ^ (1 << 14);
+      break;
     }
+  }
 
-    return 0xFFFF;
+  return 0xFFFF;
 }
 
 #else

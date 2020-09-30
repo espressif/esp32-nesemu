@@ -12,23 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string.h>
 #include <stdio.h>
-#include "sdkconfig.h"
-#include "rom/ets_sys.h"
-#include "rom/gpio.h"
-#include "soc/gpio_reg.h"
-#include "soc/gpio_sig_map.h"
-#include "soc/gpio_struct.h"
-#include "soc/io_mux_reg.h"
-#include "soc/spi_reg.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "driver/gpio.h"
-#include "driver/periph_ctrl.h"
+#include <string.h>
+
+#include <driver/gpio.h>
+#include <driver/ledc.h>
+#include <driver/periph_ctrl.h>
+#include <driver/spi_master.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <rom/ets_sys.h>
+#include <rom/gpio.h>
+#include <soc/gpio_reg.h>
+#include <soc/gpio_sig_map.h>
+#include <soc/gpio_struct.h>
+#include <soc/io_mux_reg.h>
+#include <soc/spi_reg.h>
+
 #include "spi_lcd.h"
-#include "driver/spi_master.h"
-#include "driver/ledc.h"
+
+#include "sdkconfig.h"
 
 #define PIN_NUM_MISO CONFIG_HW_LCD_MISO_GPIO
 #define PIN_NUM_MOSI CONFIG_HW_LCD_MOSI_GPIO
@@ -81,7 +84,7 @@ DRAM_ATTR static const lcd_init_cmd_t lcd_init_cmds[] = {
     {0xC5, {0x35, 0x3E}, 2}, // VCM control
     {0xC7, {0xBE}, 1},       // VCM control2, was B1h
 #ifdef CONFIG_HW_LCD_ROTATE_180
-    {0x36, {(1 << 5) | (1 << 3)}, 1},                       // MV | BGR
+    {0x36, {(1 << 5) | (1 << 3)}, 1}, // MV | BGR
 #else
     {0x36, {(1 << 7) | (1 << 6) | (1 << 5) | (1 << 3)}, 1}, // MY | MX | MV | BGR
 #endif
