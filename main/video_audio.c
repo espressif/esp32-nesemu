@@ -34,19 +34,11 @@
 #include <nesinput.h>
 #include <osd.h>
 #include <stdint.h>
-#include "driver/i2s.h"
+#include <driver/i2s.h>
 #include "sdkconfig.h"
-#include <spi_lcd.h>
+#include "spi_lcd.h"
 
-#if defined CONFIG_HW_CONTROLLER_GPIO
-#include <gpiocontroller.h>
-#elif defined CONFIG_HW_CONTROLLER_PSX
-#include <psxcontroller.h>
-#elif defined CONFIG_HW_CONTROLLER_I2C_GP
-#include <i2c_gpcontroller.h>
-#elif defined CONFIG_HW_CONTROLLER_I2C_KB
-#include <i2c_kbcontroller.h>
-#endif
+#include "controller.h"
 
 #define DEFAULT_SAMPLERATE 32000
 #define DEFAULT_FRAGSIZE 128
@@ -266,15 +258,7 @@ static void videoTask(void *arg)
 
 static void osd_initinput()
 {
-#if defined CONFIG_HW_CONTROLLER_GPIO
-	gpiocontrollerInit();
-#elif defined CONFIG_HW_CONTROLLER_PSX
-	psxcontrollerInit();
-#elif defined CONFIG_HW_CONTROLLER_I2C_GP
-	i2c_gpcontrollerInit();
-#elif defined CONFIG_HW_CONTROLLER_I2C_KB
-	i2c_kbcontrollerInit();
-#endif
+	controller_init();
 }
 
 void osd_getinput(void)
@@ -283,15 +267,7 @@ void osd_getinput(void)
 		event_joypad1_select, event_state_save, event_state_load, event_joypad1_start, event_joypad1_up, event_joypad1_right, event_joypad1_down, event_joypad1_left,
 		0, 0, 0, 0, event_soft_reset, event_joypad1_a, event_joypad1_b, event_hard_reset};
 	static int oldb = 0xffff;
-#if defined CONFIG_HW_CONTROLLER_GPIO
-	int b = gpioReadInput();
-#elif defined CONFIG_HW_CONTROLLER_PSX
-	int b = psxReadInput();
-#elif defined CONFIG_HW_CONTROLLER_I2C_GP
-	int b = i2c_gpReadInput();
-#elif defined CONFIG_HW_CONTROLLER_I2C_KB
-	int b = i2c_kbReadInput();
-#endif
+	int b = controller_read_input();
 	int chg = b ^ oldb;
 	int x;
 	oldb = b;

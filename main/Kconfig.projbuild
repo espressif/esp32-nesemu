@@ -218,8 +218,8 @@ config HW_CONTROLLER_PSX
 config HW_CONTROLLER_I2C_GP
 	bool "I2C Gamepad"
 
-config HW_CONTROLLER_I2C_KB
-	bool "I2C Keyboard"
+config HW_CONTROLLER_I2C_M5KB
+	bool "I2C M5Keyboard"
 
 endchoice
 
