@@ -16,6 +16,7 @@
 
 #include <driver/adc.h>
 #include <driver/gpio.h>
+#include <driver/i2c.h>
 #include <esp_adc_cal.h>
 #include <esp_log.h>
 #include <esp_system.h>
