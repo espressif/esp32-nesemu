@@ -49,6 +49,12 @@ void osd_fullname(char *fullname, const char *shortname)
 /* This gives filenames for storage of saves */
 char *osd_newextension(char *string, char *ext)
 {
+   // dirty: assume extension is 3 characters
+   size_t l = strlen(string);
+   string[l - 3] = ext[1];
+   string[l - 2] = ext[2];
+   string[l - 1] = ext[3];
+
    return string;
 }
 
