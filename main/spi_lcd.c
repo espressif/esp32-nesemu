@@ -15,12 +15,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+
 #include <driver/gpio.h>
 #include <driver/ledc.h>
 #include <driver/periph_ctrl.h>
 #include <driver/spi_master.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
 #include <rom/ets_sys.h>
 #include <rom/gpio.h>
 #include <soc/gpio_reg.h>

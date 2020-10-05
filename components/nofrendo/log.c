@@ -62,8 +62,7 @@ int log_print(const char *string)
       log_func(string);
    
    /* Log it to disk, as well */
-//   fputs(string, errorlog);
-//	printf("%s\n", string);
+   // fputs(string, errorlog);
 
    return 0;
 }
@@ -82,7 +81,7 @@ int log_printf(const char *format, ... )
       log_func(buffer);
    }
 
-//   vfprintf(errorlog, format, arg);
+   // vfprintf(errorlog, format, arg);
    va_end(arg);
 
    return 0; /* should be number of chars written */
@@ -130,7 +129,7 @@ void log_assert(int expr, int line, const char *file, char *msg)
       log_printf("ASSERT: line %d of %s\n", line, file);
 
    asm("break.n 1");
-//   exit(-1);
+   // exit(-1);
 }
 
 

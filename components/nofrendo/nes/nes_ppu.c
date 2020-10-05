@@ -372,8 +372,8 @@ uint8 ppu_read(uint32 address)
       if ((ppu.bg_on || ppu.obj_on) && !ppu.vram_accessible)
       {
          ppu.vdata_latch = 0xFF;
-         log_printf("VRAM read at $%04X, scanline %d\n", 
-                    ppu.vaddr, nes_getcontextptr()->scanline);
+         // log_printf("VRAM read at $%04X, scanline %d\n", 
+         //            ppu.vaddr, nes_getcontextptr()->scanline);
       }
       else
       {

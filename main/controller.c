@@ -14,16 +14,17 @@
 
 #include <stdio.h>
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
+#include <freertos/semphr.h>
+#include <freertos/task.h>
+
 #include <driver/adc.h>
 #include <driver/gpio.h>
 #include <driver/i2c.h>
 #include <esp_adc_cal.h>
 #include <esp_log.h>
 #include <esp_system.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/queue.h>
-#include <freertos/semphr.h>
-#include <freertos/task.h>
 #include <soc/adc_channel.h>
 #include <soc/gpio_struct.h>
 

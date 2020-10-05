@@ -15,11 +15,13 @@
 #include <math.h>
 #include <string.h>
 
-#include <driver/i2s.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/timers.h>
 #include <freertos/task.h>
 #include <freertos/queue.h>
+
+#include <driver/i2s.h>
+
 //Nes stuff wants to define this as well...
 #undef false
 #undef true

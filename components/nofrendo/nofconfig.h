@@ -12,6 +12,9 @@
 #define CONFIG_FILE "nofrendo.cfg"
 #endif
 
+#define FSROOT "/spiffs"
+#define ROM_FILE FSROOT "/rom.nes"
+
 typedef struct config_s
 {
    /* open loads from the disk the saved configuration.

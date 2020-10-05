@@ -1,3 +1,5 @@
+#include <freertos/FreeRTOS.h>
+
 #include <driver/gpio.h>
 #include <esp_wifi.h>
 #include <esp_system.h>
@@ -6,37 +8,15 @@
 #include <esp_log.h>
 #include <esp_partition.h>
 #include <esp_spiffs.h>
-#include <freertos/FreeRTOS.h>
 #include <nvs_flash.h>
 
+#include "nofconfig.h"
 #include "nofrendo.h"
-
-char *osd_getromdata()
-{
-    char *romdata;
-    const esp_partition_t *part;
-    spi_flash_mmap_handle_t hrom;
-    esp_err_t err;
-    nvs_flash_init();
-    part = esp_partition_find_first(ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_OTA_1, NULL);
-    if (part == 0)
-        printf("Couldn't find rom part!\n");
-    err = esp_partition_mmap(part, 0, 0x140000, SPI_FLASH_MMAP_DATA, (const void **)&romdata, &hrom);
-    if (err != ESP_OK)
-        printf("Couldn't map rom part!\n");
-    printf("Initialized. ROM@%p\n", romdata);
-    return (char *)romdata;
-}
-
-esp_err_t event_handler(void *ctx, system_event_t *event)
-{
-    return ESP_OK;
-}
 
 void spiffs_init(void)
 {
     esp_vfs_spiffs_conf_t conf = {
-        .base_path = "/spiffs",
+        .base_path = FSROOT,
         .partition_label = NULL,
         .max_files = 5,
         .format_if_mount_failed = true};
