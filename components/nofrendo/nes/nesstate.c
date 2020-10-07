@@ -25,14 +25,15 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <noftypes.h>
-#include <nesstate.h>
-#include <gui.h>
-#include <nes.h>
-#include <log.h>
-#include <osd.h>
-#include <libsnss.h>
-#include "nes6502.h"
+
+#include "../noftypes.h"
+#include "nesstate.h"
+#include "../gui.h"
+#include "nes.h"
+#include "../log.h"
+#include "../osd.h"
+#include "../libsnss/libsnss.h"
+#include "../cpu/nes6502.h"
 
 #define  FIRST_STATE_SLOT  0
 #define  LAST_STATE_SLOT   9
@@ -90,7 +91,7 @@ static int save_baseblock(nes_t *state, SNSS_FILE *snssFile)
    return 0;
 }
 
-static bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
+static nofrendo_bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
 {
    ASSERT(state);
 
@@ -112,7 +113,7 @@ static bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
 static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
 {
    int i;
-   bool written = false;
+   nofrendo_bool written = nofrendo_false;
    int sram_length;
 
    ASSERT(state);
@@ -124,12 +125,12 @@ static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
    {
       if (state->rominfo->sram[i])
       {
-         written = true;
+         written = nofrendo_true;
          break;
       }
    }
 
-   if (false == written)
+   if (nofrendo_false == written)
       return -1;
 
    if (state->rominfo->sram_banks > 8)
@@ -140,8 +141,8 @@ static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
 
    snssFile->sramBlock.sramSize = SRAM_1K * state->rominfo->sram_banks;
 
-   /* TODO: this should not always be true!! */
-   snssFile->sramBlock.sramEnabled = true;
+   /* TODO: this should not always be nofrendo_true!! */
+   snssFile->sramBlock.sramEnabled = nofrendo_true;
 
    memcpy(snssFile->sramBlock.sram, state->rominfo->sram, snssFile->sramBlock.sramSize);
 
@@ -259,7 +260,7 @@ static void load_baseblock(nes_t *state, SNSS_FILE *snssFile)
 
    /* do some extra handling */
    state->ppu->flipflop = 0;
-   state->ppu->strikeflag = false;
+   state->ppu->strikeflag = nofrendo_false;
 
    nes6502_setcontext(state->cpu);
    ppu_setcontext(state->ppu);

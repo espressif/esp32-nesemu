@@ -26,7 +26,7 @@
 #ifndef _NES_PPU_H_
 #define _NES_PPU_H_
 
-#include <bitmap.h>
+#include "../bitmap.h"
 
 /* PPU register defines */
 #define  PPU_CTRL0            0x2000
@@ -91,13 +91,13 @@ typedef struct ppu_s
    uint8 obj_height;
    uint32 obj_base, bg_base;
 
-   bool bg_on, obj_on;
-   bool obj_mask, bg_mask;
+   nofrendo_bool bg_on, obj_on;
+   nofrendo_bool obj_mask, bg_mask;
    
    uint8 latch, vdata_latch;
    uint8 strobe;
 
-   bool strikeflag;
+   nofrendo_bool strikeflag;
    uint32 strike_cycle;
 
    /* callbacks for naughty mappers */
@@ -107,10 +107,10 @@ typedef struct ppu_s
    /* copy of our current palette */
    rgb_t curpal[256];
 
-   bool vram_accessible;
+   nofrendo_bool vram_accessible;
 
-   bool vram_present;
-   bool drawsprites;
+   nofrendo_bool vram_present;
+   nofrendo_bool drawsprites;
 } ppu_t;
 
 
@@ -133,8 +133,8 @@ extern uint8 *ppu_getpage(int page);
 
 /* control */
 extern void ppu_reset(int reset_type);
-extern bool ppu_enabled(void);
-extern void ppu_scanline(bitmap_t *bmp, int scanline, bool draw_flag);
+extern nofrendo_bool ppu_enabled(void);
+extern void ppu_scanline(bitmap_t *bmp, int scanline, nofrendo_bool draw_flag);
 extern void ppu_endscanline(int scanline);
 extern void ppu_checknmi();
 
@@ -154,7 +154,7 @@ extern void ppu_setdefaultpal(ppu_t *src_ppu);
 /* bleh */
 extern void ppu_dumppattern(bitmap_t *bmp, int table_num, int x_loc, int y_loc, int col);
 extern void ppu_dumpoam(bitmap_t *bmp, int x_loc, int y_loc);
-extern void ppu_displaysprites(bool display);
+extern void ppu_displaysprites(nofrendo_bool display);
 
 #endif /* _NES_PPU_H_ */
 

@@ -26,8 +26,8 @@
 #ifndef _NES_MMC_H_
 #define _NES_MMC_H_
 
-#include <libsnss.h>
-#include <nes_apu.h>
+#include "../libsnss/libsnss.h"
+#include "../sndhrdw/nes_apu.h"
 
 #define  MMC_LASTBANK      -1
 
@@ -59,7 +59,7 @@ typedef struct mapintf_s
 } mapintf_t;
 
 
-#include <nes_rom.h>
+#include "nes_rom.h"
 typedef struct mmc_s
 {
    mapintf_t *intf;
@@ -78,7 +78,7 @@ extern void mmc_destroy(mmc_t **nes_mmc);
 extern void mmc_getcontext(mmc_t *dest_mmc);
 extern void mmc_setcontext(mmc_t *src_mmc);
 
-extern bool mmc_peek(int map_num);
+extern nofrendo_bool mmc_peek(int map_num);
 
 extern void mmc_reset(void);
 

@@ -53,22 +53,22 @@ typedef  unsigned int   uint32;
 #ifndef __cplusplus
 typedef enum
 {
-   false = 0,
-   true = 1
-} bool;
+   nofrendo_false = 0,
+   nofrendo_true = 1
+} nofrendo_bool;
 
 #ifndef  NULL
 #define  NULL     ((void *) 0)
 #endif
 #endif /* !__cplusplus */
 
-#include <memguard.h>
-#include <log.h>
+#include "memguard.h"
+#include "log.h"
 
 #ifdef NOFRENDO_DEBUG
 
 #define  ASSERT(expr)      log_assert((int) (expr), __LINE__, __FILE__, NULL)
-#define  ASSERT_MSG(msg)   log_assert(false, __LINE__, __FILE__, (msg))
+#define  ASSERT_MSG(msg)   log_assert(nofrendo_false, __LINE__, __FILE__, (msg))
 
 #else /* !NOFRENDO_DEBUG */
 

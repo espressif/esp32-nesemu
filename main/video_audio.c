@@ -22,11 +22,6 @@
 
 #include <driver/i2s.h>
 
-//Nes stuff wants to define this as well...
-#undef false
-#undef true
-#undef bool
-
 #include "bitmap.h"
 #include "event.h"
 #include "noftypes.h"
@@ -110,7 +105,7 @@ static void osd_stopsound(void)
 static int osd_init_sound(void)
 {
 #if CONFIG_SOUND_ENA
-	audio_frame = malloc(2 * DEFAULT_FRAGSIZE);
+	audio_frame = nofrendo_malloc(2 * DEFAULT_FRAGSIZE);
 	i2s_config_t cfg = {
 		.mode = I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN,
 		.sample_rate = DEFAULT_SAMPLERATE,
@@ -120,7 +115,7 @@ static int osd_init_sound(void)
 		.intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
 		.dma_buf_count = 6,
 		.dma_buf_len = 512,
-		.use_apll = false};
+		.use_apll = nofrendo_false};
 	i2s_driver_install(I2S_NUM_0, &cfg, 2, &queue);
 	i2s_set_pin(I2S_NUM_0, NULL);
 	i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
@@ -164,7 +159,7 @@ viddriver_t sdlDriver =
 		lock_write,					/* lock_write */
 		free_write,					/* free_write */
 		custom_blit,				/* custom_blit */
-		false						/* invalidate flag */
+		nofrendo_false				/* invalidate flag */
 };
 
 bitmap_t *myBitmap;

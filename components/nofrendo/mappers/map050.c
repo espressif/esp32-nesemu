@@ -26,15 +26,15 @@
 **
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes.h>
-#include <libsnss.h>
-#include <log.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes.h"
+#include "../libsnss/libsnss.h"
+#include "../log.h"
 
 static struct
 {
-  bool enabled;
+  nofrendo_bool enabled;
   uint32 counter;
 } irq;
 
@@ -44,7 +44,7 @@ static struct
 static void map50_irq_reset (void)
 {
   /* Turn off IRQs */
-  irq.enabled = false;
+  irq.enabled = nofrendo_false;
   irq.counter = 0x0000;
 
   /* Done */
@@ -112,7 +112,7 @@ static void map50_write (uint32 address, uint8 value)
   if (address & 0x100)
   {
     /* IRQ settings */
-    if (value & 0x01) irq.enabled = true;
+    if (value & 0x01) irq.enabled = nofrendo_true;
     else              map50_irq_reset ();
   }
   else

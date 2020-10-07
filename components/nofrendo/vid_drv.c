@@ -24,12 +24,13 @@
 */
 
 #include <string.h>
-#include <noftypes.h>
-#include <log.h>
-#include <bitmap.h>
-#include <vid_drv.h>
-#include <gui.h>
-#include <osd.h>
+
+#include "noftypes.h"
+#include "log.h"
+#include "bitmap.h"
+#include "vid_drv.h"
+#include "gui.h"
+#include "osd.h"
 
 /* hardware surface */
 static bitmap_t *screen = NULL;
@@ -297,7 +298,7 @@ INLINE int calc_dirties(rect_t *list)
 
    for (i = 0; i < iterations; i++)
    {
-      dirty = false;
+      dirty = nofrendo_false;
 
       j = line_offset;
       DUFFS_DEVICE(
@@ -305,14 +306,14 @@ INLINE int calc_dirties(rect_t *list)
          if (vid_memcmp(back_buffer->line[j], primary_buffer->line[j], 
                         CHUNK_WIDTH))
          { 
-            dirty = true; 
+            dirty = nofrendo_true; 
             break; 
          } 
 
          j++; 
       }, CHUNK_HEIGHT);
 
-      if (true == dirty)
+      if (nofrendo_true == dirty)
       {
          list->h = CHUNK_HEIGHT;
          list->w = CHUNK_WIDTH;
@@ -340,9 +341,9 @@ void vid_flush(void)
 
    ASSERT(driver);
 
-   if (true == driver->invalidate)
+   if (nofrendo_true == driver->invalidate)
    {
-      driver->invalidate = false;
+      driver->invalidate = nofrendo_false;
       num_dirties = -1;
    }
    else

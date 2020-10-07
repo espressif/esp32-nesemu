@@ -24,17 +24,18 @@
 */
 
 #include <stdlib.h>
-#include <noftypes.h>
-#include <event.h>
-#include <nofrendo.h>
-#include <gui.h>
-#include <osd.h>
+
+#include "noftypes.h"
+#include "event.h"
+#include "nofrendo.h"
+#include "gui.h"
+#include "osd.h"
 
 /* TODO: put system specific stuff in their own files... */
-#include <nes.h>
-#include <nesinput.h>
-#include <nes_pal.h>
-#include <nesstate.h>
+#include "nes/nes.h"
+#include "nes/nesinput.h"
+#include "nes/nes_pal.h"
+#include "nes/nesstate.h"
 
 /* pointer to our current system's event handler table */
 static event_t *system_events = NULL;

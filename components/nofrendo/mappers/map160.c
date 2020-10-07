@@ -23,14 +23,14 @@
 ** $Id: map160.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <nes.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes_ppu.h"
+#include "../nes/nes.h"
 
 static struct
 {
-   bool enabled, expired;
+   nofrendo_bool enabled, expired;
    int counter;
    int latch_c005, latch_c003;
 } irq;
@@ -47,19 +47,19 @@ static void map160_write(uint32 address, uint8 value)
    }
    else if (0xC002 == address)
    {
-      irq.enabled = false;
+      irq.enabled = nofrendo_false;
       irq.latch_c005 = irq.latch_c003;
    }
    else if (0xC003 == address)
    {
-      if (false == irq.expired)
+      if (nofrendo_false == irq.expired)
       {
          irq.counter = value;
       }
       else
       {
-         irq.expired = false;
-         irq.enabled = true;
+         irq.expired = nofrendo_false;
+         irq.enabled = nofrendo_true;
          irq.counter = irq.latch_c005;
       }
    }
@@ -82,9 +82,9 @@ static void map160_hblank(int vblank)
    {
       if (ppu_enabled() && irq.enabled)
       {
-         if (0 == irq.counter && false == irq.expired)
+         if (0 == irq.counter && nofrendo_false == irq.expired)
          {
-            irq.expired = true;
+            irq.expired = nofrendo_true;
             nes_irq();
          }
          else
@@ -97,8 +97,8 @@ static void map160_hblank(int vblank)
 
 static void map160_init(void)
 {
-   irq.enabled = false;
-   irq.expired = false;
+   irq.enabled = nofrendo_false;
+   irq.expired = nofrendo_false;
    irq.counter = 0;
    irq.latch_c003 = irq.latch_c005 = 0;
 }

@@ -27,7 +27,7 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
-#include <nofrendo.h>
+#include "nofrendo.h"
 
 enum
 {

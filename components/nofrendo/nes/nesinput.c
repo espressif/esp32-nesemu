@@ -23,9 +23,9 @@
 ** $Id: nesinput.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nesinput.h>
-#include <log.h>
+#include "../noftypes.h"
+#include "nesinput.h"
+#include "../log.h"
 
 /* TODO: make a linked list of inputs sources, so they
 **       can be removed if need be

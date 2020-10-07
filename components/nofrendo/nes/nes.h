@@ -26,13 +26,13 @@
 #ifndef _NES_H_
 #define _NES_H_
 
-#include <noftypes.h>
-#include <nes_apu.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <nes_rom.h>
-#include "nes6502.h"
-#include <bitmap.h>
+#include "../noftypes.h"
+#include "../sndhrdw/nes_apu.h"
+#include "nes_mmc.h"
+#include "nes_ppu.h"
+#include "nes_rom.h"
+#include "../cpu/nes6502.h"
+#include "../bitmap.h"
 
 /* Visible (NTSC) screen height */
 #ifndef NES_VISIBLE_HEIGHT
@@ -75,7 +75,7 @@ typedef struct nes_s
       there, saving us about 64K of memory. */
 //   bitmap_t *vidbuf; 
 
-   bool fiq_occurred;
+   nofrendo_bool fiq_occurred;
    uint8 fiq_state;
    int fiq_cycles;
 
@@ -83,11 +83,11 @@ typedef struct nes_s
 
    /* Timing stuff */
    float scanline_cycles;
-   bool autoframeskip;
+   nofrendo_bool autoframeskip;
 
    /* control */
-   bool poweroff;
-   bool pause;
+   nofrendo_bool poweroff;
+   nofrendo_bool pause;
 
 } nes_t;
 
@@ -132,7 +132,7 @@ extern void nes_togglepause(void);
 ** scanline emulation simplifications/timing fixes
 **
 ** Revision 1.6  2000/11/25 01:52:17  matt
-** bool stinks sometimes
+** nofrendo_bool stinks sometimes
 **
 ** Revision 1.5  2000/11/09 14:07:28  matt
 ** state load fixed, state save mostly fixed

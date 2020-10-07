@@ -29,20 +29,16 @@
 #include <string.h>
 
 #include <esp_heap_caps.h>
-//Nes stuff wants to define this as well...
-#undef false
-#undef true
-#undef bool
 
-#include <noftypes.h>
-#include <nes_rom.h>
-#include <intro.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <nes.h>
-#include <gui.h>
-#include <log.h>
-#include <osd.h>
+#include "../noftypes.h"
+#include "nes_rom.h"
+#include "../intro.h"
+#include "nes_mmc.h"
+#include "nes_ppu.h"
+#include "nes.h"
+#include "../gui.h"
+#include "../log.h"
+#include "../osd.h"
 
 /* Max length for displayed filename */
 #define ROM_DISP_MAXLEN 20
@@ -134,7 +130,7 @@ static void rom_loadsram(rominfo_t *rominfo)
 static int rom_allocsram(rominfo_t *rominfo)
 {
    /* Load up SRAM */
-   rominfo->sram = malloc(SRAM_BANK_LENGTH * rominfo->sram_banks);
+   rominfo->sram = nofrendo_malloc(SRAM_BANK_LENGTH * rominfo->sram_banks);
    if (NULL == rominfo->sram)
    {
       gui_sendmsg(GUI_RED, "Could not allocate space for battery RAM");
@@ -165,7 +161,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    ASSERT(rominfo);
 
    /* Allocate ROM space, and load it up! */
-   // rominfo->rom = malloc((rominfo->rom_banks * ROM_BANK_LENGTH));
+   // rominfo->rom = nofrendo_malloc((rominfo->rom_banks * ROM_BANK_LENGTH));
    rominfo->rom = heap_caps_malloc((rominfo->rom_banks * ROM_BANK_LENGTH), MALLOC_CAP_SPIRAM);
    if (NULL == rominfo->rom)
    {
@@ -177,7 +173,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    /* If there's VROM, allocate and stuff it in */
    if (rominfo->vrom_banks)
    {
-      // rominfo->vrom = malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
+      // rominfo->vrom = nofrendo_malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
       rominfo->vrom = heap_caps_malloc((rominfo->vrom_banks * VROM_BANK_LENGTH), MALLOC_CAP_SPIRAM);
       if (NULL == rominfo->vrom)
       {
@@ -188,7 +184,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    }
    else
    {
-      rominfo->vram = malloc(VRAM_LENGTH);
+      rominfo->vram = nofrendo_malloc(VRAM_LENGTH);
       if (NULL == rominfo->vram)
       {
          gui_sendmsg(GUI_RED, "Could not allocate space for VRAM");
@@ -264,7 +260,7 @@ static int rom_adddirty(char *filename)
 #ifdef NOFRENDO_DEBUG
 #define MAX_BUFFER_LENGTH 255
    char buffer[MAX_BUFFER_LENGTH + 1];
-   bool found = false;
+   bool found = nofrendo_false;
 
    FILE *fp = fopen("dirtyrom.txt", "rt");
    if (NULL == fp)
@@ -274,12 +270,12 @@ static int rom_adddirty(char *filename)
    {
       if (0 == strncmp(filename, buffer, strlen(filename)))
       {
-         found = true;
+         found = nofrendo_true;
          break;
       }
    }
 
-   if (false == found)
+   if (nofrendo_false == found)
    {
       /* close up the file, open it back up for writing */
       fclose(fp);
@@ -356,12 +352,12 @@ static int rom_getheader(FILE *fp, rominfo_t *rominfo)
    if (0 == memcmp(head.reserved, reserved, RESERVED_LENGTH))
    {
       /* We were clean */
-      header_dirty = false;
+      header_dirty = nofrendo_false;
       rominfo->mapper_number |= (head.mapper_hinybble & 0xF0);
    }
    else
    {
-      header_dirty = true;
+      header_dirty = nofrendo_true;
 
       /* @!?#@! DiskDude. */
       if (('D' == head.mapper_hinybble) && (0 == memcmp(head.reserved, "iskDude!", 8)))
@@ -430,7 +426,7 @@ rominfo_t *rom_load(const char *filename)
    FILE *fp;
    rominfo_t *rominfo;
 
-   rominfo = malloc(sizeof(rominfo_t));
+   rominfo = nofrendo_malloc(sizeof(rominfo_t));
    if (NULL == rominfo)
       return NULL;
 
@@ -448,7 +444,7 @@ rominfo_t *rom_load(const char *filename)
       goto _fail;
 
    /* Make sure we really support the mapper */
-   if (false == mmc_peek(rominfo->mapper_number))
+   if (nofrendo_false == mmc_peek(rominfo->mapper_number))
    {
       gui_sendmsg(GUI_RED, "Mapper %d not yet implemented", rominfo->mapper_number);
       goto _fail;
@@ -488,12 +484,12 @@ rominfo_t *rom_load(const char *filename)
 _fail:
    if (NULL != fp)
       _fclose(fp);
-   rom_free(&rominfo);
+   rom_nofrendo_free(&rominfo);
    return NULL;
 }
 
 /* Free a ROM */
-void rom_free(rominfo_t **rominfo)
+void rom_nofrendo_free(rominfo_t **rominfo)
 {
    if (NULL == *rominfo)
    {
@@ -512,15 +508,15 @@ void rom_free(rominfo_t **rominfo)
    rom_savesram(*rominfo);
 
    if ((*rominfo)->sram)
-      free((*rominfo)->sram);
+      nofrendo_free((*rominfo)->sram);
    if ((*rominfo)->rom)
-      free((*rominfo)->rom);
+      nofrendo_free((*rominfo)->rom);
    if ((*rominfo)->vrom)
-      free((*rominfo)->vrom);
+      nofrendo_free((*rominfo)->vrom);
    if ((*rominfo)->vram)
-      free((*rominfo)->vram);
+      nofrendo_free((*rominfo)->vram);
 
-   free(*rominfo);
+   nofrendo_free(*rominfo);
 
    gui_sendmsg(GUI_GREEN, "ROM freed");
 }

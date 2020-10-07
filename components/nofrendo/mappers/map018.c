@@ -23,9 +23,9 @@
 ** $Id: map018.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes_ppu.h"
 
 /* mapper 18: Jaleco SS8806 */
 #define  VRC_PBANK(bank, value, high) \
@@ -119,7 +119,7 @@ static void map18_write(uint32 address, uint8 value)
       if(irq.counter>15) irq.counter-=16;
       break;
    case 0xF000:
-      if(value&0x01) irq.enabled=true;
+      if(value&0x01) irq.enabled=nofrendo_true;
       break;
    case 0xF001: 
       irq.enabled=value&0x01;

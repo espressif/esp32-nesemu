@@ -25,18 +25,19 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <noftypes.h>
-#include <nes_ppu.h>
-#include <nes.h>
-#include <gui.h>
-#include "nes6502.h"
-#include <log.h>
-#include <nes_mmc.h>
 
-#include <bitmap.h>
-#include <vid_drv.h>
-#include <nes_pal.h>
-#include <nesinput.h>
+#include "../noftypes.h"
+#include "nes_ppu.h"
+#include "nes.h"
+#include "../gui.h"
+#include "../cpu/nes6502.h"
+#include "../log.h"
+#include "nes_mmc.h"
+
+#include "../bitmap.h"
+#include "../vid_drv.h"
+#include "nes_pal.h"
+#include "nesinput.h"
 
 
 /* PPU access */
@@ -56,7 +57,7 @@
 static ppu_t ppu;
 
 
-void ppu_displaysprites(bool display)
+void ppu_displaysprites(nofrendo_bool display)
 {
    ppu.drawsprites = display;
 }
@@ -122,10 +123,10 @@ void ppu_getcontext(ppu_t *dest_ppu)
 
 ppu_t *ppu_create(void)
 {
-   static bool pal_generated = false;
+   static nofrendo_bool pal_generated = nofrendo_false;
    ppu_t *temp;
 
-   temp = malloc(sizeof(ppu_t));
+   temp = nofrendo_malloc(sizeof(ppu_t));
    if (NULL == temp)
       return NULL;
 
@@ -133,14 +134,14 @@ ppu_t *ppu_create(void)
 
    temp->latchfunc = NULL;
    temp->vromswitch = NULL;
-   temp->vram_present = false;
-   temp->drawsprites = true;
+   temp->vram_present = nofrendo_false;
+   temp->drawsprites = nofrendo_true;
 
    /* TODO: probably a better way to do this... */
-   if (false == pal_generated)
+   if (nofrendo_false == pal_generated)
    {
       pal_generate();
-      pal_generated = true;
+      pal_generated = nofrendo_true;
    }
 
    ppu_setdefaultpal(temp);
@@ -152,7 +153,7 @@ void ppu_destroy(ppu_t **src_ppu)
 {
    if (*src_ppu)
    {
-      free(*src_ppu);
+      nofrendo_free(*src_ppu);
       *src_ppu = NULL;
    }
 }
@@ -228,7 +229,7 @@ void ppu_reset(int reset_type)
    ppu.tile_xofs = 0;
 
    ppu.latch = 0;
-   ppu.vram_accessible = true;
+   ppu.vram_accessible = nofrendo_true;
 }
 
 /* we render a scanline of graphics first so we know exactly
@@ -237,12 +238,12 @@ void ppu_reset(int reset_type)
 */
 static void ppu_setstrike(int x_loc)
 {
-   if (false == ppu.strikeflag)
+   if (nofrendo_false == ppu.strikeflag)
    {
-      ppu.strikeflag = true;
+      ppu.strikeflag = nofrendo_true;
 
       /* 3 pixels per cpu cycle */
-      ppu.strike_cycle = nes6502_getcycles(false) + (x_loc / 3);
+      ppu.strike_cycle = nes6502_getcycles(nofrendo_false) + (x_loc / 3);
    }
 }
 
@@ -355,7 +356,7 @@ uint8 ppu_read(uint32 address)
 
       if (ppu.strikeflag)
       {
-         if (nes6502_getcycles(false) >= ppu.strike_cycle)
+         if (nes6502_getcycles(nofrendo_false) >= ppu.strike_cycle)
             value |= PPU_STATF_STRIKE;
       }
 
@@ -426,10 +427,10 @@ void ppu_write(uint32 address, uint8 value)
    case PPU_CTRL1:
       ppu.ctrl1 = value;
 
-      ppu.obj_on = (value & PPU_CTRL1F_OBJON) ? true : false;
-      ppu.bg_on = (value & PPU_CTRL1F_BGON) ? true : false;
-      ppu.obj_mask = (value & PPU_CTRL1F_OBJMASK) ? false : true;
-      ppu.bg_mask = (value & PPU_CTRL1F_BGMASK) ? false : true;
+      ppu.obj_on = (value & PPU_CTRL1F_OBJON) ? nofrendo_true : nofrendo_false;
+      ppu.bg_on = (value & PPU_CTRL1F_BGON) ? nofrendo_true : nofrendo_false;
+      ppu.obj_mask = (value & PPU_CTRL1F_OBJMASK) ? nofrendo_false : nofrendo_true;
+      ppu.bg_mask = (value & PPU_CTRL1F_BGMASK) ? nofrendo_false : nofrendo_true;
       break;
 
    case PPU_OAMADDR:
@@ -493,7 +494,7 @@ void ppu_write(uint32 address, uint8 value)
          {
             uint32 addr = ppu.vaddr;
 
-            if (false == ppu.vram_present && addr >= 0x3000)
+            if (nofrendo_false == ppu.vram_present && addr >= 0x3000)
                ppu.vaddr -= 0x1000;
 
             PPU_MEM(addr) = value;
@@ -593,7 +594,7 @@ INLINE void draw_bgtile(uint8 *surface, uint8 pat1, uint8 pat2,
 }
 
 INLINE int draw_oamtile(uint8 *surface, uint8 attrib, uint8 pat1, 
-                        uint8 pat2, const uint8 *col_tbl, bool check_strike)
+                        uint8 pat2, const uint8 *col_tbl, nofrendo_bool check_strike)
 {
    int strike_pixel = -1;
    uint32 color = ((pat2 & 0xAA) << 8) | ((pat2 & 0x55) << 1)
@@ -702,7 +703,7 @@ static void ppu_renderbg(uint8 *vidbuf)
    uint8 col_high, attrib, attrib_shift;
 
    /* draw a line of transparent background color if bg is disabled */
-   if (false == ppu.bg_on)
+   if (nofrendo_false == ppu.bg_on)
    {
       memset(vidbuf, FULLBG, NES_SCREEN_WIDTH);
       return;
@@ -792,7 +793,7 @@ static void ppu_renderoam(uint8 *vidbuf, int scanline)
    obj_t *sprite_ptr;
    uint8 sprite_height;
 
-   if (false == ppu.obj_on)
+   if (nofrendo_false == ppu.obj_on)
       return;
 
    /* Get our buffer pointer */
@@ -818,7 +819,7 @@ static void ppu_renderoam(uint8 *vidbuf, int scanline)
       int y_offset;
       uint8 tile_index, attrib, col_high;
       uint8 sprite_y, sprite_x;
-      bool check_strike;
+      nofrendo_bool check_strike;
       int strike_pixel;
 
       sprite_y = sprite_ptr->y_loc + 1;
@@ -873,7 +874,7 @@ static void ppu_renderoam(uint8 *vidbuf, int scanline)
       /* if we're on sprite 0 and sprite 0 strike flag isn't set,
       ** check for a strike 
       */
-      check_strike = (0 == sprite_num) && (false == ppu.strikeflag);
+      check_strike = (0 == sprite_num) && (nofrendo_false == ppu.strikeflag);
       strike_pixel = draw_oamtile(bmp_ptr, attrib, data_ptr[0], data_ptr[8], ppu.palette + 16 + col_high, check_strike);
       if (strike_pixel >= 0)
          ppu_setstrike(strike_pixel);
@@ -908,7 +909,7 @@ static void ppu_fakeoam(int scanline)
 
    /* we don't need to be here if strike flag is set */
 
-   if (false == ppu.obj_on || ppu.strikeflag)
+   if (nofrendo_false == ppu.obj_on || ppu.strikeflag)
       return;
 
    sprite_height = ppu.obj_height;
@@ -1004,12 +1005,12 @@ static void ppu_fakeoam(int scanline)
    }
 }
 
-bool ppu_enabled(void)
+nofrendo_bool ppu_enabled(void)
 {
    return (ppu.bg_on || ppu.obj_on);
 }
 
-static void ppu_renderscanline(bitmap_t *bmp, int scanline, bool draw_flag)
+static void ppu_renderscanline(bitmap_t *bmp, int scanline, nofrendo_bool draw_flag)
 {
    uint8 *buf = bmp->line[scanline];
 
@@ -1031,7 +1032,7 @@ static void ppu_renderscanline(bitmap_t *bmp, int scanline, bool draw_flag)
       ppu_renderbg(buf);
 
    /* TODO: fetch obj data 1 scanline before */
-   if (true == ppu.drawsprites && true == draw_flag)
+   if (nofrendo_true == ppu.drawsprites && nofrendo_true == draw_flag)
       ppu_renderoam(buf, scanline);
    else
       ppu_fakeoam(scanline);
@@ -1078,7 +1079,7 @@ void ppu_checknmi(void)
       nes_nmi();
 }
 
-void ppu_scanline(bitmap_t *bmp, int scanline, bool draw_flag)
+void ppu_scanline(bitmap_t *bmp, int scanline, nofrendo_bool draw_flag)
 {
    if (scanline < 240)
    {
@@ -1089,27 +1090,27 @@ void ppu_scanline(bitmap_t *bmp, int scanline, bool draw_flag)
    else if (241 == scanline)
    {
       ppu.stat |= PPU_STATF_VBLANK;
-      ppu.vram_accessible = true;
+      ppu.vram_accessible = nofrendo_true;
    }
    else if (261 == scanline)
    {
       ppu.stat &= ~PPU_STATF_VBLANK;
-      ppu.strikeflag = false;
+      ppu.strikeflag = nofrendo_false;
       ppu.strike_cycle = (uint32) -1;
 
-      ppu.vram_accessible = false;
+      ppu.vram_accessible = nofrendo_false;
    }
 }
 
 /*
-bool ppu_checkzapperhit(bitmap_t *bmp, int x, int y)
+nofrendo_bool ppu_checkzapperhit(bitmap_t *bmp, int x, int y)
 {
    uint8 pixel = bmp->line[y][x] & 0x3F;
 
    if (0x20 == pixel || 0x30 == pixel)
-      return true;
+      return nofrendo_true;
 
-   return false;
+   return nofrendo_false;
 }
 */
 

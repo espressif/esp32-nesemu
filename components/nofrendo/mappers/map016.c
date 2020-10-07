@@ -23,15 +23,15 @@
 ** $Id: map016.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <nes.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes_ppu.h"
+#include "../nes/nes.h"
 
 static struct
 {
    int counter;
-   bool enabled;
+   nofrendo_bool enabled;
 } irq;
 
 /* mapper 16: Bandai */
@@ -41,7 +41,7 @@ static void map16_init(void)
    mmc_bankrom(16, 0x8000, 0);
    mmc_bankrom(16, 0xC000, MMC_LASTBANK);
    irq.counter = 0;
-   irq.enabled = false;
+   irq.enabled = nofrendo_false;
 }
 
 static void map16_write(uint32 address, uint8 value)
@@ -82,7 +82,7 @@ static void map16_write(uint32 address, uint8 value)
          break;
    
       case 0xA:
-         irq.enabled = (value & 1) ? true : false;
+         irq.enabled = (value & 1) ? nofrendo_true : nofrendo_false;
          break;
  
       case 0xB:

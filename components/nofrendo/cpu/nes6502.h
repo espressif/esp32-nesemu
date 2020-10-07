@@ -29,7 +29,7 @@
 #ifndef _NES6502_H_
 #define _NES6502_H_
 
-#include <noftypes.h>
+#include "../noftypes.h"
 
 /* Define this to enable decimal mode in ADC / SBC (not needed in NES) */
 /*#define  NES6502_DECIMAL*/
@@ -105,7 +105,7 @@ extern int nes6502_execute(int total_cycles);
 extern void nes6502_nmi(void);
 extern void nes6502_irq(void);
 extern uint8 nes6502_getbyte(uint32 address);
-extern uint32 nes6502_getcycles(bool reset_flag);
+extern uint32 nes6502_getcycles(nofrendo_bool reset_flag);
 extern void nes6502_burn(int cycles);
 extern void nes6502_release(void);
 

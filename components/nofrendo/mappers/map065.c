@@ -23,14 +23,14 @@
 ** $Id: map065.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes_ppu.h"
 
 static struct
 {
    int counter;
-   bool enabled;
+   nofrendo_bool enabled;
    int cycles;
    uint8 low, high;
 } irq;
@@ -38,7 +38,7 @@ static struct
 static void map65_init(void)
 {
    irq.counter = 0;
-   irq.enabled = false;
+   irq.enabled = nofrendo_false;
    irq.low = irq.high = 0;
    irq.cycles = 0;
 }
@@ -67,7 +67,7 @@ static void map65_write(uint32 address, uint8 value)
       switch (reg)
       {
       case 4:
-         irq.enabled = (value & 0x01) ? false : true;
+         irq.enabled = (value & 0x01) ? nofrendo_false : nofrendo_true;
          break;
 
       case 5:

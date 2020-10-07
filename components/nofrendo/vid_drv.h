@@ -26,7 +26,7 @@
 #ifndef _VID_DRV_H_
 #define _VID_DRV_H_
 
-#include <bitmap.h>
+#include "bitmap.h"
 
 typedef struct viddriver_s
 {
@@ -41,7 +41,7 @@ typedef struct viddriver_s
    /* set up a palette */
    void      (*set_palette)(rgb_t *palette);
    /* custom bitmap clear (can be NULL) */
-   void      (*clear)(uint8 color);
+   void      (*clear)(uint8_t color);
    /* lock surface for writing (required) */
    bitmap_t *(*lock_write)(void);
    /* free a locked surface (can be NULL) */
@@ -50,7 +50,7 @@ typedef struct viddriver_s
    void      (*custom_blit)(bitmap_t *primary, int num_dirties, 
                             rect_t *dirty_rects);
    /* immediately invalidate the buffer, i.e. full redraw */
-   bool      invalidate;
+   nofrendo_bool      invalidate;
 } viddriver_t;
 
 /* TODO: filth */

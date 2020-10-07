@@ -25,9 +25,10 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <noftypes.h>
-#include <bitmap.h>
-#include <pcx.h>
+
+#include "noftypes.h"
+#include "bitmap.h"
+#include "pcx.h"
 
 /* Save a PCX snapshot from a given NES bitmap */
 int pcx_write(char *filename, bitmap_t *bmp, rgb_t *pal)

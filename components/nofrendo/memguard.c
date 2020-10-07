@@ -25,18 +25,13 @@
 ** $Id: memguard.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <memguard.h>
-
-/* undefine macro definitions, so we get real calls */
-#undef malloc
-#undef free
-#undef strdup
+#include "noftypes.h"
+#include "memguard.h"
 
 #include <string.h>
 #include <stdlib.h>
-#include <log.h>
 
+#include "log.h"
 
 /* Maximum number of allocated blocks at any one time */
 #define  MAX_BLOCKS        4096
@@ -51,7 +46,7 @@ typedef struct memblock_s
 } memblock_t;
 
 /* debugging flag */
-bool mem_debug = true;
+nofrendo_bool mem_debug = nofrendo_true;
 
 
 #ifdef NOFRENDO_DEBUG
@@ -248,18 +243,19 @@ static void mem_deleteblock(void *data, char *file, int line)
 #ifdef NOFRENDO_DEBUG
 
 /* allocates memory and clears it */
-void *_my_malloc(int size, char *file, int line)
+void *_my_nofrendo_malloc(int size, char *file, int line)
 {
    void *temp;
    char fail[256];
 
-   if (NULL == mem_record && false != mem_debug)
+   if (NULL == mem_record && nofrendo_false != mem_debug)
       mem_init();
 
-   if (false != mem_debug)
+   if (nofrendo_false != mem_debug)
       temp = mem_guardalloc(size, GUARD_LENGTH);
    else
       temp = malloc(size);
+      // temp = heap_caps_malloc(size, MALLOC_CAP_DEFAULT);
 
    printf("Malloc: %d at %s:%d\n", size, file, line);
    if (NULL == temp)
@@ -269,7 +265,7 @@ void *_my_malloc(int size, char *file, int line)
       ASSERT_MSG(fail);
    }
 
-   if (false != mem_debug)
+   if (nofrendo_false != mem_debug)
       mem_addblock(temp, size, file, line);
 
    mem_blockcount++;
@@ -278,7 +274,7 @@ void *_my_malloc(int size, char *file, int line)
 }
 
 /* free a pointer allocated with my_malloc */
-void _my_free(void **data, char *file, int line)
+void _my_nofrendo_free(void **data, char *file, int line)
 {
    char fail[256];
 
@@ -297,7 +293,7 @@ void _my_free(void **data, char *file, int line)
 
    mem_blockcount--; /* dec our block count */
 
-   if (false != mem_debug)
+   if (nofrendo_false != mem_debug)
    {
       mem_deleteblock(*data, file, line);
       mem_freeguardblock(*data, GUARD_LENGTH);
@@ -310,14 +306,14 @@ void _my_free(void **data, char *file, int line)
    *data = NULL; /* NULL our source */
 }
 
-char *_my_strdup(const char *string, char *file, int line)
+char *_my_nofrendo_strdup(const char *string, char *file, int line)
 {
    char *temp;
 
    if (NULL == string)
       return NULL;
 
-   temp = (char *) _my_malloc(strlen(string) + 1, file, line);
+   temp = (char *) _my_nofrendo_malloc(strlen(string) + 1, file, line);
    if (NULL == temp)
       return NULL;
 
@@ -329,12 +325,13 @@ char *_my_strdup(const char *string, char *file, int line)
 #else /* !NOFRENDO_DEBUG */
 
 /* allocates memory and clears it */
-void *_my_malloc(int size)
+void *_my_nofrendo_malloc(int size)
 {
    void *temp;
    char fail[256];
 
-   temp = malloc(size);
+   // temp = malloc(size);
+   temp = heap_caps_malloc(size, MALLOC_CAP_INTERNAL);
 
    if (NULL == temp)
    {
@@ -346,7 +343,7 @@ void *_my_malloc(int size)
 }
 
 /* free a pointer allocated with my_malloc */
-void _my_free(void **data)
+void _my_nofrendo_free(void **data)
 {
    char fail[256];
 
@@ -360,7 +357,7 @@ void _my_free(void **data)
    *data = NULL; /* NULL our source */
 }
 
-char *_my_strdup(const char *string)
+char *_my_nofrendo_strdup(const char *string)
 {
    char *temp;
 
@@ -368,7 +365,7 @@ char *_my_strdup(const char *string)
       return NULL;
 
    /* will ASSERT for us */
-   temp = (char *) _my_malloc(strlen(string) + 1);
+   temp = (char *) _my_nofrendo_malloc(strlen(string) + 1);
    if (NULL == temp)
       return NULL;
 
@@ -385,7 +382,7 @@ void mem_checkleaks(void)
 #ifdef NOFRENDO_DEBUG
    int i;
 
-   if (false == mem_debug || NULL == mem_record)
+   if (nofrendo_false == mem_debug || NULL == mem_record)
       return;
 
    if (mem_blockcount)
@@ -417,7 +414,7 @@ void mem_checkblocks(void)
 #ifdef NOFRENDO_DEBUG
    int i;
 
-   if (false == mem_debug || NULL == mem_record)
+   if (nofrendo_false == mem_debug || NULL == mem_record)
       return;
 
    for (i = 0; i < MAX_BLOCKS; i++)
@@ -485,7 +482,7 @@ void mem_checkblocks(void)
 ** block manager space itself wasn't being freed - d'oh!
 **
 ** Revision 1.10  2000/07/06 17:15:43  matt
-** false isn't NULL, Neil... =)
+** nofrendo_false isn't NULL, Neil... =)
 **
 ** Revision 1.9  2000/07/05 23:10:01  neil
 ** It's a shame if the memguard segfaults

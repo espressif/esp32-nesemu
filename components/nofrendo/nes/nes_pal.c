@@ -24,9 +24,9 @@
 */
 
 #include <math.h>
-#include <noftypes.h>
-#include <bitmap.h>
-#include <nes_pal.h>
+#include "../noftypes.h"
+#include "../bitmap.h"
+#include "nes_pal.h"
 
 #ifndef PI
 #define PI 3.1415926535897932384626433832795
@@ -67,7 +67,7 @@ rgb_t nes_palette[64];
 static float hue = 334.0f;
 static float tint = 0.4f;
 
-#include <gui.h>
+#include "../gui.h"
 
 void pal_dechue(void)
 {

@@ -5,8 +5,8 @@
 ** $Id: nofconfig.h,v 1.1 2001/04/27 14:37:11 neil Exp $
 */
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef _NOFCONFIG_H_
+#define _NOFCONFIG_H_
 
 #ifndef CONFIG_FILE
 #define CONFIG_FILE "nofrendo.cfg"
@@ -15,15 +15,17 @@
 #define FSROOT "/spiffs"
 #define ROM_FILE FSROOT "/rom.nes"
 
+#include "noftypes.h"
+
 typedef struct config_s
 {
    /* open loads from the disk the saved configuration.
    **
    ** open must be the first config function called.
    **
-   ** open returns true on success, false otherwise.
+   ** open returns nofrendo_true on success, nofrendo_false otherwise.
    */
-   bool (*open)(void);
+   nofrendo_bool (*open)(void);
       
    /* close saves the current configuration to disk.
    **

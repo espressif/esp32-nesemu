@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <noftypes.h>
-#include <log.h>
-#include <osd.h>
-#include <nofconfig.h>
-#include <version.h>
+#include "noftypes.h"
+#include "log.h"
+#include "osd.h"
+#include "nofconfig.h"
+#include "version.h"
 
 typedef struct myvar_s
 {
@@ -21,7 +21,7 @@ typedef struct myvar_s
 } myvar_t;
 
 static myvar_t *myVars = NULL;
-static bool mySaveNeeded = false;
+static nofrendo_bool mySaveNeeded = nofrendo_false;
 
 
 static void my_destroy(myvar_t **var)
@@ -29,19 +29,19 @@ static void my_destroy(myvar_t **var)
    ASSERT(*var);
 
    if ((*var)->group) 
-      free((*var)->group);
+      nofrendo_free((*var)->group);
    if ((*var)->key)
-      free((*var)->key);
+      nofrendo_free((*var)->key);
    if ((*var)->value)
-      free((*var)->value);
-   free(*var);
+      nofrendo_free((*var)->value);
+   nofrendo_free(*var);
 }
 
 static myvar_t *my_create(const char *group, const char *key, const char *value)
 {
    myvar_t *var;
 
-   var = malloc(sizeof(*var));
+   var = nofrendo_malloc(sizeof(*var));
    if (NULL == var)
    {
       return 0;
@@ -50,9 +50,9 @@ static myvar_t *my_create(const char *group, const char *key, const char *value)
    var->less = var->greater = NULL;
    var->group = var->key = var->value = NULL;
 
-   if ((var->group = malloc(strlen(group) + 1))
-       && (var->key = malloc(strlen(key) + 1))
-       && (var->value = malloc(strlen(value) + 1)))
+   if ((var->group = nofrendo_malloc(strlen(group) + 1))
+       && (var->key = nofrendo_malloc(strlen(key) + 1))
+       && (var->value = nofrendo_malloc(strlen(value) + 1)))
    {
       strcpy(var->group, group);
       strcpy(var->key, key);
@@ -146,13 +146,13 @@ static char *my_getline(FILE *stream)
       if (NULL == (fgets(buf, sizeof(buf), stream)))
       {
          if (dynamic)
-            free(dynamic);
+            nofrendo_free(dynamic);
          return 0;
       }
 
       if (NULL == dynamic)
       {
-         dynamic = malloc(strlen(buf) + 1);
+         dynamic = nofrendo_malloc(strlen(buf) + 1);
          if (NULL == dynamic)
          {
             return 0;
@@ -163,12 +163,12 @@ static char *my_getline(FILE *stream)
       {
          /* a mini-version of realloc that works with our memory manager */
          char *temp = NULL;
-         temp = malloc(strlen(dynamic) + strlen(buf) + 1);
+         temp = nofrendo_malloc(strlen(dynamic) + strlen(buf) + 1);
          if (NULL == temp)
             return 0;
 
          strcpy(temp, dynamic);
-         free(dynamic);
+         nofrendo_free(dynamic);
          dynamic = temp;
 
          strcat(dynamic, buf);
@@ -194,7 +194,7 @@ static int load_config(char *filename)
       char *line;
       char *group = NULL, *key = NULL, *value = NULL;
 
-      mySaveNeeded = true;
+      mySaveNeeded = nofrendo_true;
       while ((line = my_getline(config_file)))
       {
          char *s;
@@ -220,7 +220,7 @@ static int load_config(char *filename)
 
             case '[':
                if (group)
-                  free(group);
+                  nofrendo_free(group);
 
                group = ++s;
 
@@ -235,7 +235,7 @@ static int load_config(char *filename)
                   *s++ = '\0';
                }
 
-               if ((value = malloc(strlen(group) + 1)))
+               if ((value = nofrendo_malloc(strlen(group) + 1)))
                {
                   strcpy(value, group);
                }
@@ -278,11 +278,11 @@ static int load_config(char *filename)
             }
          } while (*s);
 
-         free(line);
+         nofrendo_free(line);
       }
 
       if (group) 
-         free(group);
+         nofrendo_free(group);
 
       fclose(config_file);
    }
@@ -311,14 +311,14 @@ static int save_config(char *filename)
    return 0;
 }
 
-static bool open_config(void)
+static nofrendo_bool open_config(void)
 {
    return load_config(config.filename);
 }
 
 static void close_config(void)
 {
-   if (true == mySaveNeeded) 
+   if (nofrendo_true == mySaveNeeded) 
    {
       save_config(config.filename);
    }
@@ -342,7 +342,7 @@ static void write_int(const char *group, const char *key, int value)
    }
 
    my_insert(var);
-   mySaveNeeded = true;
+   mySaveNeeded = nofrendo_true;
 }
 
 /* read_int loads an integer from the configuration into "value"
@@ -376,7 +376,7 @@ static void write_string(const char *group, const char *key, const char *value)
    }
 
    my_insert(var);
-   mySaveNeeded = true;
+   mySaveNeeded = nofrendo_true;
 }
 
 /* read_string copies a string from the configuration into "value"

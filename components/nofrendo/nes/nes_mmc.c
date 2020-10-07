@@ -24,14 +24,15 @@
 */
 
 #include <string.h>
-#include <noftypes.h>
-#include "nes6502.h"
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <libsnss.h>
-#include <log.h>
-#include <mmclist.h>
-#include <nes_rom.h>
+
+#include "../noftypes.h"
+#include "../cpu/nes6502.h"
+#include "nes_mmc.h"
+#include "nes_ppu.h"
+#include "../libsnss/libsnss.h"
+#include "../log.h"
+#include "mmclist.h"
+#include "nes_rom.h"
 
 #define  MMC_8KROM         (mmc.cart->rom_banks * 2)
 #define  MMC_16KROM        (mmc.cart->rom_banks)
@@ -160,18 +161,18 @@ void mmc_bankrom(int size, uint32 address, int bank)
 }
 
 /* Check to see if this mapper is supported */
-bool mmc_peek(int map_num)
+nofrendo_bool mmc_peek(int map_num)
 {
    mapintf_t **map_ptr = mappers;
 
    while (NULL != *map_ptr)
    {
       if ((*map_ptr)->number == map_num)
-         return true;
+         return nofrendo_true;
       map_ptr++;
    }
 
-   return false;
+   return nofrendo_false;
 }
 
 static void mmc_setpages(void)
@@ -224,7 +225,7 @@ void mmc_reset(void)
 void mmc_destroy(mmc_t **nes_mmc)
 {
    if (*nes_mmc)
-      free(*nes_mmc);
+      nofrendo_free(*nes_mmc);
 }
 
 mmc_t *mmc_create(rominfo_t *rominfo)
@@ -238,7 +239,7 @@ mmc_t *mmc_create(rominfo_t *rominfo)
          return NULL; /* Should *never* happen */
    }
 
-   temp = malloc(sizeof(mmc_t));
+   temp = nofrendo_malloc(sizeof(mmc_t));
    if (NULL == temp)
       return NULL;
 

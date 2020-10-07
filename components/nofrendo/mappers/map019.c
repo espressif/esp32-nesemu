@@ -23,9 +23,9 @@
 ** $Id: map019.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes_ppu.h"
 
 /* TODO: shouldn't there be an h-blank IRQ handler??? */
 
@@ -62,7 +62,7 @@ static void map19_write(uint32 address, uint8 value)
    
    case 0xB:
       irq.counter = ((value & 0x7F) << 8) | (irq.counter & 0xFF);
-      irq.enabled = (value & 0x80) ? true : false;
+      irq.enabled = (value & 0x80) ? nofrendo_true : nofrendo_false;
       break;
 
    case 0x10:

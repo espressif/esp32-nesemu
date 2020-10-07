@@ -23,11 +23,11 @@
 ** $Id: map005.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes.h>
-#include <log.h>
-#include "mmc5_snd.h"
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes.h"
+#include "../log.h"
+#include "../sndhrdw/mmc5_snd.h"
 
 /* TODO: there's lots of info about this mapper now;
 ** let's implement it correctly/completely
@@ -46,13 +46,13 @@ static void map5_hblank(int vblank)
 
    if (irq.counter == nes_getcontextptr()->scanline)
    {
-      if (true == irq.enabled)
+      if (nofrendo_true == irq.enabled)
       {
          nes_irq();
-         irq.reset = true;
+         irq.reset = nofrendo_true;
       }
       //else 
-      //   irq.reset = false;
+      //   irq.reset = nofrendo_false;
       irq.counter = irq.latch;
    }
 }
@@ -191,12 +191,12 @@ static void map5_write(uint32 address, uint8 value)
    case 0x5203:
       irq.counter = value;
       irq.latch = value;
-//      irq.reset = false;
+//      irq.reset = nofrendo_false;
       break;
 
    case 0x5204:
-      irq.enabled = (value & 0x80) ? true : false;
-//      irq.reset = false;
+      irq.enabled = (value & 0x80) ? nofrendo_true : nofrendo_false;
+//      irq.reset = nofrendo_false;
       break;
 
    default:

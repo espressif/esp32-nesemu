@@ -26,7 +26,6 @@
 */
 
 
-#include <noftypes.h>
 #include "nes6502.h"
 #include "dis6502.h"
 
@@ -244,7 +243,7 @@
 ** flag variables, and mask out the irrelevant data when
 ** we need to check them (branches, etc).  This makes the
 ** zero flag only really be 'set' when z_flag == 0.
-** The rest of the flags are stored as true booleans.
+** The rest of the flags are stored as nofrendo_true booleans.
 */
 
 /* Scatter flags to separate variables */
@@ -686,7 +685,7 @@
 #define JAM() \
 { \
    PC--; \
-   cpu.jammed = true; \
+   cpu.jammed = nofrendo_true; \
    cpu.int_pending = 0; \
    ADD_CYCLES(2); \
 }
@@ -1303,7 +1302,7 @@ uint8 nes6502_getbyte(uint32 address)
 }
 
 /* get number of elapsed cycles */
-uint32 nes6502_getcycles(bool reset_flag)
+uint32 nes6502_getcycles(nofrendo_bool reset_flag)
 {
    uint32 cycles = cpu.total_cycles;
 
@@ -2411,7 +2410,7 @@ void nes6502_reset(void)
    cpu.int_latency = 0;                      /* No latent interrupts */
    cpu.pc_reg = bank_readword(RESET_VECTOR); /* Fetch reset vector */
    cpu.burn_cycles = RESET_CYCLES;
-   cpu.jammed = false;
+   cpu.jammed = nofrendo_false;
 }
 
 /* following macro is used for below 2 functions */
@@ -2426,7 +2425,7 @@ void nes6502_nmi(void)
 {
    DECLARE_LOCAL_REGS
 
-   if (false == cpu.jammed)
+   if (nofrendo_false == cpu.jammed)
    {
       GET_GLOBAL_REGS();
       NMI_PROC();
@@ -2440,7 +2439,7 @@ void nes6502_irq(void)
 {
    DECLARE_LOCAL_REGS
 
-   if (false == cpu.jammed)
+   if (nofrendo_false == cpu.jammed)
    {
       GET_GLOBAL_REGS();
       if (0 == i_flag)

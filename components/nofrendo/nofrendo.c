@@ -26,17 +26,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <noftypes.h>
-#include <nofrendo.h>
-#include <event.h>
-#include <nofconfig.h>
-#include <log.h>
-#include <osd.h>
-#include <gui.h>
-#include <vid_drv.h>
+
+#include "noftypes.h"
+#include "nofrendo.h"
+#include "event.h"
+#include "nofconfig.h"
+#include "log.h"
+#include "osd.h"
+#include "gui.h"
+#include "vid_drv.h"
 
 /* emulated system includes */
-#include <nes.h>
+#include "nes/nes.h"
 
 /* our global machine structure */
 static struct
@@ -51,7 +52,7 @@ static struct
 
    int refresh_rate;
 
-   bool quit;
+   nofrendo_bool quit;
 } console;
 
 /* our happy little timer ISR */
@@ -67,12 +68,12 @@ static void shutdown_everything(void)
 {
    if (console.filename)
    {
-      free(console.filename);
+      nofrendo_free(console.filename);
       console.filename = NULL;
    }
    if (console.nextfilename)
    {
-      free(console.nextfilename);
+      nofrendo_free(console.nextfilename);
       console.nextfilename = NULL;
    }
 
@@ -99,7 +100,7 @@ void main_eject(void)
 
    if (NULL != console.filename)
    {
-      free(console.filename);
+      nofrendo_free(console.filename);
       console.filename = NULL;
    }
    console.type = system_unknown;
@@ -108,14 +109,14 @@ void main_eject(void)
 /* Act on the user's quit requests */
 void main_quit(void)
 {
-   console.quit = true;
+   console.quit = nofrendo_true;
 
    main_eject();
 
    /* if there's a pending filename / system, clear */
    if (NULL != console.nextfilename)
    {
-      free(console.nextfilename);
+      nofrendo_free(console.nextfilename);
       console.nextfilename = NULL;
    }
    console.nexttype = system_unknown;
@@ -149,7 +150,7 @@ static int internal_insert(const char *filename, system_t type)
    if (system_autodetect == type)
       type = detect_systemtype(filename);
 
-   console.filename = strdup(filename);
+   console.filename = nofrendo_strdup(filename);
    console.type = type;
 
    /* set up the event system for this system type */
@@ -182,7 +183,7 @@ static int internal_insert(const char *filename, system_t type)
    default:
       log_printf("system type unknown, playing nofrendo NES intro.\n");
       if (NULL != console.filename)
-         free(console.filename);
+         nofrendo_free(console.filename);
 
       /* oooh, recursion */
       return internal_insert(filename, system_nes);
@@ -194,7 +195,7 @@ static int internal_insert(const char *filename, system_t type)
 /* This tells main_loop to load this next image */
 void main_insert(const char *filename, system_t type)
 {
-   console.nextfilename = strdup(filename);
+   console.nextfilename = nofrendo_strdup(filename);
    console.nexttype = type;
 
    main_eject();
@@ -208,7 +209,7 @@ int nofrendo_main(int argc, char *argv[])
    console.type = system_unknown;
    console.nexttype = system_unknown;
    console.refresh_rate = 0;
-   console.quit = false;
+   console.quit = nofrendo_false;
    
    if (log_init())
       return -1;
@@ -240,10 +241,10 @@ int main_loop(const char *filename, system_t type)
       return -1;
 	printf("vid_init done\n");
 
-   console.nextfilename = strdup(filename);
+   console.nextfilename = nofrendo_strdup(filename);
    console.nexttype = type;
 
-   while (false == console.quit)
+   while (nofrendo_false == console.quit)
    {
       if (internal_insert(console.nextfilename, console.nexttype))
          return 1;
@@ -270,7 +271,7 @@ int main_loop(const char *filename, system_t type)
 ** removed fds "system"
 **
 ** Revision 1.46  2000/11/25 01:51:53  matt
-** bool stinks sometimes
+** nofrendo_bool stinks sometimes
 **
 ** Revision 1.45  2000/11/20 13:22:12  matt
 ** standardized timer ISR, added nofrendo_ticks
