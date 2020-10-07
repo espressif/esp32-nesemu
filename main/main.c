@@ -50,7 +50,7 @@ void spiffs_init(void)
     }
     else
     {
-        printf("Partition size: total: %d, used: %d", total, used);
+        printf("Partition size: total: %d, used: %d\n", total, used);
     }
 }
 
