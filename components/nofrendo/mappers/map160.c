@@ -30,7 +30,7 @@
 
 static struct
 {
-   nofrendo_bool enabled, expired;
+   bool enabled, expired;
    int counter;
    int latch_c005, latch_c003;
 } irq;
@@ -47,19 +47,19 @@ static void map160_write(uint32 address, uint8 value)
    }
    else if (0xC002 == address)
    {
-      irq.enabled = nofrendo_false;
+      irq.enabled = false;
       irq.latch_c005 = irq.latch_c003;
    }
    else if (0xC003 == address)
    {
-      if (nofrendo_false == irq.expired)
+      if (false == irq.expired)
       {
          irq.counter = value;
       }
       else
       {
-         irq.expired = nofrendo_false;
-         irq.enabled = nofrendo_true;
+         irq.expired = false;
+         irq.enabled = true;
          irq.counter = irq.latch_c005;
       }
    }
@@ -82,9 +82,9 @@ static void map160_hblank(int vblank)
    {
       if (ppu_enabled() && irq.enabled)
       {
-         if (0 == irq.counter && nofrendo_false == irq.expired)
+         if (0 == irq.counter && false == irq.expired)
          {
-            irq.expired = nofrendo_true;
+            irq.expired = true;
             nes_irq();
          }
          else
@@ -97,8 +97,8 @@ static void map160_hblank(int vblank)
 
 static void map160_init(void)
 {
-   irq.enabled = nofrendo_false;
-   irq.expired = nofrendo_false;
+   irq.enabled = false;
+   irq.expired = false;
    irq.counter = 0;
    irq.latch_c003 = irq.latch_c005 = 0;
 }

@@ -262,7 +262,7 @@ static uint8 nes_clearfiq(void)
 {
    if (nes.fiq_occurred)
    {
-      nes.fiq_occurred = nofrendo_false;
+      nes.fiq_occurred = false;
       return 0x40;
    }
 
@@ -283,7 +283,7 @@ static void nes_checkfiq(int cycles)
       nes.fiq_cycles += (int) NES_FIQ_PERIOD;
       if (0 == (nes.fiq_state & 0xC0))
       {
-         nes.fiq_occurred = nofrendo_true;
+         nes.fiq_occurred = true;
          nes6502_irq();
       }
    }
@@ -294,7 +294,7 @@ void nes_nmi(void)
    nes6502_nmi();
 }
 
-static void nes_renderframe(nofrendo_bool draw_flag)
+static void nes_renderframe(bool draw_flag)
 {
    int elapsed_cycles;
    mapintf_t *mapintf = nes.mmc->intf;
@@ -334,12 +334,12 @@ static void nes_renderframe(nofrendo_bool draw_flag)
    nes.scanline = 0;
 }
 
-static void system_video(nofrendo_bool draw)
+static void system_video(bool draw)
 {
    /* TODO: hack */
-   if (nofrendo_false == draw)
+   if (false == draw)
    {
-      gui_frame(nofrendo_false);
+      gui_frame(false);
       return;
    }
 
@@ -348,7 +348,7 @@ static void system_video(nofrendo_bool draw)
 //            0, 0, NES_SCREEN_WIDTH, NES_VISIBLE_HEIGHT);
 
    /* overlay our GUI on top of it */
-   gui_frame(nofrendo_true);
+   gui_frame(true);
 
    /* blit to screen */
    vid_flush();
@@ -369,7 +369,7 @@ void nes_emulate(void)
    nes.scanline_cycles = 0;
    nes.fiq_cycles = (int) NES_FIQ_PERIOD;
 
-   while (nofrendo_false == nes.poweroff)
+   while (false == nes.poweroff)
    {
       if (nofrendo_ticks != last_ticks)
       {
@@ -380,24 +380,24 @@ void nes_emulate(void)
          last_ticks = nofrendo_ticks;
       }
 
-      if (nofrendo_true == nes.pause)
+      if (true == nes.pause)
       {
          /* TODO: dim the screen, and pause/silence the apu */
-         system_video(nofrendo_true);
+         system_video(true);
          frames_to_render = 0;
       }
       else if (frames_to_render > 1)
       {
          frames_to_render--;
-         nes_renderframe(nofrendo_false);
-         system_video(nofrendo_false);
+         nes_renderframe(false);
+         system_video(false);
       }
-      else if ((1 == frames_to_render && nofrendo_true == nes.autoframeskip)
-               || nofrendo_false == nes.autoframeskip)
+      else if ((1 == frames_to_render && true == nes.autoframeskip)
+               || false == nes.autoframeskip)
       {
          frames_to_render = 0;
-         nes_renderframe(nofrendo_true);
-         system_video(nofrendo_true);
+         nes_renderframe(true);
+         system_video(true);
       }
    }
 }
@@ -454,12 +454,12 @@ void nes_destroy(nes_t **machine)
 
 void nes_poweroff(void)
 {
-   nes.poweroff = nofrendo_true;
+   nes.poweroff = true;
 }
 
 void nes_togglepause(void)
 {
-   nes.pause ^= nofrendo_true;
+   nes.pause ^= true;
 }
 
 /* insert a cart into the NES */
@@ -486,7 +486,7 @@ int nes_insertcart(const char *filename, nes_t *machine)
 
    /* if there's VRAM, let the PPU know */
    if (NULL != machine->rominfo->vram)
-      machine->ppu->vram_present = nofrendo_true;
+      machine->ppu->vram_present = true;
    
    apu_setext(machine->apu, machine->mmc->intf->sound_ext);
    
@@ -522,7 +522,7 @@ nes_t *nes_create(void)
 //   if (NULL == machine->vidbuf)
 //      goto _fail;
 
-   machine->autoframeskip = nofrendo_true;
+   machine->autoframeskip = true;
 
    /* cpu */
    machine->cpu = nofrendo_malloc(sizeof(nes6502_context));
@@ -559,8 +559,8 @@ nes_t *nes_create(void)
    if (NULL == machine->ppu)
       goto _fail;
 
-   machine->poweroff = nofrendo_false;
-   machine->pause = nofrendo_false;
+   machine->poweroff = false;
+   machine->pause = false;
 
    return machine;
 
@@ -593,7 +593,7 @@ _fail:
 ** scanline emulation simplifications/timing fixes
 **
 ** Revision 1.13  2000/11/25 01:53:42  matt
-** nofrendo_bool stinks sometimes
+** bool stinks sometimes
 **
 ** Revision 1.12  2000/11/21 13:28:40  matt
 ** take care to zero allocated mem

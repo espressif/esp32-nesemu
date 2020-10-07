@@ -29,7 +29,7 @@
 
 typedef struct vrcvirectangle_s
 {
-   nofrendo_bool enabled;
+   bool enabled;
 
    uint8 reg[3];
    
@@ -43,7 +43,7 @@ typedef struct vrcvirectangle_s
 
 typedef struct vrcvisawtooth_s
 {
-   nofrendo_bool enabled;
+   bool enabled;
    
    uint8 reg[3];
    
@@ -81,7 +81,7 @@ static int32 vrcvi_rectangle(vrcvirectangle_t *chan)
    }
 
    /* return if not enabled */
-   if (nofrendo_false == chan->enabled)
+   if (false == chan->enabled)
       return 0;
 
    if (chan->adder < chan->duty_flip)
@@ -113,7 +113,7 @@ static int32 vrcvi_sawtooth(vrcvisawtooth_t *chan)
    }
 
    /* return if not enabled */
-   if (nofrendo_false == chan->enabled)
+   if (false == chan->enabled)
       return 0;
 
    return (chan->output_acc >> 3) << 9;
@@ -155,7 +155,7 @@ static void vrcvi_write(uint32 address, uint8 value)
    case 0xA002:
       vrcvi.rectangle[chan].reg[2] = value;
       vrcvi.rectangle[chan].freq = ((value & 0x0F) << 8) + vrcvi.rectangle[chan].reg[1] + 1;
-      vrcvi.rectangle[chan].enabled = (value & 0x80) ? nofrendo_true : nofrendo_false;
+      vrcvi.rectangle[chan].enabled = (value & 0x80) ? true : false;
       break;
 
    case 0xB000:
@@ -171,7 +171,7 @@ static void vrcvi_write(uint32 address, uint8 value)
    case 0xB002:
       vrcvi.saw.reg[2] = value;
       vrcvi.saw.freq = (((value & 0x0F) << 8) + vrcvi.saw.reg[1] + 1) << 1;
-      vrcvi.saw.enabled = (value & 0x80) ? nofrendo_true : nofrendo_false;
+      vrcvi.saw.enabled = (value & 0x80) ? true : false;
       break;
 
    default:

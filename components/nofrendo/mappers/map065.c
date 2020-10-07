@@ -30,7 +30,7 @@
 static struct
 {
    int counter;
-   nofrendo_bool enabled;
+   bool enabled;
    int cycles;
    uint8 low, high;
 } irq;
@@ -38,7 +38,7 @@ static struct
 static void map65_init(void)
 {
    irq.counter = 0;
-   irq.enabled = nofrendo_false;
+   irq.enabled = false;
    irq.low = irq.high = 0;
    irq.cycles = 0;
 }
@@ -67,7 +67,7 @@ static void map65_write(uint32 address, uint8 value)
       switch (reg)
       {
       case 4:
-         irq.enabled = (value & 0x01) ? nofrendo_false : nofrendo_true;
+         irq.enabled = (value & 0x01) ? false : true;
          break;
 
       case 5:

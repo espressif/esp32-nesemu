@@ -32,7 +32,7 @@ static struct
 {
    int counter, latch;
    int wait_state;
-   nofrendo_bool enabled;
+   bool enabled;
 } irq;
 
 /* mapper 85: Konami VRC7 */
@@ -119,8 +119,8 @@ static void map85_write(uint32 address, uint8 value)
       else
       {
          irq.wait_state = value & 0x01;
-         irq.enabled = (value & 0x02) ? nofrendo_true : nofrendo_false;
-         if (nofrendo_true == irq.enabled)
+         irq.enabled = (value & 0x02) ? true : false;
+         if (true == irq.enabled)
             irq.counter = irq.latch;
       }
       break;
@@ -165,7 +165,7 @@ static void map85_init(void)
 
    irq.counter = irq.latch = 0;
    irq.wait_state = 0;
-   irq.enabled = nofrendo_false;
+   irq.enabled = false;
 }
 
 mapintf_t map85_intf = 

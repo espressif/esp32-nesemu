@@ -31,7 +31,7 @@
 static struct
 {
    int counter, latch;
-   nofrendo_bool enabled, reset;
+   bool enabled, reset;
 } irq;
 
 static uint8 command = 0;
@@ -42,7 +42,7 @@ static void map64_hblank(int vblank)
    if (vblank)
       return;
 
-   irq.reset = nofrendo_false;
+   irq.reset = false;
 
    if (ppu_enabled())
    {
@@ -50,10 +50,10 @@ static void map64_hblank(int vblank)
       {
          irq.counter = irq.latch;
        
-         if (nofrendo_true == irq.enabled)
+         if (true == irq.enabled)
             nes_irq();
 
-         irq.reset = nofrendo_true;
+         irq.reset = true;
       }
    }
 }
@@ -139,16 +139,16 @@ static void map64_write(uint32 address, uint8 value)
    
    case 0xC001:
       //irq.latch = value;
-      irq.reset = nofrendo_true;
+      irq.reset = true;
       break;
    
    case 0xE000:
       //irq.counter = irq.latch;
-      irq.enabled = nofrendo_false;
+      irq.enabled = false;
       break;
    
    case 0xE001:
-      irq.enabled = nofrendo_true;
+      irq.enabled = true;
       break;
    
    default:
@@ -158,7 +158,7 @@ static void map64_write(uint32 address, uint8 value)
       break;
    }
 
-   if (nofrendo_true == irq.reset)
+   if (true == irq.reset)
       irq.counter = irq.latch;
 }
 
@@ -170,7 +170,7 @@ static void map64_init(void)
    mmc_bankrom(8, 0xE000, MMC_LASTBANK);
 
    irq.counter = irq.latch = 0;
-   irq.reset = irq.enabled = nofrendo_false;
+   irq.reset = irq.enabled = false;
 }
 
 static map_memwrite map64_memwrite[] =

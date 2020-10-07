@@ -47,7 +47,7 @@ typedef struct memblock_s
 } memblock_t;
 
 /* debugging flag */
-nofrendo_bool mem_debug = nofrendo_true;
+bool mem_debug = true;
 
 
 #ifdef NOFRENDO_DEBUG
@@ -252,10 +252,10 @@ void *_my_nofrendo_malloc(int size, char *file, int line)
    void *temp;
    char fail[256];
 
-   if (NULL == mem_record && nofrendo_false != mem_debug)
+   if (NULL == mem_record && false != mem_debug)
       mem_init();
 
-   if (nofrendo_false != mem_debug)
+   if (false != mem_debug)
       temp = mem_guardalloc(size, GUARD_LENGTH);
    else
       // temp = malloc(size);
@@ -269,7 +269,7 @@ void *_my_nofrendo_malloc(int size, char *file, int line)
       ASSERT_MSG(fail);
    }
 
-   if (nofrendo_false != mem_debug)
+   if (false != mem_debug)
       mem_addblock(temp, size, file, line);
 
    mem_blockcount++;
@@ -297,7 +297,7 @@ void _my_nofrendo_free(void **data, char *file, int line)
 
    mem_blockcount--; /* dec our block count */
 
-   if (nofrendo_false != mem_debug)
+   if (false != mem_debug)
    {
       mem_deleteblock(*data, file, line);
       mem_freeguardblock(*data, GUARD_LENGTH);
@@ -386,7 +386,7 @@ void mem_checkleaks(void)
 #ifdef NOFRENDO_DEBUG
    int i;
 
-   if (nofrendo_false == mem_debug || NULL == mem_record)
+   if (false == mem_debug || NULL == mem_record)
       return;
 
    if (mem_blockcount)
@@ -418,7 +418,7 @@ void mem_checkblocks(void)
 #ifdef NOFRENDO_DEBUG
    int i;
 
-   if (nofrendo_false == mem_debug || NULL == mem_record)
+   if (false == mem_debug || NULL == mem_record)
       return;
 
    for (i = 0; i < MAX_BLOCKS; i++)
@@ -486,7 +486,7 @@ void mem_checkblocks(void)
 ** block manager space itself wasn't being freed - d'oh!
 **
 ** Revision 1.10  2000/07/06 17:15:43  matt
-** nofrendo_false isn't NULL, Neil... =)
+** false isn't NULL, Neil... =)
 **
 ** Revision 1.9  2000/07/05 23:10:01  neil
 ** It's a shame if the memguard segfaults

@@ -119,7 +119,7 @@ static void map18_write(uint32 address, uint8 value)
       if(irq.counter>15) irq.counter-=16;
       break;
    case 0xF000:
-      if(value&0x01) irq.enabled=nofrendo_true;
+      if(value&0x01) irq.enabled=true;
       break;
    case 0xF001: 
       irq.enabled=value&0x01;

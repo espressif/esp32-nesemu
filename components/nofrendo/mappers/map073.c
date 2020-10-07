@@ -33,7 +33,7 @@
 
 static struct
 {
-  nofrendo_bool enabled;
+  bool enabled;
   uint32 counter;
 } irq;
 
@@ -43,7 +43,7 @@ static struct
 static void map73_init (void)
 {
   /* Turn off IRQs */
-  irq.enabled = nofrendo_false;
+  irq.enabled = false;
   irq.counter = 0x0000;
 
   /* Done */
@@ -76,7 +76,7 @@ static void map73_hblank (int vblank)
        nes_irq ();
 
        /* Shut off IRQ counter */
-       irq.enabled = nofrendo_false;
+       irq.enabled = false;
      }
    }
 }
@@ -100,8 +100,8 @@ static void map73_write (uint32 address, uint8 value)
     case 0xB000: irq.counter &= 0x0FFF;
                  irq.counter |= (uint32) (value << 12);
                  break;
-    case 0xC000: if (value & 0x02) irq.enabled = nofrendo_true;
-                 else              irq.enabled = nofrendo_false;
+    case 0xC000: if (value & 0x02) irq.enabled = true;
+                 else              irq.enabled = false;
                  break;
     case 0xF000: mmc_bankrom (16, 0x8000, value);
     default:     break;

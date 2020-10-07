@@ -67,21 +67,21 @@ typedef struct rectangle_s
 {
    uint8 regs[4];
 
-   nofrendo_bool enabled;
+   bool enabled;
    
    float accum;
    int32 freq;
    int32 output_vol;
-   nofrendo_bool fixed_envelope;
-   nofrendo_bool holdnote;
+   bool fixed_envelope;
+   bool holdnote;
    uint8 volume;
 
    int32 sweep_phase;
    int32 sweep_delay;
-   nofrendo_bool sweep_on;
+   bool sweep_on;
    uint8 sweep_shifts;
    uint8 sweep_length;
-   nofrendo_bool sweep_inc;
+   bool sweep_inc;
 
    /* this may not be necessary in the future */
    int32 freq_limit;
@@ -98,7 +98,7 @@ typedef struct triangle_s
 {
    uint8 regs[3];
 
-   nofrendo_bool enabled;
+   bool enabled;
 
    float accum;
    int32 freq;
@@ -106,8 +106,8 @@ typedef struct triangle_s
 
    uint8 adder;
 
-   nofrendo_bool holdnote;
-   nofrendo_bool counter_started;
+   bool holdnote;
+   bool counter_started;
    /* quasi-hack */
    int write_latency;
 
@@ -120,7 +120,7 @@ typedef struct noise_s
 {
    uint8 regs[3];
 
-   nofrendo_bool enabled;
+   bool enabled;
 
    float accum;
    int32 freq;
@@ -129,8 +129,8 @@ typedef struct noise_s
    int32 env_phase;
    int32 env_delay;
    uint8 env_vol;
-   nofrendo_bool fixed_envelope;
-   nofrendo_bool holdnote;
+   bool fixed_envelope;
+   bool holdnote;
 
    uint8 volume;
 
@@ -139,7 +139,7 @@ typedef struct noise_s
 #ifdef REALTIME_NOISE
    uint8 xor_tap;
 #else
-   nofrendo_bool short_sample;
+   bool short_sample;
    int cur_pos;
 #endif /* REALTIME_NOISE */
 } noise_t;
@@ -149,7 +149,7 @@ typedef struct dmc_s
    uint8 regs[4];
 
    /* bodge for timestamp queue */
-   nofrendo_bool enabled;
+   bool enabled;
    
    float accum;
    int32 freq;
@@ -161,9 +161,9 @@ typedef struct dmc_s
    int cached_dmalength;
    uint8 cur_byte;
 
-   nofrendo_bool looping;
-   nofrendo_bool irq_gen;
-   nofrendo_bool irq_occurred;
+   bool looping;
+   bool irq_gen;
+   bool irq_occurred;
 
 } dmc_t;
 
@@ -245,7 +245,7 @@ extern void apu_reset(void);
 
 extern void apu_setext(apu_t *apu, apuext_t *ext);
 extern void apu_setfilter(int filter_type);
-extern void apu_setchan(int chan, nofrendo_bool enabled);
+extern void apu_setchan(int chan, bool enabled);
 
 extern uint8 apu_read(uint32 address);
 extern void apu_write(uint32 address, uint8 value);

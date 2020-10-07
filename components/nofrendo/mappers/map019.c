@@ -62,7 +62,7 @@ static void map19_write(uint32 address, uint8 value)
    
    case 0xB:
       irq.counter = ((value & 0x7F) << 8) | (irq.counter & 0xFF);
-      irq.enabled = (value & 0x80) ? nofrendo_true : nofrendo_false;
+      irq.enabled = (value & 0x80) ? true : false;
       break;
 
    case 0x10:

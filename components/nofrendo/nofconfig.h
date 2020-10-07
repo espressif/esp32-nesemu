@@ -23,9 +23,9 @@ typedef struct config_s
    **
    ** open must be the first config function called.
    **
-   ** open returns nofrendo_true on success, nofrendo_false otherwise.
+   ** open returns true on success, false otherwise.
    */
-   nofrendo_bool (*open)(void);
+   bool (*open)(void);
       
    /* close saves the current configuration to disk.
    **

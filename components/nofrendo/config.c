@@ -21,7 +21,7 @@ typedef struct myvar_s
 } myvar_t;
 
 static myvar_t *myVars = NULL;
-static nofrendo_bool mySaveNeeded = nofrendo_false;
+static bool mySaveNeeded = false;
 
 
 static void my_destroy(myvar_t **var)
@@ -194,7 +194,7 @@ static int load_config(char *filename)
       char *line;
       char *group = NULL, *key = NULL, *value = NULL;
 
-      mySaveNeeded = nofrendo_true;
+      mySaveNeeded = true;
       while ((line = my_getline(config_file)))
       {
          char *s;
@@ -311,14 +311,14 @@ static int save_config(char *filename)
    return 0;
 }
 
-static nofrendo_bool open_config(void)
+static bool open_config(void)
 {
    return load_config(config.filename);
 }
 
 static void close_config(void)
 {
-   if (nofrendo_true == mySaveNeeded) 
+   if (true == mySaveNeeded) 
    {
       save_config(config.filename);
    }
@@ -342,7 +342,7 @@ static void write_int(const char *group, const char *key, int value)
    }
 
    my_insert(var);
-   mySaveNeeded = nofrendo_true;
+   mySaveNeeded = true;
 }
 
 /* read_int loads an integer from the configuration into "value"
@@ -376,7 +376,7 @@ static void write_string(const char *group, const char *key, const char *value)
    }
 
    my_insert(var);
-   mySaveNeeded = nofrendo_true;
+   mySaveNeeded = true;
 }
 
 /* read_string copies a string from the configuration into "value"

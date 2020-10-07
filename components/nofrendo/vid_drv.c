@@ -298,7 +298,7 @@ INLINE int calc_dirties(rect_t *list)
 
    for (i = 0; i < iterations; i++)
    {
-      dirty = nofrendo_false;
+      dirty = false;
 
       j = line_offset;
       DUFFS_DEVICE(
@@ -306,14 +306,14 @@ INLINE int calc_dirties(rect_t *list)
          if (vid_memcmp(back_buffer->line[j], primary_buffer->line[j], 
                         CHUNK_WIDTH))
          { 
-            dirty = nofrendo_true; 
+            dirty = true; 
             break; 
          } 
 
          j++; 
       }, CHUNK_HEIGHT);
 
-      if (nofrendo_true == dirty)
+      if (true == dirty)
       {
          list->h = CHUNK_HEIGHT;
          list->w = CHUNK_WIDTH;
@@ -341,9 +341,9 @@ void vid_flush(void)
 
    ASSERT(driver);
 
-   if (nofrendo_true == driver->invalidate)
+   if (true == driver->invalidate)
    {
-      driver->invalidate = nofrendo_false;
+      driver->invalidate = false;
       num_dirties = -1;
    }
    else

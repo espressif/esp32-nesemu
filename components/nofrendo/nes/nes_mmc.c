@@ -161,18 +161,18 @@ void mmc_bankrom(int size, uint32 address, int bank)
 }
 
 /* Check to see if this mapper is supported */
-nofrendo_bool mmc_peek(int map_num)
+bool mmc_peek(int map_num)
 {
    mapintf_t **map_ptr = mappers;
 
    while (NULL != *map_ptr)
    {
       if ((*map_ptr)->number == map_num)
-         return nofrendo_true;
+         return true;
       map_ptr++;
    }
 
-   return nofrendo_false;
+   return false;
 }
 
 static void mmc_setpages(void)

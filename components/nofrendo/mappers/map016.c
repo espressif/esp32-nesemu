@@ -31,7 +31,7 @@
 static struct
 {
    int counter;
-   nofrendo_bool enabled;
+   bool enabled;
 } irq;
 
 /* mapper 16: Bandai */
@@ -41,7 +41,7 @@ static void map16_init(void)
    mmc_bankrom(16, 0x8000, 0);
    mmc_bankrom(16, 0xC000, MMC_LASTBANK);
    irq.counter = 0;
-   irq.enabled = nofrendo_false;
+   irq.enabled = false;
 }
 
 static void map16_write(uint32 address, uint8 value)
@@ -82,7 +82,7 @@ static void map16_write(uint32 address, uint8 value)
          break;
    
       case 0xA:
-         irq.enabled = (value & 1) ? nofrendo_true : nofrendo_false;
+         irq.enabled = (value & 1) ? true : false;
          break;
  
       case 0xB:

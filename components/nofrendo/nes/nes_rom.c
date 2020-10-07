@@ -260,7 +260,7 @@ static int rom_adddirty(char *filename)
 #ifdef NOFRENDO_DEBUG
 #define MAX_BUFFER_LENGTH 255
    char buffer[MAX_BUFFER_LENGTH + 1];
-   bool found = nofrendo_false;
+   bool found = false;
 
    FILE *fp = fopen("dirtyrom.txt", "rt");
    if (NULL == fp)
@@ -270,12 +270,12 @@ static int rom_adddirty(char *filename)
    {
       if (0 == strncmp(filename, buffer, strlen(filename)))
       {
-         found = nofrendo_true;
+         found = true;
          break;
       }
    }
 
-   if (nofrendo_false == found)
+   if (false == found)
    {
       /* close up the file, open it back up for writing */
       fclose(fp);
@@ -352,12 +352,12 @@ static int rom_getheader(FILE *fp, rominfo_t *rominfo)
    if (0 == memcmp(head.reserved, reserved, RESERVED_LENGTH))
    {
       /* We were clean */
-      header_dirty = nofrendo_false;
+      header_dirty = false;
       rominfo->mapper_number |= (head.mapper_hinybble & 0xF0);
    }
    else
    {
-      header_dirty = nofrendo_true;
+      header_dirty = true;
 
       /* @!?#@! DiskDude. */
       if (('D' == head.mapper_hinybble) && (0 == memcmp(head.reserved, "iskDude!", 8)))
@@ -444,7 +444,7 @@ rominfo_t *rom_load(const char *filename)
       goto _fail;
 
    /* Make sure we really support the mapper */
-   if (nofrendo_false == mmc_peek(rominfo->mapper_number))
+   if (false == mmc_peek(rominfo->mapper_number))
    {
       gui_sendmsg(GUI_RED, "Mapper %d not yet implemented", rominfo->mapper_number);
       goto _fail;

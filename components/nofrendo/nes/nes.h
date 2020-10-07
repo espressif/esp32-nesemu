@@ -75,7 +75,7 @@ typedef struct nes_s
       there, saving us about 64K of memory. */
 //   bitmap_t *vidbuf; 
 
-   nofrendo_bool fiq_occurred;
+   bool fiq_occurred;
    uint8 fiq_state;
    int fiq_cycles;
 
@@ -83,11 +83,11 @@ typedef struct nes_s
 
    /* Timing stuff */
    float scanline_cycles;
-   nofrendo_bool autoframeskip;
+   bool autoframeskip;
 
    /* control */
-   nofrendo_bool poweroff;
-   nofrendo_bool pause;
+   bool poweroff;
+   bool pause;
 
 } nes_t;
 
@@ -132,7 +132,7 @@ extern void nes_togglepause(void);
 ** scanline emulation simplifications/timing fixes
 **
 ** Revision 1.6  2000/11/25 01:52:17  matt
-** nofrendo_bool stinks sometimes
+** bool stinks sometimes
 **
 ** Revision 1.5  2000/11/09 14:07:28  matt
 ** state load fixed, state save mostly fixed

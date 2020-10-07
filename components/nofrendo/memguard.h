@@ -56,7 +56,7 @@ extern void mem_cleanup(void);
 extern void mem_checkblocks(void);
 extern void mem_checkleaks(void);
 
-extern nofrendo_bool mem_debug;
+extern bool mem_debug;
 
 #endif   /* _MEMGUARD_H_ */
 

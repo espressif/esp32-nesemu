@@ -44,7 +44,7 @@ static void map40_init(void)
    mmc_bankrom(8, 0xA000, 5);
    mmc_bankrom(8, 0xE000, 7);
 
-   irq.enabled = nofrendo_false;
+   irq.enabled = false;
    irq.counter = (int) MAP40_IRQ_PERIOD;
 }
 
@@ -58,7 +58,7 @@ static void map40_hblank(int vblank)
       if (0 == irq.counter)
       {
          nes_irq();
-         irq.enabled = nofrendo_false;
+         irq.enabled = false;
       }
    }
 }
@@ -70,12 +70,12 @@ static void map40_write(uint32 address, uint8 value)
    switch (range)
    {
    case 0: /* 0x8000-0x9FFF */
-      irq.enabled = nofrendo_false;
+      irq.enabled = false;
       irq.counter = (int) MAP40_IRQ_PERIOD;
       break;
 
    case 1: /* 0xA000-0xBFFF */
-      irq.enabled = nofrendo_true;
+      irq.enabled = true;
       break;
 
    case 3: /* 0xE000-0xFFFF */

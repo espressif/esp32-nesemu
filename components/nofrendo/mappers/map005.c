@@ -46,13 +46,13 @@ static void map5_hblank(int vblank)
 
    if (irq.counter == nes_getcontextptr()->scanline)
    {
-      if (nofrendo_true == irq.enabled)
+      if (true == irq.enabled)
       {
          nes_irq();
-         irq.reset = nofrendo_true;
+         irq.reset = true;
       }
       //else 
-      //   irq.reset = nofrendo_false;
+      //   irq.reset = false;
       irq.counter = irq.latch;
    }
 }
@@ -191,12 +191,12 @@ static void map5_write(uint32 address, uint8 value)
    case 0x5203:
       irq.counter = value;
       irq.latch = value;
-//      irq.reset = nofrendo_false;
+//      irq.reset = false;
       break;
 
    case 0x5204:
-      irq.enabled = (value & 0x80) ? nofrendo_true : nofrendo_false;
-//      irq.reset = nofrendo_false;
+      irq.enabled = (value & 0x80) ? true : false;
+//      irq.reset = false;
       break;
 
    default:

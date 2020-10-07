@@ -78,7 +78,7 @@ extern void mmc_destroy(mmc_t **nes_mmc);
 extern void mmc_getcontext(mmc_t *dest_mmc);
 extern void mmc_setcontext(mmc_t *src_mmc);
 
-extern nofrendo_bool mmc_peek(int map_num);
+extern bool mmc_peek(int map_num);
 
 extern void mmc_reset(void);
 

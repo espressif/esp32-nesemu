@@ -41,7 +41,7 @@ typedef struct viddriver_s
    /* set up a palette */
    void      (*set_palette)(rgb_t *palette);
    /* custom bitmap clear (can be NULL) */
-   void      (*clear)(uint8_t color);
+   void      (*clear)(uint8 color);
    /* lock surface for writing (required) */
    bitmap_t *(*lock_write)(void);
    /* free a locked surface (can be NULL) */
@@ -50,7 +50,7 @@ typedef struct viddriver_s
    void      (*custom_blit)(bitmap_t *primary, int num_dirties, 
                             rect_t *dirty_rects);
    /* immediately invalidate the buffer, i.e. full redraw */
-   nofrendo_bool      invalidate;
+   bool      invalidate;
 } viddriver_t;
 
 /* TODO: filth */

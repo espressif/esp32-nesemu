@@ -51,7 +51,7 @@ static void map24_hblank(int vblank)
       {
          irq.counter = irq.latch;
          nes_irq();
-         //irq.enabled = nofrendo_false;
+         //irq.enabled = false;
          irq.enabled = irq.wait_state;
       }
    }

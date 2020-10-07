@@ -23,8 +23,10 @@
 ** $Id: noftypes.h,v 1.1 2001/04/27 14:37:11 neil Exp $
 */
 
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef _NOFTYPES_H_
+#define _NOFTYPES_H_
+
+#include <stdbool.h>
 
 /* Define this if running on little-endian (x86) systems */
 #define  HOST_LITTLE_ENDIAN
@@ -50,25 +52,13 @@ typedef  unsigned char  uint8;
 typedef  unsigned short uint16;
 typedef  unsigned int   uint32;
 
-#ifndef __cplusplus
-typedef enum
-{
-   nofrendo_false = 0,
-   nofrendo_true = 1
-} nofrendo_bool;
-
-#ifndef  NULL
-#define  NULL     ((void *) 0)
-#endif
-#endif /* !__cplusplus */
-
 #include "memguard.h"
 #include "log.h"
 
 #ifdef NOFRENDO_DEBUG
 
 #define  ASSERT(expr)      log_assert((int) (expr), __LINE__, __FILE__, NULL)
-#define  ASSERT_MSG(msg)   log_assert(nofrendo_false, __LINE__, __FILE__, (msg))
+#define  ASSERT_MSG(msg)   log_assert(false, __LINE__, __FILE__, (msg))
 
 #else /* !NOFRENDO_DEBUG */
 

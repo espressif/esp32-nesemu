@@ -34,7 +34,7 @@
 
 static struct
 {
-  nofrendo_bool enabled;
+  bool enabled;
   uint32 counter;
 } irq;
 
@@ -44,7 +44,7 @@ static struct
 static void map42_irq_reset (void)
 {
   /* Turn off IRQs */
-  irq.enabled = nofrendo_false;
+  irq.enabled = false;
   irq.counter = 0x0000;
 
   /* Done */
@@ -114,7 +114,7 @@ static void map42_write (uint32 address, uint8 value)
                break;
 
     /* Register 2: IRQ */
-    case 0x02: if (value & 0x02) irq.enabled = nofrendo_true;
+    case 0x02: if (value & 0x02) irq.enabled = true;
                else              map42_irq_reset ();
                break;
 

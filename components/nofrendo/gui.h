@@ -72,7 +72,7 @@ extern void gui_sendmsg(int color, char *format, ...);
 extern int gui_init(void);
 extern void gui_shutdown(void);
 
-extern void gui_frame(nofrendo_bool draw);
+extern void gui_frame(bool draw);
 
 extern void gui_togglefps(void);
 extern void gui_togglegui(void);

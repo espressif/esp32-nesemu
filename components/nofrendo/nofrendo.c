@@ -52,7 +52,7 @@ static struct
 
    int refresh_rate;
 
-   nofrendo_bool quit;
+   bool quit;
 } console;
 
 /* our happy little timer ISR */
@@ -109,7 +109,7 @@ void main_eject(void)
 /* Act on the user's quit requests */
 void main_quit(void)
 {
-   console.quit = nofrendo_true;
+   console.quit = true;
 
    main_eject();
 
@@ -209,7 +209,7 @@ int nofrendo_main(int argc, char *argv[])
    console.type = system_unknown;
    console.nexttype = system_unknown;
    console.refresh_rate = 0;
-   console.quit = nofrendo_false;
+   console.quit = false;
    
    if (log_init())
       return -1;
@@ -244,7 +244,7 @@ int main_loop(const char *filename, system_t type)
    console.nextfilename = nofrendo_strdup(filename);
    console.nexttype = type;
 
-   while (nofrendo_false == console.quit)
+   while (false == console.quit)
    {
       if (internal_insert(console.nextfilename, console.nexttype))
          return 1;
@@ -271,7 +271,7 @@ int main_loop(const char *filename, system_t type)
 ** removed fds "system"
 **
 ** Revision 1.46  2000/11/25 01:51:53  matt
-** nofrendo_bool stinks sometimes
+** bool stinks sometimes
 **
 ** Revision 1.45  2000/11/20 13:22:12  matt
 ** standardized timer ISR, added nofrendo_ticks

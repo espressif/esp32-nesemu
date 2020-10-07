@@ -70,13 +70,13 @@ typedef struct mmc5rectangle_s
 {
    uint8 regs[4];
 
-   nofrendo_bool enabled;
+   bool enabled;
    
    float accum;
    int32 freq;
    int32 output_vol;
-   nofrendo_bool fixed_envelope;
-   nofrendo_bool holdnote;
+   bool fixed_envelope;
+   bool holdnote;
    uint8 volume;
 
    int32 env_phase;
@@ -91,7 +91,7 @@ typedef struct mmc5rectangle_s
 typedef struct mmc5dac_s
 {
    int32 output;
-   nofrendo_bool enabled;
+   bool enabled;
 } mmc5dac_t;
 
 
@@ -122,11 +122,11 @@ static int32 mmc5_rectangle(mmc5rectangle_t *chan)
 
    APU_VOLUME_DECAY(chan->output_vol);
 
-   if (nofrendo_false == chan->enabled || 0 == chan->vbl_length)
+   if (false == chan->enabled || 0 == chan->vbl_length)
       return MMC5_RECTANGLE_OUTPUT;
 
    /* vbl length counter */
-   if (nofrendo_false == chan->holdnote)
+   if (false == chan->holdnote)
       chan->vbl_length--;
 
    /* envelope decay at a rate of (env_delay + 1) / 240 secs */
@@ -236,8 +236,8 @@ static void mmc5_write(uint32 address, uint8 value)
 
       mmc5.rect[chan].volume = value & 0x0F;
       mmc5.rect[chan].env_delay = decay_lut[value & 0x0F];
-      mmc5.rect[chan].holdnote = (value & 0x20) ? nofrendo_true : nofrendo_false;
-      mmc5.rect[chan].fixed_envelope = (value & 0x10) ? nofrendo_true : nofrendo_false;
+      mmc5.rect[chan].holdnote = (value & 0x20) ? true : false;
+      mmc5.rect[chan].fixed_envelope = (value & 0x10) ? true : false;
       mmc5.rect[chan].duty_flip = duty_lut[value >> 6];
       break;
 
@@ -270,21 +270,21 @@ static void mmc5_write(uint32 address, uint8 value)
    case MMC5_SMASK:
       if (value & 0x01)
       {
-         mmc5.rect[0].enabled = nofrendo_true;
+         mmc5.rect[0].enabled = true;
       }
       else
       {
-         mmc5.rect[0].enabled = nofrendo_false;
+         mmc5.rect[0].enabled = false;
          mmc5.rect[0].vbl_length = 0;
       }
 
       if (value & 0x02)
       {
-         mmc5.rect[1].enabled = nofrendo_true;
+         mmc5.rect[1].enabled = true;
       }
       else
       {
-         mmc5.rect[1].enabled = nofrendo_false;
+         mmc5.rect[1].enabled = false;
          mmc5.rect[1].vbl_length = 0;
       }
 
@@ -292,9 +292,9 @@ static void mmc5_write(uint32 address, uint8 value)
 
    case 0x5010:
       if (value & 0x01)
-         mmc5.dac.enabled = nofrendo_true;
+         mmc5.dac.enabled = true;
       else
-         mmc5.dac.enabled = nofrendo_false;
+         mmc5.dac.enabled = false;
       break;
 
    case 0x5011:

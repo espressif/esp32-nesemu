@@ -31,7 +31,7 @@
 static struct
 {
    int counter, latch;
-   nofrendo_bool enabled, reset;
+   bool enabled, reset;
 } irq;
 
 static uint8 reg;
@@ -121,18 +121,18 @@ static void map4_write(uint32 address, uint8 value)
       break;
 
    case 0xC001:
-      irq.reset = nofrendo_true;
+      irq.reset = true;
       irq.counter = irq.latch;
       break;
 
    case 0xE000:
-      irq.enabled = nofrendo_false;
+      irq.enabled = false;
 //      if (irq.reset)
 //         irq.counter = irq.latch;
       break;
 
    case 0xE001:
-      irq.enabled = nofrendo_true;
+      irq.enabled = true;
 //      if (irq.reset)
 //         irq.counter = irq.latch;
       break;
@@ -146,7 +146,7 @@ static void map4_write(uint32 address, uint8 value)
       break;
    }
 
-   if (nofrendo_true == irq.reset)
+   if (true == irq.reset)
       irq.counter = irq.latch;
 }
 
@@ -159,14 +159,14 @@ static void map4_hblank(int vblank)
    {
       if (irq.counter >= 0)
       {
-         irq.reset = nofrendo_false;
+         irq.reset = false;
          irq.counter--;
 
          if (irq.counter < 0)
          {
             if (irq.enabled)
             {
-               irq.reset = nofrendo_true;
+               irq.reset = true;
                nes_irq();
             }
          }
@@ -193,7 +193,7 @@ static void map4_setstate(SnssMapperBlock *state)
 static void map4_init(void)
 {
    irq.counter = irq.latch = 0;
-   irq.enabled = irq.reset = nofrendo_false;
+   irq.enabled = irq.reset = false;
    reg = command = 0;
    vrombase = 0x0000;
 }

@@ -64,7 +64,7 @@ rgb_t gui_pal[GUI_TOTALCOLORS] =
 /**************************************************************/
 #include "pcx.h"
 #include "nes/nesstate.h"
-static nofrendo_bool option_drawsprites = nofrendo_true;
+static bool option_drawsprites = true;
 
 /* save a PCX snapshot */
 void gui_savesnap(void)
@@ -84,7 +84,7 @@ void gui_savesnap(void)
 /* Show/hide sprites (hiding sprites useful for making maps) */
 void gui_togglesprites(void)
 {
-   option_drawsprites ^= nofrendo_true;
+   option_drawsprites ^= true;
    ppu_displaysprites(option_drawsprites);
    gui_sendmsg(GUI_GREEN, "Sprites %s", option_drawsprites ? "displayed" : "hidden");
 }
@@ -94,7 +94,7 @@ void gui_togglefs(void)
 {
    nes_t *machine = nes_getcontextptr();
 
-   machine->autoframeskip ^= nofrendo_true;
+   machine->autoframeskip ^= true;
    if (machine->autoframeskip)
       gui_sendmsg(GUI_YELLOW, "automatic frameskip");
    else
@@ -111,9 +111,9 @@ void gui_toggle_chan(int chan)
 {
 #define  FILL_CHAR   0x7C           /* ASCII 124 '|' */
 #define  BLANK_CHAR  0x7F           /* ASCII 127   [delta] */
-   static nofrendo_bool chan_enabled[6] = { nofrendo_true, nofrendo_true, nofrendo_true, nofrendo_true, nofrendo_true, nofrendo_true };
+   static bool chan_enabled[6] = { true, true, true, true, true, true };
 
-   chan_enabled[chan] ^= nofrendo_true;
+   chan_enabled[chan] ^= true;
    apu_setchan(chan, chan_enabled[chan]);
 
    gui_sendmsg(GUI_ORANGE, "%ca %cb %cc %cd %ce %cext",
@@ -157,15 +157,15 @@ enum
 
 /* TODO: roll options into a structure */
 static message_t msg;
-static nofrendo_bool option_showfps = nofrendo_true;
-static nofrendo_bool option_showgui = nofrendo_false;
+static bool option_showfps = false;
+static bool option_showgui = false;
 static int option_wavetype = GUI_WAVENONE;
-static nofrendo_bool option_showpattern = nofrendo_false;
-static nofrendo_bool option_showoam = nofrendo_false;
+static bool option_showpattern = false;
+static bool option_showoam = false;
 static int pattern_col = 0;
 
 /* timimg variables */
-static nofrendo_bool gui_fpsupdate = nofrendo_false;
+static bool gui_fpsupdate = false;
 static int gui_ticks = 0;
 static int gui_fps = 0;
 static int gui_refresh = 60; /* default to 60Hz */
@@ -176,26 +176,26 @@ static bitmap_t *gui_surface;
 
 
 /* Put a pixel on our bitmap- just for GUI use */
-INLINE void gui_putpixel(int x_pos, int y_pos, uint8_t color)
+INLINE void gui_putpixel(int x_pos, int y_pos, uint8 color)
 {
    gui_surface->line[y_pos][x_pos] = color;
 }
 
 /* Line drawing */
-static void gui_hline(int x_pos, int y_pos, int length, uint8_t color)
+static void gui_hline(int x_pos, int y_pos, int length, uint8 color)
 {
    while (length--)
       gui_putpixel(x_pos++, y_pos, color);
 }
 
-static void gui_vline(int x_pos, int y_pos, int height, uint8_t color)
+static void gui_vline(int x_pos, int y_pos, int height, uint8 color)
 {
    while (height--)
       gui_putpixel(x_pos, y_pos++, color);
 }
 
 /* Rectangles */
-static void gui_rect(int x_pos, int y_pos, int width, int height, uint8_t color)
+static void gui_rect(int x_pos, int y_pos, int width, int height, uint8 color)
 {
    gui_hline(x_pos, y_pos, width, color);
    gui_hline(x_pos, y_pos + height - 1, width, color);
@@ -203,16 +203,16 @@ static void gui_rect(int x_pos, int y_pos, int width, int height, uint8_t color)
    gui_vline(x_pos + width - 1, y_pos + 1, height - 2, color);
 }
 
-static void gui_rectfill(int x_pos, int y_pos, int width, int height, uint8_t color)
+static void gui_rectfill(int x_pos, int y_pos, int width, int height, uint8 color)
 {
    while (height--)
       gui_hline(x_pos, y_pos++, width, color);
 }
 
 /* Draw the outline of a button */
-static void gui_buttonrect(int x_pos, int y_pos, int width, int height, nofrendo_bool down)
+static void gui_buttonrect(int x_pos, int y_pos, int width, int height, bool down)
 {
-   uint8_t color1, color2;
+   uint8 color1, color2;
 
    if (down)
    {
@@ -232,7 +232,7 @@ static void gui_buttonrect(int x_pos, int y_pos, int width, int height, nofrendo
 }
 
 /* Text blitting */
-INLINE void gui_charline(char ch, int x_pos, int y_pos, uint8_t color)
+INLINE void gui_charline(char ch, int x_pos, int y_pos, uint8 color)
 {
    int count = 8;
    while (count--)
@@ -243,7 +243,7 @@ INLINE void gui_charline(char ch, int x_pos, int y_pos, uint8_t color)
    }
 }
 
-static void gui_putchar(const uint8_t *dat, int height, int x_pos, int y_pos, uint8_t color)
+static void gui_putchar(const uint8 *dat, int height, int x_pos, int y_pos, uint8 color)
 {
    while (height--)
       gui_charline(*dat++, x_pos, y_pos++, color);
@@ -262,7 +262,7 @@ static int gui_textlen(char *str, font_t *font)
 }
 
 /* Simple textout() type function */
-static int gui_textout(char *str, int x_pos, int y_pos, font_t *font, uint8_t color)
+static int gui_textout(char *str, int x_pos, int y_pos, font_t *font, uint8 color)
 {
    int x_new;
    int num_chars = strlen(str);
@@ -287,7 +287,7 @@ static int gui_textout(char *str, int x_pos, int y_pos, font_t *font, uint8_t co
 
 /* Draw bar-/button-type text */
 static int gui_textbar(char *str, int x_pos, int y_pos, font_t *font,
-                       uint8_t color, uint8_t bgcolor, nofrendo_bool buttonstate)
+                       uint8 color, uint8 bgcolor, bool buttonstate)
 {
    int width = gui_textlen(str, &small);
 
@@ -338,7 +338,7 @@ void gui_tick(int ticks)
    if (fps_counter >= gui_refresh)
    {
       fps_counter -= gui_refresh;
-      gui_fpsupdate = nofrendo_true;
+      gui_fpsupdate = true;
    }
 }
 
@@ -380,11 +380,11 @@ static void gui_updatefps(void)
    static char fpsbuf[20];
 
    /* Check to see if we need to do an sprintf or not */
-   if (nofrendo_true == gui_fpsupdate)
+   if (true == gui_fpsupdate)
    {
       sprintf(fpsbuf, "%4d FPS /%4d%%", gui_fps, (gui_fps * 100) / gui_refresh);
       gui_fps = 0;
-      gui_fpsupdate = nofrendo_false;
+      gui_fpsupdate = false;
    }
 
    gui_textout(fpsbuf, gui_surface->width - 1 - 90, 1, &small, GUI_GREEN);
@@ -393,13 +393,13 @@ static void gui_updatefps(void)
 /* Turn FPS on/off */
 void gui_togglefps(void)
 {
-   option_showfps ^= nofrendo_true;
+   option_showfps ^= true;
 }
 
 /* Turn GUI on/off */
 void gui_togglegui(void)
 {
-   option_showgui ^= nofrendo_true;
+   option_showgui ^= true;
 }
 
 void gui_togglewave(void)
@@ -409,13 +409,13 @@ void gui_togglewave(void)
 
 void gui_toggleoam(void)
 {
-   option_showoam ^= nofrendo_true;
+   option_showoam ^= true;
 }
 
 /* TODO: hack! */
 void gui_togglepattern(void)
 {
-   option_showpattern ^= nofrendo_true;
+   option_showpattern ^= true;
 }
 
 /* TODO: hack! */
@@ -446,7 +446,7 @@ static void gui_updatewave(int wave_type)
    int loop, xofs, yofs;
    int difference, offset;
    float scale;
-   uint8_t val, oldval;
+   uint8 val, oldval;
    int vis_length = 0;
    void *vis_buffer = NULL;
    int vis_bps;
@@ -477,7 +477,7 @@ static void gui_updatewave(int wave_type)
       if (16 == vis_bps)
          oldval = 0x40 - (((((uint16 *) vis_buffer)[0] >> 8) ^ 0x80) >> 2);
       else
-         oldval = 0x40 - (((uint8_t *) vis_buffer)[0] >> 2);
+         oldval = 0x40 - (((uint8 *) vis_buffer)[0] >> 2);
 
       for (loop = 1; loop < WAVEDISP_WIDTH; loop++)
       {
@@ -485,7 +485,7 @@ static void gui_updatewave(int wave_type)
          if (16 == vis_bps)
             val = 0x40 - (((((uint16 *) vis_buffer)[(uint32) (loop * scale)] >> 8) ^ 0x80) >> 2);
          else
-            val = 0x40 - (((uint8_t *) vis_buffer)[(uint32) (loop * scale)] >> 2);
+            val = 0x40 - (((uint8 *) vis_buffer)[(uint32) (loop * scale)] >> 2);
          if (oldval < val)
          {
             offset = oldval;
@@ -510,7 +510,7 @@ static void gui_updatewave(int wave_type)
          if (16 == vis_bps)
             val = ((((uint16 *) vis_buffer)[(uint32) (loop * scale)] >> 8) ^ 0x80) >> 2;
          else
-            val = ((uint8_t *) vis_buffer)[(uint32) (loop * scale)] >> 2;
+            val = ((uint8 *) vis_buffer)[(uint32) (loop * scale)] >> 2;
          if (val == 0x20)
             gui_putpixel(xofs + loop, yofs + 0x20, GUI_GREEN);
          else if (val < 0x20)
@@ -549,10 +549,10 @@ static void gui_updateoam(void)
 
 
 /* The GUI overlay */
-void gui_frame(nofrendo_bool draw)
+void gui_frame(bool draw)
 {
    gui_fps++;
-   if (nofrendo_false == draw)
+   if (false == draw)
       return;
 
    gui_surface = vid_getbuffer();

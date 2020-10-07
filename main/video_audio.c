@@ -115,7 +115,7 @@ static int osd_init_sound(void)
 		.intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
 		.dma_buf_count = 6,
 		.dma_buf_len = 512,
-		.use_apll = nofrendo_false};
+		.use_apll = false};
 	i2s_driver_install(I2S_NUM_0, &cfg, 2, &queue);
 	i2s_set_pin(I2S_NUM_0, NULL);
 	i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
@@ -159,7 +159,7 @@ viddriver_t sdlDriver =
 		lock_write,					/* lock_write */
 		free_write,					/* free_write */
 		custom_blit,				/* custom_blit */
-		nofrendo_false				/* invalidate flag */
+		false						/* invalidate flag */
 };
 
 bitmap_t *myBitmap;

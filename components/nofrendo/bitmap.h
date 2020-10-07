@@ -43,7 +43,7 @@ typedef struct rgb_s
 typedef struct bitmap_s
 {
    int width, height, pitch;
-   nofrendo_bool hardware;             /* is data a hardware region? */
+   bool hardware;             /* is data a hardware region? */
    uint8 *data;               /* protected */
    uint8 *line[ZERO_LENGTH];  /* will hold line pointers */
 } bitmap_t;

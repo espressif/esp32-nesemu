@@ -91,7 +91,7 @@ static int save_baseblock(nes_t *state, SNSS_FILE *snssFile)
    return 0;
 }
 
-static nofrendo_bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
+static bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
 {
    ASSERT(state);
 
@@ -113,7 +113,7 @@ static nofrendo_bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
 static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
 {
    int i;
-   nofrendo_bool written = nofrendo_false;
+   bool written = false;
    int sram_length;
 
    ASSERT(state);
@@ -125,12 +125,12 @@ static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
    {
       if (state->rominfo->sram[i])
       {
-         written = nofrendo_true;
+         written = true;
          break;
       }
    }
 
-   if (nofrendo_false == written)
+   if (false == written)
       return -1;
 
    if (state->rominfo->sram_banks > 8)
@@ -141,8 +141,8 @@ static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
 
    snssFile->sramBlock.sramSize = SRAM_1K * state->rominfo->sram_banks;
 
-   /* TODO: this should not always be nofrendo_true!! */
-   snssFile->sramBlock.sramEnabled = nofrendo_true;
+   /* TODO: this should not always be true!! */
+   snssFile->sramBlock.sramEnabled = true;
 
    memcpy(snssFile->sramBlock.sram, state->rominfo->sram, snssFile->sramBlock.sramSize);
 
@@ -260,7 +260,7 @@ static void load_baseblock(nes_t *state, SNSS_FILE *snssFile)
 
    /* do some extra handling */
    state->ppu->flipflop = 0;
-   state->ppu->strikeflag = nofrendo_false;
+   state->ppu->strikeflag = false;
 
    nes6502_setcontext(state->cpu);
    ppu_setcontext(state->ppu);
