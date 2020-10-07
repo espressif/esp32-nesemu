@@ -25,12 +25,13 @@
 ** $Id: memguard.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include "noftypes.h"
-#include "memguard.h"
-
 #include <string.h>
 #include <stdlib.h>
 
+#include <esp_heap_caps.h>
+
+#include "noftypes.h"
+#include "memguard.h"
 #include "log.h"
 
 /* Maximum number of allocated blocks at any one time */
@@ -122,7 +123,8 @@ static void *mem_guardalloc(int alloc_size, int guard_size)
    alloc_size = (alloc_size + 3) & ~3;
 
    /* allocate memory */
-   orig = malloc(alloc_size + (guard_size * 2));
+   // orig = malloc(alloc_size + (guard_size * 2));
+   orig = heap_caps_malloc(alloc_size + (guard_size * 2), MALLOC_CAP_INTERNAL);
    if (NULL == orig)
       return NULL;
 
@@ -185,7 +187,9 @@ static void mem_init(void)
 
    mem_blockcount = 0;
 
-   mem_record = malloc(MAX_BLOCKS * sizeof(memblock_t));
+   // mem_record = malloc(MAX_BLOCKS * sizeof(memblock_t));
+   mem_record = heap_caps_malloc(MAX_BLOCKS * sizeof(memblock_t), MALLOC_CAP_INTERNAL);
+
    ASSERT(mem_record);
    memset(mem_record, 0, MAX_BLOCKS * sizeof(memblock_t));
 }
@@ -254,8 +258,8 @@ void *_my_nofrendo_malloc(int size, char *file, int line)
    if (nofrendo_false != mem_debug)
       temp = mem_guardalloc(size, GUARD_LENGTH);
    else
-      temp = malloc(size);
-      // temp = heap_caps_malloc(size, MALLOC_CAP_DEFAULT);
+      // temp = malloc(size);
+      temp = heap_caps_malloc(size, MALLOC_CAP_INTERNAL);
 
    printf("Malloc: %d at %s:%d\n", size, file, line);
    if (NULL == temp)
