@@ -67,7 +67,7 @@ typedef  unsigned int   uint32;
 
 #endif /* !NOFRENDO_DEBUG */
 
-#endif /* _TYPES_H_ */
+#endif /* _NOFTYPES_H_ */
 
 /*
 ** $Log: noftypes.h,v $
