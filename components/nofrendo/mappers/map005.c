@@ -219,7 +219,7 @@ static uint8 map5_read(uint32 address)
    {
 #ifdef NOFRENDO_DEBUG
       log_printf("invalid MMC5 read: $%04X", address);
-#endif
+#endif /* !NOFRENDO_DEBUG */
       return 0xFF;
    }
 }

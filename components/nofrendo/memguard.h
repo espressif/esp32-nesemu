@@ -38,7 +38,7 @@ extern void *_my_nofrendo_malloc(int size, char *file, int line);
 extern void _my_nofrendo_free(void **data, char *file, int line);
 extern char *_my_nofrendo_strdup(const char *string, char *file, int line);
 
-#else /* !NORFRENDO_DEBUG */
+#else /* !NOFRENDO_DEBUG */
 
 /* Non-debugging versions of calls */
 #define  nofrendo_malloc(s)   _my_nofrendo_malloc((s))

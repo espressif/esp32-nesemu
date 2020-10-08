@@ -347,7 +347,7 @@ static void gui_tickdec(void)
 {
 #ifdef NOFRENDO_DEBUG
    static int hertz_ticks = 0;
-#endif
+#endif /* !NOFRENDO_DEBUG */
    int ticks = gui_ticks;
 
    if (0 == ticks)
@@ -363,7 +363,7 @@ static void gui_tickdec(void)
       hertz_ticks -= (10 * gui_refresh);
       // mem_checkblocks(); 
    }
-#endif
+#endif /* !NOFRENDO_DEBUG */
 
    /* TODO: bleh */
    if (msg.ttl > 0)
@@ -593,7 +593,7 @@ void gui_sendmsg(int color, char *format, ...)
    log_print("GUI: ");
    log_print(msg.text);
    log_print("\n");
-#endif
+#endif /* !NOFRENDO_DEBUG */
 
    va_end(arg);
 

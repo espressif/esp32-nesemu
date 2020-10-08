@@ -148,7 +148,7 @@ static void map24_write(uint32 address, uint8 value)
    default:
 #ifdef NOFRENDO_DEBUG
       log_printf("invalid VRC6 write: $%02X to $%04X", value, address);
-#endif
+#endif /* !NOFRENDO_DEBUG */
       break;      
    }
 }

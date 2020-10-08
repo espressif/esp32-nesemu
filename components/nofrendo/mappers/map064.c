@@ -120,7 +120,7 @@ static void map64_write(uint32 address, uint8 value)
       default:
 #ifdef NOFRENDO_DEBUG
          log_printf("mapper 64: unknown command #%d", command & 0xF);
-#endif
+#endif /* !NOFRENDO_DEBUG */
          break;
       }
       break;
@@ -154,7 +154,7 @@ static void map64_write(uint32 address, uint8 value)
    default:
 #ifdef NOFRENDO_DEBUG
       log_printf("mapper 64: Wrote $%02X to $%04X", value, address);
-#endif
+#endif /* !NOFRENDO_DEBUG */
       break;
    }
 
