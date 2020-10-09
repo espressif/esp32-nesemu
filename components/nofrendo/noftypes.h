@@ -28,6 +28,8 @@
 
 #include <stdbool.h>
 
+#define NOFRENDO_DEBUG
+
 /* Define this if running on little-endian (x86) systems */
 #define  HOST_LITTLE_ENDIAN
 
