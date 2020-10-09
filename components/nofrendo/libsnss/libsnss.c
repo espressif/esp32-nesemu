@@ -369,7 +369,7 @@ SNSS_SkipNextBlock(SNSS_FILE *snssFile)
 static SNSS_RETURN_CODE
 SNSS_ReadBaseBlock(SNSS_FILE *snssFile)
 {
-   char blockBytes[BASE_BLOCK_LENGTH];
+   char *blockBytes = nofrendo_malloc(BASE_BLOCK_LENGTH);
    SnssBlockHeader header;
 
    if (SNSS_ReadBlockHeader(&header, snssFile) != SNSS_OK)
