@@ -42,9 +42,6 @@
 #define DEFAULT_SAMPLERATE 32000
 #define DEFAULT_FRAGSIZE 128
 
-#define DEFAULT_WIDTH 256
-#define DEFAULT_HEIGHT NES_VISIBLE_HEIGHT
-
 TimerHandle_t timer;
 
 //Seemingly, this will be called only once. Should call func with a freq of frequency,
@@ -76,14 +73,19 @@ static void do_audio_frame()
 		if (n > left)
 			n = left;
 		audio_callback(audio_frame, n); //get more data
+
 		//16 bit mono -> 32-bit (16 bit r+l)
-		for (int i = n - 1; i >= 0; i--)
+		int16_t *mono_ptr = audio_frame + n;
+		int16_t *stereo_ptr = audio_frame + n + n;
+		int i = n;
+		while (i--)
 		{
 			// audio_frame[i] = audio_frame[i] + 0x8000;
-			int16_t a = (audio_frame[i] >> 3);
-			audio_frame[i * 2 + 1] = 0x8000 + a;
-			audio_frame[i * 2] = 0x8000 - a;
+			int16_t a = (*(--mono_ptr) >> 3);
+			*(--stereo_ptr) = 0x8000 + a;
+			*(--stereo_ptr) = 0x8000 - a;
 		}
+
 		size_t i2s_bytes_write;
 		i2s_write(I2S_NUM_0, (const char *)audio_frame, 4 * n, &i2s_bytes_write, portMAX_DELAY);
 		left -= i2s_bytes_write / 4;
@@ -105,7 +107,7 @@ static void osd_stopsound(void)
 static int osd_init_sound(void)
 {
 #if CONFIG_SOUND_ENA
-	audio_frame = nofrendo_malloc(2 * DEFAULT_FRAGSIZE);
+	audio_frame = nofrendo_malloc(4 * DEFAULT_FRAGSIZE);
 	i2s_config_t cfg = {
 		.mode = I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN,
 		.sample_rate = DEFAULT_SAMPLERATE,
@@ -166,8 +168,8 @@ bitmap_t *myBitmap;
 
 void osd_getvideoinfo(vidinfo_t *info)
 {
-	info->default_width = DEFAULT_WIDTH;
-	info->default_height = DEFAULT_HEIGHT;
+	info->default_width = NES_VISIBLE_WIDTH;
+	info->default_height = NES_VISIBLE_HEIGHT;
 	info->driver = &sdlDriver;
 }
 
@@ -219,7 +221,7 @@ static void clear(uint8 color)
 static bitmap_t *lock_write(void)
 {
 	//   SDL_LockSurface(mySurface);
-	myBitmap = bmp_createhw((uint8 *)fb, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH * 2);
+	myBitmap = bmp_createhw((uint8 *)fb, NES_VISIBLE_WIDTH, NES_VISIBLE_HEIGHT, NES_VISIBLE_WIDTH * 2);
 	return myBitmap;
 }
 
@@ -240,13 +242,13 @@ static void videoTask(void *arg)
 {
 	int x, y;
 	bitmap_t *bmp = NULL;
-	x = (320 - DEFAULT_WIDTH) / 2;
-	y = ((240 - DEFAULT_HEIGHT) / 2);
+	x = (320 - NES_VISIBLE_WIDTH) / 2;
+	y = ((240 - NES_VISIBLE_HEIGHT) / 2);
 	while (1)
 	{
 		//		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
-		lcd_write_frame(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, (const uint8_t **)bmp->line);
+		lcd_write_frame(x, y, NES_VISIBLE_WIDTH, NES_VISIBLE_HEIGHT, (const uint8_t **)bmp->line);
 	}
 }
 
