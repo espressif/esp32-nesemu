@@ -16,16 +16,16 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <signal.h>
+#include <unistd.h>
 
-#include "errno.h"
-#include "fcntl.h"
-#include "limits.h"
 #include "log.h"
 #include "nofrendo.h"
 #include "noftypes.h"
 #include "osd.h"
-#include "signal.h"
-#include "unistd.h"
 #include "version.h"
 
 #include "nofconfig.h"

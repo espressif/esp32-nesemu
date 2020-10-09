@@ -29,15 +29,15 @@ void spiffs_init(void)
     {
         if (ret == ESP_FAIL)
         {
-            printf("Failed to mount or format filesystem");
+            log_printf("Failed to mount or format filesystem");
         }
         else if (ret == ESP_ERR_NOT_FOUND)
         {
-            printf("Failed to find SPIFFS partition");
+            log_printf("Failed to find SPIFFS partition");
         }
         else
         {
-            printf("Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
+            log_printf("Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
         }
         return;
     }
@@ -46,11 +46,11 @@ void spiffs_init(void)
     ret = esp_spiffs_info(NULL, &total, &used);
     if (ret != ESP_OK)
     {
-        printf("Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
+        log_printf("Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
     }
     else
     {
-        printf("Partition size: total: %d, used: %d\n", total, used);
+        log_printf("Partition size: total: %d, used: %d\n", total, used);
     }
 }
 
@@ -58,9 +58,9 @@ int app_main(void)
 {
     spiffs_init();
 
-    printf("NoFrendo start!\n");
+    log_printf("NoFrendo start!\n");
     nofrendo_main(0, NULL);
-    printf("NoFrendo died? Oh no!\n");
+    log_printf("NoFrendo died? Oh no!\n");
     asm("break.n 1");
     return 0;
 }

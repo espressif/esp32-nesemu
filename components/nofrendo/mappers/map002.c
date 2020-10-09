@@ -30,7 +30,7 @@
 static void map2_init()
 {
     int last_bank = mmc_getinfo()->rom_banks - 1;
-    printf("map2_init. last_bank=%d\n", last_bank);
+    log_printf("map2_init. last_bank=%d\n", last_bank);
     mmc_bankrom(16, 0xc000, last_bank);
     mmc_bankrom(16, 0x8000, 0);
 }

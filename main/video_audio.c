@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <math.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <freertos/FreeRTOS.h>
@@ -31,9 +32,8 @@
 #include "nes_pal.h"
 #include "nesinput.h"
 #include "osd.h"
-#include "stdint.h"
-#include "spi_lcd.h"
 
+#include "spi_lcd.h"
 #include "controller.h"
 
 #include "nofconfig.h"
@@ -47,7 +47,7 @@ TimerHandle_t timer;
 //Seemingly, this will be called only once. Should call func with a freq of frequency,
 int osd_installtimer(int frequency, void *func, int funcsize, void *counter, int countersize)
 {
-	printf("Timer install, configTICK_RATE_HZ=%d, freq=%d\n", configTICK_RATE_HZ, frequency);
+	log_printf("Timer install, configTICK_RATE_HZ=%d, freq=%d\n", configTICK_RATE_HZ, frequency);
 	timer = xTimerCreate("nes", configTICK_RATE_HZ / frequency, pdTRUE, NULL, func);
 	xTimerStart(timer, 0);
 	return 0;
@@ -64,7 +64,6 @@ static int16_t *audio_frame;
 
 static void do_audio_frame()
 {
-
 #if CONFIG_SOUND_ENA
 	int left = DEFAULT_SAMPLERATE / NES_REFRESH_RATE;
 	while (left)
@@ -272,7 +271,7 @@ void osd_getinput(void)
 	int x;
 	oldb = b;
 	event_t evh;
-	// printf("Input: %x\n", b);
+	// log_printf("Input: %x\n", b);
 	for (x = 0; x < 16; x++)
 	{
 		if (chg & 1)
