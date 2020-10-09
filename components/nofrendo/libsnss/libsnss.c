@@ -411,7 +411,7 @@ SNSS_WriteBaseBlock(SNSS_FILE *snssFile)
 {
    SnssBlockHeader header;
    SNSS_RETURN_CODE returnCode;
-   char blockBytes[BASE_BLOCK_LENGTH];
+   char *blockBytes = nofrendo_malloc(BASE_BLOCK_LENGTH);
    unsigned short tempShort;
 
    strcpy(header.tag, "BASR");
