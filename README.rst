@@ -1,3 +1,8 @@
+Arduino Compatible Version
+==========================
+
+This is a special fork version of esp32-nesemu aim for revise source code compatible to Arduino as much as possible.
+
 ESP32-NESEMU, a Nintendo Entertainment System emulator for the ESP32
 ====================================================================
 
