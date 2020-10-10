@@ -164,7 +164,7 @@ static int internal_insert(const char *filename, system_t type)
       console.machine.nes = nes_create();
       if (NULL == console.machine.nes)
       {
-         log_printf("Failed to create NES instance.\n");
+         nofrendo_log_printf("Failed to create NES instance.\n");
          return -1;
       }
 
@@ -181,7 +181,7 @@ static int internal_insert(const char *filename, system_t type)
    
    case system_unknown:
    default:
-      log_printf("system type unknown, playing nofrendo NES intro.\n");
+      nofrendo_log_printf("system type unknown, playing nofrendo NES intro.\n");
       if (NULL != console.filename)
          nofrendo_free(console.filename);
 
@@ -239,7 +239,7 @@ int main_loop(const char *filename, system_t type)
    osd_getvideoinfo(&video);
    if (vid_init(video.default_width, video.default_height, video.driver))
       return -1;
-	log_printf("vid_init done\n");
+	nofrendo_log_printf("vid_init done\n");
 
    console.nextfilename = nofrendo_strdup(filename);
    console.nexttype = type;

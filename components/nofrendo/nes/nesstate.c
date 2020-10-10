@@ -100,7 +100,7 @@ static bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
 
    if (state->rominfo->vram_banks > 2)
    {
-      log_printf("too many VRAM banks: %d\n", state->rominfo->vram_banks);
+      nofrendo_log_printf("too many VRAM banks: %d\n", state->rominfo->vram_banks);
       return -1;
    }
 
@@ -135,7 +135,7 @@ static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
 
    if (state->rominfo->sram_banks > 8)
    {
-      log_printf("Unsupported number of SRAM banks: %d\n", state->rominfo->sram_banks);
+      nofrendo_log_printf("Unsupported number of SRAM banks: %d\n", state->rominfo->sram_banks);
       return -1;
    }
 
@@ -475,7 +475,7 @@ int state_load(void)
       
       case SNSS_UNKNOWN_BLOCK:
       default:
-         log_printf("unknown SNSS block type\n");
+         nofrendo_log_printf("unknown SNSS block type\n");
          break;
       }
    }

@@ -47,7 +47,7 @@ TimerHandle_t timer;
 //Seemingly, this will be called only once. Should call func with a freq of frequency,
 int osd_installtimer(int frequency, void *func, int funcsize, void *counter, int countersize)
 {
-	log_printf("Timer install, configTICK_RATE_HZ=%d, freq=%d\n", configTICK_RATE_HZ, frequency);
+	nofrendo_log_printf("Timer install, configTICK_RATE_HZ=%d, freq=%d\n", configTICK_RATE_HZ, frequency);
 	timer = xTimerCreate("nes", configTICK_RATE_HZ / frequency, pdTRUE, NULL, func);
 	xTimerStart(timer, 0);
 	return 0;
@@ -271,7 +271,7 @@ void osd_getinput(void)
 	int x;
 	oldb = b;
 	event_t evh;
-	// log_printf("Input: %x\n", b);
+	// nofrendo_log_printf("Input: %x\n", b);
 	for (x = 0; x < 16; x++)
 	{
 		if (chg & 1)

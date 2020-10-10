@@ -67,7 +67,7 @@ int log_print(const char *string)
    return 0;
 }
 
-int log_printf(const char *format, ... )
+int nofrendo_log_printf(const char *format, ... )
 {
    /* don't allocate on stack every call */
    static char buffer[1024 + 1];
@@ -105,7 +105,7 @@ int log_print(const char *string)
    return 0;
 }
 
-int log_printf(const char *format, ... )
+int nofrendo_log_printf(const char *format, ... )
 {
    UNUSED(format);
 
@@ -124,9 +124,9 @@ void log_assert(int expr, int line, const char *file, char *msg)
       return;
 
    if (NULL != msg)
-      log_printf("ASSERT: line %d of %s, %s\n", line, file, msg);
+      nofrendo_log_printf("ASSERT: line %d of %s, %s\n", line, file, msg);
    else
-      log_printf("ASSERT: line %d of %s\n", line, file);
+      nofrendo_log_printf("ASSERT: line %d of %s\n", line, file);
 
    asm("break.n 1");
    // exit(-1);

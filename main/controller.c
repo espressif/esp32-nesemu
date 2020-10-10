@@ -271,11 +271,11 @@ void controller_init()
   psxDone();
   if (t == 0 || t == 0xff)
   {
-    log_printf("No PSX/PS2 controller detected (0x%X). You will not be able to control the game.\n", t);
+    nofrendo_log_printf("No PSX/PS2 controller detected (0x%X). You will not be able to control the game.\n", t);
   }
   else
   {
-    log_printf("PSX controller type 0x%X\n", t);
+    nofrendo_log_printf("PSX controller type 0x%X\n", t);
   }
 }
 
@@ -347,7 +347,7 @@ int controller_read_input()
   i2c_cmd_link_delete(cmd);
   if (ret == 0)
   {
-    log_printf("I2C read %d, return %d\n", data, ret);
+    nofrendo_log_printf("I2C read %d, return %d\n", data, ret);
 
     return 0xFFFF ^ ((((0x01 & data) > 0) << 4) | (((0x02 & data) > 0) << 6) | (((0x04 & data) > 0) << 7) | (((0x08 & data) > 0) << 5) | (((0x10 & data) > 0) << 0) | (((0x20 & data) > 0) << 3) | (((0x40 & data) > 0) << 13) | (((0x80 & data) > 0) << 14));
   }
@@ -412,7 +412,7 @@ int controller_read_input()
   i2c_cmd_link_delete(cmd);
   if ((ret == 0) && (data > 0))
   {
-    log_printf("I2C read %d, return %d\n", data, ret);
+    nofrendo_log_printf("I2C read %d, return %d\n", data, ret);
 
     switch (data)
     {
@@ -450,7 +450,7 @@ int controller_read_input()
 
 void controller_gpio_init()
 {
-  log_printf("GPIO controller disabled in menuconfig; no input enabled.\n");
+  nofrendo_log_printf("GPIO controller disabled in menuconfig; no input enabled.\n");
 }
 
 int controller_gpio_read_input()

@@ -519,7 +519,7 @@ char *nes6502_disasm(uint32 PC, uint8 P, uint8 A, uint8 X, uint8 Y, uint8 S)
 ** made sure last line of all source files is a newline
 **
 ** Revision 1.7  2000/07/11 04:26:23  matt
-** rewrote to fill up a static buffer, rather than use log_printf
+** rewrote to fill up a static buffer, rather than use nofrendo_log_printf
 **
 ** Revision 1.6  2000/07/10 05:15:58  matt
 ** fixed a bug in indirect x/y disassembly
