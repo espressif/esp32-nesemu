@@ -28,6 +28,7 @@
 #include <soc/adc_channel.h>
 #include <soc/gpio_struct.h>
 
+#include "noftypes.h"
 #include "sdkconfig.h"
 
 #if defined(CONFIG_HW_CONTROLLER_GPIO)
