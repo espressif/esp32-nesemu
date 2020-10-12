@@ -184,7 +184,7 @@ static void mem_init(void)
    mem_blockcount = 0;
 
    // mem_record = malloc(MAX_BLOCKS * sizeof(memblock_t));
-   mem_record = heap_caps_malloc(MAX_BLOCKS * sizeof(memblock_t), MALLOC_CAP_SPIRAM);
+   mem_record = heap_caps_malloc_prefer(MAX_BLOCKS * sizeof(memblock_t), MALLOC_CAP_SPIRAM, MALLOC_CAP_DEFAULT);
 
    ASSERT(mem_record);
    memset(mem_record, 0, MAX_BLOCKS * sizeof(memblock_t));
