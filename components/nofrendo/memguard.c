@@ -256,7 +256,7 @@ void *_my_nofrendo_malloc(int size, char *file, int line)
       // temp = malloc(size);
       temp = heap_caps_malloc(size, MALLOC_CAP_8BIT);
 
-   printf("Malloc: %d at %s:%d\n", size, file, line);
+   nofrendo_log_printf("MALLOC_CAP_8BIT free: %d, malloc: %d at %s:%d\n", heap_caps_get_free_size(MALLOC_CAP_8BIT), size, file, line);
    if (NULL == temp)
    {
       sprintf(fail, "malloc: out of memory at line %d of %s.  block size: %d\n",
