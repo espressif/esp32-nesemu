@@ -167,8 +167,8 @@ bitmap_t *myBitmap;
 
 void osd_getvideoinfo(vidinfo_t *info)
 {
-	info->default_width = NES_VISIBLE_WIDTH;
-	info->default_height = NES_VISIBLE_HEIGHT;
+	info->default_width = NES_SCREEN_WIDTH;
+	info->default_height = NES_SCREEN_HEIGHT;
 	info->driver = &sdlDriver;
 }
 
@@ -220,7 +220,7 @@ static void clear(uint8 color)
 static bitmap_t *lock_write(void)
 {
 	//   SDL_LockSurface(mySurface);
-	myBitmap = bmp_createhw((uint8 *)fb, NES_VISIBLE_WIDTH, NES_VISIBLE_HEIGHT, NES_VISIBLE_WIDTH * 2);
+	myBitmap = bmp_createhw((uint8 *)fb, NES_SCREEN_WIDTH, NES_SCREEN_HEIGHT, NES_SCREEN_WIDTH * 2);
 	return myBitmap;
 }
 
@@ -241,13 +241,13 @@ static void videoTask(void *arg)
 {
 	int x, y;
 	bitmap_t *bmp = NULL;
-	x = (320 - NES_VISIBLE_WIDTH) / 2;
-	y = ((240 - NES_VISIBLE_HEIGHT) / 2);
+	x = (320 - NES_SCREEN_WIDTH) / 2;
+	y = ((240 - NES_SCREEN_HEIGHT) / 2);
 	while (1)
 	{
 		//		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);//skip one frame to drop to 30
 		xQueueReceive(vidQueue, &bmp, portMAX_DELAY);
-		lcd_write_frame(x, y, NES_VISIBLE_WIDTH, NES_VISIBLE_HEIGHT, (const uint8_t **)bmp->line);
+		lcd_write_frame(x, y, NES_SCREEN_WIDTH, NES_SCREEN_HEIGHT, (const uint8_t **)bmp->line);
 	}
 }
 

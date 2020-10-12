@@ -29,8 +29,6 @@
 #include <stdbool.h>
 
 #define NOFRENDO_DEBUG
-#define NES_VISIBLE_WIDTH 256
-#define NES_VISIBLE_HEIGHT 240
 
 /* Define this if running on little-endian (x86) systems */
 #define  HOST_LITTLE_ENDIAN

@@ -1082,7 +1082,7 @@ void ppu_checknmi(void)
 void ppu_scanline(bitmap_t *bmp, int scanline, bool draw_flag)
 {
    // if (scanline < 240)
-   if (scanline < NES_VISIBLE_HEIGHT)
+   if (scanline < NES_SCREEN_HEIGHT)
    {
       /* Lower the Max Sprite per scanline flag */
       ppu.stat &= ~PPU_STATF_MAXSPRITE;
