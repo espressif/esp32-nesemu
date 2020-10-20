@@ -5,6 +5,7 @@
 #include <esp_system.h>
 #include <esp_event.h>
 #include <esp_event_loop.h>
+#include <esp_heap_caps.h>
 #include <esp_log.h>
 #include <esp_partition.h>
 #include <esp_spiffs.h>
@@ -12,6 +13,18 @@
 
 #include "nofconfig.h"
 #include "nofrendo.h"
+
+void *mem_alloc(int size, bool fast_mem)
+{
+   if (fast_mem)
+   {
+      return heap_caps_malloc(size, MALLOC_CAP_8BIT);
+   }
+   else
+   {
+      return heap_caps_malloc_prefer(size, MALLOC_CAP_SPIRAM, MALLOC_CAP_DEFAULT);
+   }
+}
 
 void spiffs_init(void)
 {

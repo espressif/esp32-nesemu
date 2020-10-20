@@ -28,8 +28,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <esp_heap_caps.h>
-
 #include "../noftypes.h"
 #include "nes_rom.h"
 #include "../intro.h"
@@ -162,7 +160,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
 
    /* Allocate ROM space, and load it up! */
    // rominfo->rom = nofrendo_malloc((rominfo->rom_banks * ROM_BANK_LENGTH));
-   rominfo->rom = heap_caps_malloc_prefer((rominfo->rom_banks * ROM_BANK_LENGTH), MALLOC_CAP_SPIRAM, MALLOC_CAP_DEFAULT);
+   rominfo->rom = mem_alloc(rominfo->rom_banks * ROM_BANK_LENGTH, false);
    if (NULL == rominfo->rom)
    {
       gui_sendmsg(GUI_RED, "Could not allocate space for ROM image");
@@ -174,7 +172,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    if (rominfo->vrom_banks)
    {
       // rominfo->vrom = nofrendo_malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
-      rominfo->vrom = heap_caps_malloc_prefer((rominfo->vrom_banks * VROM_BANK_LENGTH), MALLOC_CAP_SPIRAM, MALLOC_CAP_DEFAULT);
+      rominfo->vrom = mem_alloc(rominfo->vrom_banks * VROM_BANK_LENGTH, false);
       if (NULL == rominfo->vrom)
       {
          gui_sendmsg(GUI_RED, "Could not allocate space for VROM");

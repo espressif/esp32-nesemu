@@ -28,8 +28,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <esp_heap_caps.h>
-
 #include "noftypes.h"
 #include "memguard.h"
 #include "log.h"
@@ -122,7 +120,7 @@ static void *mem_guardalloc(int alloc_size, int guard_size)
 
    /* allocate memory */
    // orig = malloc(alloc_size + (guard_size * 2));
-   orig = heap_caps_malloc(alloc_size + (guard_size * 2), MALLOC_CAP_8BIT);
+   orig = mem_alloc(alloc_size + (guard_size * 2), true);
    if (NULL == orig)
       return NULL;
 
@@ -184,7 +182,7 @@ static void mem_init(void)
    mem_blockcount = 0;
 
    // mem_record = malloc(MAX_BLOCKS * sizeof(memblock_t));
-   mem_record = heap_caps_malloc_prefer(MAX_BLOCKS * sizeof(memblock_t), MALLOC_CAP_SPIRAM, MALLOC_CAP_DEFAULT);
+   mem_record = mem_alloc(MAX_BLOCKS * sizeof(memblock_t), false);
 
    ASSERT(mem_record);
    memset(mem_record, 0, MAX_BLOCKS * sizeof(memblock_t));
@@ -254,9 +252,9 @@ void *_my_nofrendo_malloc(int size, char *file, int line)
       temp = mem_guardalloc(size, GUARD_LENGTH);
    else
       // temp = malloc(size);
-      temp = heap_caps_malloc(size, MALLOC_CAP_8BIT);
+      temp = mem_alloc(size, true);
 
-   nofrendo_log_printf("MALLOC_CAP_8BIT free: %d, malloc: %d at %s:%d\n", heap_caps_get_free_size(MALLOC_CAP_8BIT), size, file, line);
+   nofrendo_log_printf("MALLOC_CAP_8BIT malloc: %d at %s:%d\n", size, file, line);
    if (NULL == temp)
    {
       sprintf(fail, "malloc: out of memory at line %d of %s.  block size: %d\n",
@@ -330,7 +328,7 @@ void *_my_nofrendo_malloc(int size)
    char fail[256];
 
    // temp = malloc(size);
-   temp = heap_caps_malloc(size, MALLOC_CAP_8BIT);
+   temp = mem_alloc(size, true);
 
    if (NULL == temp)
    {
