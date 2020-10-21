@@ -128,7 +128,7 @@ static void rom_loadsram(rominfo_t *rominfo)
 static int rom_allocsram(rominfo_t *rominfo)
 {
    /* Load up SRAM */
-   rominfo->sram = nofrendo_malloc(SRAM_BANK_LENGTH * rominfo->sram_banks);
+   rominfo->sram = NOFRENDO_MALLOC(SRAM_BANK_LENGTH * rominfo->sram_banks);
    if (NULL == rominfo->sram)
    {
       gui_sendmsg(GUI_RED, "Could not allocate space for battery RAM");
@@ -159,7 +159,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    ASSERT(rominfo);
 
    /* Allocate ROM space, and load it up! */
-   // rominfo->rom = nofrendo_malloc((rominfo->rom_banks * ROM_BANK_LENGTH));
+   // rominfo->rom = malloc(rominfo->rom_banks * ROM_BANK_LENGTH);
    rominfo->rom = mem_alloc(rominfo->rom_banks * ROM_BANK_LENGTH, false);
    if (NULL == rominfo->rom)
    {
@@ -171,7 +171,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    /* If there's VROM, allocate and stuff it in */
    if (rominfo->vrom_banks)
    {
-      // rominfo->vrom = nofrendo_malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
+      // rominfo->vrom = malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
       rominfo->vrom = mem_alloc(rominfo->vrom_banks * VROM_BANK_LENGTH, false);
       if (NULL == rominfo->vrom)
       {
@@ -182,7 +182,7 @@ static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
    }
    else
    {
-      rominfo->vram = nofrendo_malloc(VRAM_LENGTH);
+      rominfo->vram = NOFRENDO_MALLOC(VRAM_LENGTH);
       if (NULL == rominfo->vram)
       {
          gui_sendmsg(GUI_RED, "Could not allocate space for VRAM");
@@ -424,7 +424,7 @@ rominfo_t *rom_load(const char *filename)
    FILE *fp;
    rominfo_t *rominfo;
 
-   rominfo = nofrendo_malloc(sizeof(rominfo_t));
+   rominfo = NOFRENDO_MALLOC(sizeof(rominfo_t));
    if (NULL == rominfo)
       return NULL;
 
@@ -482,12 +482,12 @@ rominfo_t *rom_load(const char *filename)
 _fail:
    if (NULL != fp)
       _fclose(fp);
-   rom_nofrendo_free(&rominfo);
+   rom_free(&rominfo);
    return NULL;
 }
 
 /* Free a ROM */
-void rom_nofrendo_free(rominfo_t **rominfo)
+void rom_free(rominfo_t **rominfo)
 {
    if (NULL == *rominfo)
    {
@@ -506,15 +506,15 @@ void rom_nofrendo_free(rominfo_t **rominfo)
    rom_savesram(*rominfo);
 
    if ((*rominfo)->sram)
-      nofrendo_free((*rominfo)->sram);
+      NOFRENDO_FREE((*rominfo)->sram);
    if ((*rominfo)->rom)
-      nofrendo_free((*rominfo)->rom);
+      NOFRENDO_FREE((*rominfo)->rom);
    if ((*rominfo)->vrom)
-      nofrendo_free((*rominfo)->vrom);
+      NOFRENDO_FREE((*rominfo)->vrom);
    if ((*rominfo)->vram)
-      nofrendo_free((*rominfo)->vram);
+      NOFRENDO_FREE((*rominfo)->vram);
 
-   nofrendo_free(*rominfo);
+   NOFRENDO_FREE(*rominfo);
 
    gui_sendmsg(GUI_GREEN, "ROM freed");
 }

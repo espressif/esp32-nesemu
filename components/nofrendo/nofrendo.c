@@ -68,12 +68,12 @@ static void shutdown_everything(void)
 {
    if (console.filename)
    {
-      nofrendo_free(console.filename);
+      NOFRENDO_FREE(console.filename);
       console.filename = NULL;
    }
    if (console.nextfilename)
    {
-      nofrendo_free(console.nextfilename);
+      NOFRENDO_FREE(console.nextfilename);
       console.nextfilename = NULL;
    }
 
@@ -100,7 +100,7 @@ void main_eject(void)
 
    if (NULL != console.filename)
    {
-      nofrendo_free(console.filename);
+      NOFRENDO_FREE(console.filename);
       console.filename = NULL;
    }
    console.type = system_unknown;
@@ -116,7 +116,7 @@ void main_quit(void)
    /* if there's a pending filename / system, clear */
    if (NULL != console.nextfilename)
    {
-      nofrendo_free(console.nextfilename);
+      NOFRENDO_FREE(console.nextfilename);
       console.nextfilename = NULL;
    }
    console.nexttype = system_unknown;
@@ -150,7 +150,7 @@ static int internal_insert(const char *filename, system_t type)
    if (system_autodetect == type)
       type = detect_systemtype(filename);
 
-   console.filename = nofrendo_strdup(filename);
+   console.filename = NOFRENDO_STRDUP(filename);
    console.type = type;
 
    /* set up the event system for this system type */
@@ -183,7 +183,7 @@ static int internal_insert(const char *filename, system_t type)
    default:
       nofrendo_log_printf("system type unknown, playing nofrendo NES intro.\n");
       if (NULL != console.filename)
-         nofrendo_free(console.filename);
+         NOFRENDO_FREE(console.filename);
 
       /* oooh, recursion */
       return internal_insert(filename, system_nes);
@@ -195,7 +195,7 @@ static int internal_insert(const char *filename, system_t type)
 /* This tells main_loop to load this next image */
 void main_insert(const char *filename, system_t type)
 {
-   console.nextfilename = nofrendo_strdup(filename);
+   console.nextfilename = NOFRENDO_STRDUP(filename);
    console.nexttype = type;
 
    main_eject();
@@ -239,9 +239,9 @@ int main_loop(const char *filename, system_t type)
    osd_getvideoinfo(&video);
    if (vid_init(video.default_width, video.default_height, video.driver))
       return -1;
-	nofrendo_log_printf("vid_init done\n");
+	printf("vid_init done\n");
 
-   console.nextfilename = nofrendo_strdup(filename);
+   console.nextfilename = NOFRENDO_STRDUP(filename);
    console.nexttype = type;
 
    while (false == console.quit)

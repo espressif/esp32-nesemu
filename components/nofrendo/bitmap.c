@@ -45,7 +45,7 @@ static bitmap_t *_make_bitmap(uint8 *data_addr, bool hw, int width,
       return NULL;
 
    /* Make sure to add in space for line pointers */
-   bitmap = nofrendo_malloc(sizeof(bitmap_t) + (sizeof(uint8 *) * height));
+   bitmap = NOFRENDO_MALLOC(sizeof(bitmap_t) + (sizeof(uint8 *) * height));
    if (NULL == bitmap)
       return NULL;
 
@@ -82,7 +82,7 @@ bitmap_t *bmp_create(int width, int height, int overdraw)
    int pitch;
 
    pitch = width + (overdraw * 2); /* left and right */
-   addr = nofrendo_malloc((pitch * height) + 3); /* add max 32-bit aligned adjustment */
+   addr = NOFRENDO_MALLOC((pitch * height) + 3); /* add max 32-bit aligned adjustment */
    if (NULL == addr)
       return NULL;
 
@@ -101,8 +101,8 @@ void bmp_destroy(bitmap_t **bitmap)
    if (*bitmap)
    {
       if ((*bitmap)->data && false == (*bitmap)->hardware)
-         nofrendo_free((*bitmap)->data);
-      nofrendo_free(*bitmap);
+         NOFRENDO_FREE((*bitmap)->data);
+      NOFRENDO_FREE(*bitmap);
       *bitmap = NULL;
    }
 }

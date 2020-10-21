@@ -12,9 +12,6 @@
 #define CONFIG_FILE "nofrendo.cfg"
 #endif
 
-#define FSROOT "/spiffs"
-#define ROM_FILE FSROOT "/rom.nes"
-
 #include "noftypes.h"
 
 typedef struct config_s
@@ -52,7 +49,7 @@ typedef struct config_s
 
 extern config_t config;
 
-#endif /* !_CONFIG_H_ */
+#endif /* _NOFCONFIG_H_ */
 
 /*
 ** $Log: nofconfig.h,v $

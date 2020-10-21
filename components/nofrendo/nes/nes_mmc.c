@@ -225,7 +225,7 @@ void mmc_reset(void)
 void mmc_destroy(mmc_t **nes_mmc)
 {
    if (*nes_mmc)
-      nofrendo_free(*nes_mmc);
+      NOFRENDO_FREE(*nes_mmc);
 }
 
 mmc_t *mmc_create(rominfo_t *rominfo)
@@ -239,7 +239,7 @@ mmc_t *mmc_create(rominfo_t *rominfo)
          return NULL; /* Should *never* happen */
    }
 
-   temp = nofrendo_malloc(sizeof(mmc_t));
+   temp = NOFRENDO_MALLOC(sizeof(mmc_t));
    if (NULL == temp)
       return NULL;
 

@@ -30,33 +30,34 @@
 
 #ifdef NOFRENDO_DEBUG
 
-#define  nofrendo_malloc(s)   _my_nofrendo_malloc((s), __FILE__, __LINE__)
-#define  nofrendo_free(d)     _my_nofrendo_free((void **) &(d), __FILE__, __LINE__)
-#define  nofrendo_strdup(s)   _my_nofrendo_strdup((s), __FILE__, __LINE__)
+#define  NOFRENDO_MALLOC(s)   _my_malloc((s), __FILE__, __LINE__)
+#define  NOFRENDO_FREE(d)     _my_free((void **) &(d), __FILE__, __LINE__)
+#define  NOFRENDO_STRDUP(s)   _my_strdup((s), __FILE__, __LINE__)
 
-extern void *_my_nofrendo_malloc(int size, char *file, int line);
-extern void _my_nofrendo_free(void **data, char *file, int line);
-extern char *_my_nofrendo_strdup(const char *string, char *file, int line);
+extern void *_my_malloc(int size, char *file, int line);
+extern void _my_free(void **data, char *file, int line);
+extern char *_my_strdup(const char *string, char *file, int line);
 
 #else /* !NOFRENDO_DEBUG */
 
 /* Non-debugging versions of calls */
-#define  nofrendo_malloc(s)   _my_nofrendo_malloc((s))
-#define  nofrendo_free(d)     _my_nofrendo_free((void **) &(d))
-#define  nofrendo_strdup(s)   _my_nofrendo_strdup((s))
+#define  NOFRENDO_MALLOC(s)   _my_malloc((s))
+#define  NOFRENDO_FREE(d)     _my_free((void **) &(d))
+#define  NOFRENDO_STRDUP(s)   _my_strdup((s))
 
-extern void *_my_nofrendo_malloc(int size);
-extern void _my_nofrendo_free(void **data);
-extern char *_my_nofrendo_strdup(const char *string);
+extern void *_my_malloc(int size);
+extern void _my_free(void **data);
+extern char *_my_strdup(const char *string);
 
 #endif /* !NOFRENDO_DEBUG */
-
 
 extern void mem_cleanup(void);
 extern void mem_checkblocks(void);
 extern void mem_checkleaks(void);
 
 extern bool mem_debug;
+
+extern void *mem_alloc(int size, bool prefer_fast_memory);
 
 #endif   /* _MEMGUARD_H_ */
 

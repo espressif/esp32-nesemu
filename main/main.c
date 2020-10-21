@@ -13,6 +13,7 @@
 
 #include "nofconfig.h"
 #include "nofrendo.h"
+#include "config.h"
 
 void *mem_alloc(int size, bool fast_mem)
 {

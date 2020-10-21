@@ -126,7 +126,7 @@ ppu_t *ppu_create(void)
    static bool pal_generated = false;
    ppu_t *temp;
 
-   temp = nofrendo_malloc(sizeof(ppu_t));
+   temp = NOFRENDO_MALLOC(sizeof(ppu_t));
    if (NULL == temp)
       return NULL;
 
@@ -153,7 +153,7 @@ void ppu_destroy(ppu_t **src_ppu)
 {
    if (*src_ppu)
    {
-      nofrendo_free(*src_ppu);
+      NOFRENDO_FREE(*src_ppu);
       *src_ppu = NULL;
    }
 }

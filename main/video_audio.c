@@ -106,7 +106,7 @@ static void osd_stopsound(void)
 static int osd_init_sound(void)
 {
 #if CONFIG_SOUND_ENA
-	audio_frame = nofrendo_malloc(4 * DEFAULT_FRAGSIZE);
+	audio_frame = NOFRENDO_MALLOC(4 * DEFAULT_FRAGSIZE);
 	i2s_config_t cfg = {
 		.mode = I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN,
 		.sample_rate = DEFAULT_SAMPLERATE,

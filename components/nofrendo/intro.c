@@ -327,7 +327,7 @@ static uint8 *intro_getrom(void)
 {
    uint8 *rom;
    
-   rom = nofrendo_malloc(CODE_SIZE);   
+   rom = NOFRENDO_MALLOC(CODE_SIZE);   
    if (NULL != rom)
    {
       /* good measure */
@@ -347,7 +347,7 @@ static uint8 *intro_getvrom(void)
 {
    uint8 *vrom;
 
-   vrom = nofrendo_malloc(VROM_SIZE);
+   vrom = NOFRENDO_MALLOC(VROM_SIZE);
    if (NULL != vrom)
    {
       memcpy(vrom, intro_vrom, sizeof(intro_vrom));

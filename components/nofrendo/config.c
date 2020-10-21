@@ -29,19 +29,19 @@ static void my_destroy(myvar_t **var)
    ASSERT(*var);
 
    if ((*var)->group) 
-      nofrendo_free((*var)->group);
+      NOFRENDO_FREE((*var)->group);
    if ((*var)->key)
-      nofrendo_free((*var)->key);
+      NOFRENDO_FREE((*var)->key);
    if ((*var)->value)
-      nofrendo_free((*var)->value);
-   nofrendo_free(*var);
+      NOFRENDO_FREE((*var)->value);
+   NOFRENDO_FREE(*var);
 }
 
 static myvar_t *my_create(const char *group, const char *key, const char *value)
 {
    myvar_t *var;
 
-   var = nofrendo_malloc(sizeof(*var));
+   var = NOFRENDO_MALLOC(sizeof(*var));
    if (NULL == var)
    {
       return 0;
@@ -50,9 +50,9 @@ static myvar_t *my_create(const char *group, const char *key, const char *value)
    var->less = var->greater = NULL;
    var->group = var->key = var->value = NULL;
 
-   if ((var->group = nofrendo_malloc(strlen(group) + 1))
-       && (var->key = nofrendo_malloc(strlen(key) + 1))
-       && (var->value = nofrendo_malloc(strlen(value) + 1)))
+   if ((var->group = NOFRENDO_MALLOC(strlen(group) + 1))
+       && (var->key = NOFRENDO_MALLOC(strlen(key) + 1))
+       && (var->value = NOFRENDO_MALLOC(strlen(value) + 1)))
    {
       strcpy(var->group, group);
       strcpy(var->key, key);
@@ -146,13 +146,13 @@ static char *my_getline(FILE *stream)
       if (NULL == (fgets(buf, sizeof(buf), stream)))
       {
          if (dynamic)
-            nofrendo_free(dynamic);
+            NOFRENDO_FREE(dynamic);
          return 0;
       }
 
       if (NULL == dynamic)
       {
-         dynamic = nofrendo_malloc(strlen(buf) + 1);
+         dynamic = NOFRENDO_MALLOC(strlen(buf) + 1);
          if (NULL == dynamic)
          {
             return 0;
@@ -163,12 +163,12 @@ static char *my_getline(FILE *stream)
       {
          /* a mini-version of realloc that works with our memory manager */
          char *temp = NULL;
-         temp = nofrendo_malloc(strlen(dynamic) + strlen(buf) + 1);
+         temp = NOFRENDO_MALLOC(strlen(dynamic) + strlen(buf) + 1);
          if (NULL == temp)
             return 0;
 
          strcpy(temp, dynamic);
-         nofrendo_free(dynamic);
+         NOFRENDO_FREE(dynamic);
          dynamic = temp;
 
          strcat(dynamic, buf);
@@ -220,7 +220,7 @@ static int load_config(char *filename)
 
             case '[':
                if (group)
-                  nofrendo_free(group);
+                  NOFRENDO_FREE(group);
 
                group = ++s;
 
@@ -235,7 +235,7 @@ static int load_config(char *filename)
                   *s++ = '\0';
                }
 
-               if ((value = nofrendo_malloc(strlen(group) + 1)))
+               if ((value = NOFRENDO_MALLOC(strlen(group) + 1)))
                {
                   strcpy(value, group);
                }
@@ -278,11 +278,11 @@ static int load_config(char *filename)
             }
          } while (*s);
 
-         nofrendo_free(line);
+         NOFRENDO_FREE(line);
       }
 
       if (group) 
-         nofrendo_free(group);
+         NOFRENDO_FREE(group);
 
       fclose(config_file);
    }

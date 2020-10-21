@@ -435,7 +435,7 @@ void nes_destroy(nes_t **machine)
 {
    if (*machine)
    {
-      rom_nofrendo_free(&(*machine)->rominfo);
+      rom_free(&(*machine)->rominfo);
       mmc_destroy(&(*machine)->mmc);
       ppu_destroy(&(*machine)->ppu);
       apu_destroy(&(*machine)->apu);
@@ -443,11 +443,11 @@ void nes_destroy(nes_t **machine)
       if ((*machine)->cpu)
       {
          if ((*machine)->cpu->mem_page[0])
-            nofrendo_free((*machine)->cpu->mem_page[0]);
-         nofrendo_free((*machine)->cpu);
+            NOFRENDO_FREE((*machine)->cpu->mem_page[0]);
+         NOFRENDO_FREE((*machine)->cpu);
       }
 
-      nofrendo_free(*machine);
+      NOFRENDO_FREE(*machine);
       *machine = NULL;
    }
 }
@@ -510,7 +510,7 @@ nes_t *nes_create(void)
    sndinfo_t osd_sound;
    int i;
 
-   machine = nofrendo_malloc(sizeof(nes_t));
+   machine = NOFRENDO_MALLOC(sizeof(nes_t));
    if (NULL == machine)
       return NULL;
 
@@ -525,14 +525,14 @@ nes_t *nes_create(void)
    machine->autoframeskip = true;
 
    /* cpu */
-   machine->cpu = nofrendo_malloc(sizeof(nes6502_context));
+   machine->cpu = NOFRENDO_MALLOC(sizeof(nes6502_context));
    if (NULL == machine->cpu)
       goto _fail;
 
    memset(machine->cpu, 0, sizeof(nes6502_context));
    
    /* allocate 2kB RAM */
-   machine->cpu->mem_page[0] = nofrendo_malloc(NES_RAMSIZE);
+   machine->cpu->mem_page[0] = NOFRENDO_MALLOC(NES_RAMSIZE);
    if (NULL == machine->cpu->mem_page[0])
       goto _fail;
 

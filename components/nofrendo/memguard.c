@@ -240,7 +240,7 @@ static void mem_deleteblock(void *data, char *file, int line)
 #ifdef NOFRENDO_DEBUG
 
 /* allocates memory and clears it */
-void *_my_nofrendo_malloc(int size, char *file, int line)
+void *_my_malloc(int size, char *file, int line)
 {
    void *temp;
    char fail[256];
@@ -271,7 +271,7 @@ void *_my_nofrendo_malloc(int size, char *file, int line)
 }
 
 /* free a pointer allocated with my_malloc */
-void _my_nofrendo_free(void **data, char *file, int line)
+void _my_free(void **data, char *file, int line)
 {
    char fail[256];
 
@@ -303,14 +303,14 @@ void _my_nofrendo_free(void **data, char *file, int line)
    *data = NULL; /* NULL our source */
 }
 
-char *_my_nofrendo_strdup(const char *string, char *file, int line)
+char *_my_strdup(const char *string, char *file, int line)
 {
    char *temp;
 
    if (NULL == string)
       return NULL;
 
-   temp = (char *)_my_nofrendo_malloc(strlen(string) + 1, file, line);
+   temp = (char *)_my_malloc(strlen(string) + 1, file, line);
    if (NULL == temp)
       return NULL;
 
@@ -322,7 +322,7 @@ char *_my_nofrendo_strdup(const char *string, char *file, int line)
 #else /* !NOFRENDO_DEBUG */
 
 /* allocates memory and clears it */
-void *_my_nofrendo_malloc(int size)
+void *_my_malloc(int size)
 {
    void *temp;
    char fail[256];
@@ -340,7 +340,7 @@ void *_my_nofrendo_malloc(int size)
 }
 
 /* free a pointer allocated with my_malloc */
-void _my_nofrendo_free(void **data)
+void _my_free(void **data)
 {
    char fail[256];
 
@@ -354,7 +354,7 @@ void _my_nofrendo_free(void **data)
    *data = NULL; /* NULL our source */
 }
 
-char *_my_nofrendo_strdup(const char *string)
+char *_my_strdup(const char *string)
 {
    char *temp;
 
@@ -362,7 +362,7 @@ char *_my_nofrendo_strdup(const char *string)
       return NULL;
 
    /* will ASSERT for us */
-   temp = (char *)_my_nofrendo_malloc(strlen(string) + 1);
+   temp = (char *)_my_malloc(strlen(string) + 1);
    if (NULL == temp)
       return NULL;
 

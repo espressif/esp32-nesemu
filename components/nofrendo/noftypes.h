@@ -70,8 +70,6 @@ typedef  unsigned int   uint32;
 
 #endif /* !NOFRENDO_DEBUG */
 
-extern void *mem_alloc(int size, bool speedy);
-
 #endif /* _NOFTYPES_H_ */
 
 /*

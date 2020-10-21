@@ -29,6 +29,7 @@
 #include "version.h"
 
 #include "nofconfig.h"
+#include "config.h"
 
 char configfilename[] = "na";
 
