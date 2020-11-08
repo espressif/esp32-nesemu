@@ -23,11 +23,11 @@
 ** $Id: map040.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes.h>
-#include <libsnss.h>
-#include <log.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes.h"
+#include "../libsnss/libsnss.h"
+#include "../log.h"
 
 #define  MAP40_IRQ_PERIOD  (4096 / 113.666666)
 

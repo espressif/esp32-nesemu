@@ -27,60 +27,56 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <noftypes.h>
-#include <nes_rom.h>
-#include <intro.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <nes.h>
-#include <gui.h>
-#include <log.h>
-#include <osd.h>
 
-extern char *osd_getromdata();
+#include "../noftypes.h"
+#include "nes_rom.h"
+#include "../intro.h"
+#include "nes_mmc.h"
+#include "nes_ppu.h"
+#include "nes.h"
+#include "../gui.h"
+#include "../log.h"
+#include "../osd.h"
 
 /* Max length for displayed filename */
-#define  ROM_DISP_MAXLEN   20
-
+#define ROM_DISP_MAXLEN 20
 
 #ifdef ZLIB
 #include <zlib.h>
-#define  _fopen            gzopen
-#define  _fclose           gzclose
-#define  _fread(B,N,L,F)   gzread((F),(B),(L)*(N))
+#define _fopen gzopen
+#define _fclose gzclose
+#define _fread(B, N, L, F) gzread((F), (B), (L) * (N))
 #else
-#define  _fopen            fopen
-#define  _fclose           fclose
-#define  _fread(B,N,L,F)   fread((B),(N),(L),(F))
+#define _fopen fopen
+#define _fclose fclose
+#define _fread(B, N, L, F) fread((B), (N), (L), (F))
 #endif
 
-#define  ROM_FOURSCREEN    0x08
-#define  ROM_TRAINER       0x04
-#define  ROM_BATTERY       0x02
-#define  ROM_MIRRORTYPE    0x01
-#define  ROM_INES_MAGIC    "NES\x1A"
+#define ROM_FOURSCREEN 0x08
+#define ROM_TRAINER 0x04
+#define ROM_BATTERY 0x02
+#define ROM_MIRRORTYPE 0x01
+#define ROM_INES_MAGIC "NES\x1A"
 
-//ToDo: packed - JD
 typedef struct inesheader_s
 {
-   uint8 ines_magic[4]    ;
-   uint8 rom_banks        ;
-   uint8 vrom_banks       ;
-   uint8 rom_type         ;
-   uint8 mapper_hinybble  ;
-   uint8 reserved[8]      ;
-} inesheader_t;
+   uint8 ines_magic[4];
+   uint8 rom_banks;
+   uint8 vrom_banks;
+   uint8 rom_type;
+   uint8 mapper_hinybble;
+   uint8 reserved[8];
+} __attribute__((packed)) inesheader_t;
 
+#define TRAINER_OFFSET 0x1000
+#define TRAINER_LENGTH 0x200
+#define VRAM_LENGTH 0x2000
 
-#define  TRAINER_OFFSET    0x1000
-#define  TRAINER_LENGTH    0x200
-#define  VRAM_LENGTH       0x2000
+#define ROM_BANK_LENGTH 0x4000
+#define VROM_BANK_LENGTH 0x2000
 
-#define  ROM_BANK_LENGTH   0x4000
-#define  VROM_BANK_LENGTH  0x2000
-
-#define  SRAM_BANK_LENGTH  0x0400
-#define  VRAM_BANK_LENGTH  0x2000
+#define SRAM_BANK_LENGTH 0x0400
+#define VRAM_BANK_LENGTH 0x2000
 
 /* Save battery-backed RAM */
 static void rom_savesram(rominfo_t *rominfo)
@@ -100,7 +96,7 @@ static void rom_savesram(rominfo_t *rominfo)
       {
          fwrite(rominfo->sram, SRAM_BANK_LENGTH, rominfo->sram_banks, fp);
          fclose(fp);
-         log_printf("Wrote battery RAM to %s.\n", fn);
+         nofrendo_log_printf("Wrote battery RAM to %s.\n", fn);
       }
    }
 }
@@ -123,7 +119,7 @@ static void rom_loadsram(rominfo_t *rominfo)
       {
          fread(rominfo->sram, SRAM_BANK_LENGTH, rominfo->sram_banks, fp);
          fclose(fp);
-         log_printf("Read battery RAM from %s.\n", fn);
+         nofrendo_log_printf("Read battery RAM from %s.\n", fn);
       }
    }
 }
@@ -132,7 +128,7 @@ static void rom_loadsram(rominfo_t *rominfo)
 static int rom_allocsram(rominfo_t *rominfo)
 {
    /* Load up SRAM */
-   rominfo->sram = malloc(SRAM_BANK_LENGTH * rominfo->sram_banks);
+   rominfo->sram = NOFRENDO_MALLOC(SRAM_BANK_LENGTH * rominfo->sram_banks);
    if (NULL == rominfo->sram)
    {
       gui_sendmsg(GUI_RED, "Could not allocate space for battery RAM");
@@ -145,58 +141,48 @@ static int rom_allocsram(rominfo_t *rominfo)
 }
 
 /* If there's a trainer, load it in at $7000 */
-static void rom_loadtrainer(unsigned char **rom, rominfo_t *rominfo)
+static void rom_loadtrainer(FILE *fp, rominfo_t *rominfo)
 {
-   ASSERT(rom);
+   ASSERT(fp);
    ASSERT(rominfo);
 
    if (rominfo->flags & ROM_FLAG_TRAINER)
    {
-//      fread(rominfo->sram + TRAINER_OFFSET, TRAINER_LENGTH, 1, fp);
-      memcpy(rominfo->sram + TRAINER_OFFSET, *rom, TRAINER_LENGTH);
-      rom+=TRAINER_LENGTH;
-      log_printf("Read in trainer at $7000\n");
+      fread(rominfo->sram + TRAINER_OFFSET, TRAINER_LENGTH, 1, fp);
+      nofrendo_log_printf("Read in trainer at $7000\n");
    }
 }
 
-static int rom_loadrom(unsigned char **rom, rominfo_t *rominfo)
+static int rom_loadrom(FILE *fp, rominfo_t *rominfo)
 {
-   ASSERT(rom);
+   ASSERT(fp);
    ASSERT(rominfo);
 
    /* Allocate ROM space, and load it up! */
-/*
-   rominfo->rom = malloc((rominfo->rom_banks * ROM_BANK_LENGTH));
+   // rominfo->rom = malloc(rominfo->rom_banks * ROM_BANK_LENGTH);
+   rominfo->rom = mem_alloc(rominfo->rom_banks * ROM_BANK_LENGTH, false);
    if (NULL == rominfo->rom)
    {
       gui_sendmsg(GUI_RED, "Could not allocate space for ROM image");
       return -1;
    }
    _fread(rominfo->rom, ROM_BANK_LENGTH, rominfo->rom_banks, fp);
-*/
-   rominfo->rom=*rom;
-   *rom+=ROM_BANK_LENGTH*rominfo->rom_banks;
-
 
    /* If there's VROM, allocate and stuff it in */
    if (rominfo->vrom_banks)
    {
-/*
-      rominfo->vrom = malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
+      // rominfo->vrom = malloc((rominfo->vrom_banks * VROM_BANK_LENGTH));
+      rominfo->vrom = mem_alloc(rominfo->vrom_banks * VROM_BANK_LENGTH, false);
       if (NULL == rominfo->vrom)
       {
          gui_sendmsg(GUI_RED, "Could not allocate space for VROM");
          return -1;
       }
       _fread(rominfo->vrom, VROM_BANK_LENGTH, rominfo->vrom_banks, fp);
-*/
-      rominfo->vrom=*rom;
-      *rom+=VROM_BANK_LENGTH*rominfo->vrom_banks;
-
    }
    else
    {
-      rominfo->vram = malloc(VRAM_LENGTH);
+      rominfo->vram = NOFRENDO_MALLOC(VRAM_LENGTH);
       if (NULL == rominfo->vram)
       {
          gui_sendmsg(GUI_RED, "Could not allocate space for VRAM");
@@ -236,8 +222,8 @@ static void rom_checkforpal(rominfo_t *rominfo)
    /* TODO: this should really be a *SYSTEM* flag */
    rominfo->flags |= ROM_FLAG_VERSUS;
    /* TODO: bad, BAD idea, calling nes_getcontextptr... */
-   ppu_setpal(nes_getcontextptr()->ppu, vs_pal);
-   log_printf("Game specific palette found -- assuming VS. UniSystem\n");
+   // ppu_setpal(nes_getcontextptr()->ppu, vs_pal);
+   nofrendo_log_printf("Game specific palette found -- assuming VS. UniSystem\n");
 }
 
 static FILE *rom_findrom(const char *filename, rominfo_t *rominfo)
@@ -270,7 +256,7 @@ static FILE *rom_findrom(const char *filename, rominfo_t *rominfo)
 static int rom_adddirty(char *filename)
 {
 #ifdef NOFRENDO_DEBUG
-#define  MAX_BUFFER_LENGTH    255
+#define MAX_BUFFER_LENGTH 255
    char buffer[MAX_BUFFER_LENGTH + 1];
    bool found = false;
 
@@ -323,22 +309,19 @@ int rom_checkmagic(const char *filename)
    return -1;
 }
 
-static int rom_getheader(unsigned char **rom, rominfo_t *rominfo)
+static int rom_getheader(FILE *fp, rominfo_t *rominfo)
 {
-#define  RESERVED_LENGTH   8
+#define RESERVED_LENGTH 8
    inesheader_t head;
    uint8 reserved[RESERVED_LENGTH];
    bool header_dirty;
 
-   ASSERT(rom);
-   ASSERT(*rom);
+   ASSERT(fp);
    ASSERT(rominfo);
 
    /* Read in the header */
-//   _fread(&head, 1, sizeof(head), fp);
-	printf("Head: %p (%x %x %x %x)\n", *rom, (*rom)[0], (*rom)[1], (*rom)[2], (*rom)[3]);
-	memcpy(&head, *rom, sizeof(head));
-	*rom+=sizeof(head);
+   _fread(&head, sizeof(head), 1, fp);
+
 
    if (memcmp(head.ines_magic, ROM_INES_MAGIC, 4))
    {
@@ -376,10 +359,10 @@ static int rom_getheader(unsigned char **rom, rominfo_t *rominfo)
 
       /* @!?#@! DiskDude. */
       if (('D' == head.mapper_hinybble) && (0 == memcmp(head.reserved, "iskDude!", 8)))
-         log_printf("`DiskDude!' found in ROM header, ignoring high mapper nybble\n");
+         nofrendo_log_printf("`DiskDude!' found in ROM header, ignoring high mapper nybble\n");
       else
       {
-         log_printf("ROM header dirty, possible problem\n");
+         nofrendo_log_printf("ROM header dirty, possible problem\n");
          rominfo->mapper_number |= (head.mapper_hinybble & 0xF0);
       }
 
@@ -421,7 +404,7 @@ char *rom_getinfo(rominfo_t *rominfo)
    sprintf(temp, " [%d] %dk/%dk %c", rominfo->mapper_number,
            rominfo->rom_banks * 16, rominfo->vrom_banks * 8,
            (rominfo->mirror == MIRROR_VERT) ? 'V' : 'H');
-   
+
    /* Stick it on there! */
    strncat(info, temp, PATH_MAX - strlen(info));
 
@@ -438,17 +421,24 @@ char *rom_getinfo(rominfo_t *rominfo)
 /* Load a ROM image into memory */
 rominfo_t *rom_load(const char *filename)
 {
-   unsigned char *rom=(unsigned char*)osd_getromdata();
+   FILE *fp;
    rominfo_t *rominfo;
 
-   rominfo = malloc(sizeof(rominfo_t));
+   rominfo = NOFRENDO_MALLOC(sizeof(rominfo_t));
    if (NULL == rominfo)
       return NULL;
 
    memset(rominfo, 0, sizeof(rominfo_t));
 
+   fp = rom_findrom(filename, rominfo);
+
+   if (NULL == fp)
+      gui_sendmsg(GUI_RED, "%s not found, will use default ROM", filename);
+
    /* Get the header and stick it into rominfo struct */
-	if (rom_getheader(&rom, rominfo))
+   if (NULL == fp)
+      intro_get_header(rominfo);
+   else if (rom_getheader(fp, rominfo))
       goto _fail;
 
    /* Make sure we really support the mapper */
@@ -465,21 +455,33 @@ rominfo_t *rom_load(const char *filename)
    if (rom_allocsram(rominfo))
       goto _fail;
 
-      rom_loadtrainer(&rom, rominfo);
+   if (NULL != fp)
+      rom_loadtrainer(fp, rominfo);
 
-	if (rom_loadrom(&rom, rominfo))
+   if (NULL == fp)
+   {
+      if (intro_get_rom(rominfo))
+         goto _fail;
+   }
+   else if (rom_loadrom(fp, rominfo))
       goto _fail;
+
+   /* Close the file */
+   if (NULL != fp)
+      _fclose(fp);
 
    rom_loadsram(rominfo);
 
    /* See if there's a palette we can load up */
-//   rom_checkforpal(rominfo);
+   rom_checkforpal(rominfo);
 
    gui_sendmsg(GUI_GREEN, "ROM loaded: %s", rom_getinfo(rominfo));
 
    return rominfo;
 
 _fail:
+   if (NULL != fp)
+      _fclose(fp);
    rom_free(&rominfo);
    return NULL;
 }
@@ -498,21 +500,21 @@ void rom_free(rominfo_t **rominfo)
    {
       /* TODO: bad idea calling nes_getcontextptr... */
       ppu_setdefaultpal(nes_getcontextptr()->ppu);
-      log_printf("Default NES palette restored\n");
+      nofrendo_log_printf("Default NES palette restored\n");
    }
 
    rom_savesram(*rominfo);
 
    if ((*rominfo)->sram)
-      free((*rominfo)->sram);
+      NOFRENDO_FREE((*rominfo)->sram);
    if ((*rominfo)->rom)
-      free((*rominfo)->rom);
+      NOFRENDO_FREE((*rominfo)->rom);
    if ((*rominfo)->vrom)
-      free((*rominfo)->vrom);
+      NOFRENDO_FREE((*rominfo)->vrom);
    if ((*rominfo)->vram)
-      free((*rominfo)->vram);
+      NOFRENDO_FREE((*rominfo)->vram);
 
-   free(*rominfo);
+   NOFRENDO_FREE(*rominfo);
 
    gui_sendmsg(GUI_GREEN, "ROM freed");
 }

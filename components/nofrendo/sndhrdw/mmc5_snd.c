@@ -24,9 +24,10 @@
 */
 
 #include <string.h>
-#include <noftypes.h>
+
+#include "../noftypes.h"
 #include "mmc5_snd.h"
-#include <nes_apu.h>
+#include "nes_apu.h"
 
 /* TODO: encapsulate apu/mmc5 rectangle */
 

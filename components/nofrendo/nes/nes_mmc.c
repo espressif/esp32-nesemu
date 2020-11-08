@@ -24,14 +24,15 @@
 */
 
 #include <string.h>
-#include <noftypes.h>
-#include "nes6502.h"
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <libsnss.h>
-#include <log.h>
-#include <mmclist.h>
-#include <nes_rom.h>
+
+#include "../noftypes.h"
+#include "../cpu/nes6502.h"
+#include "nes_mmc.h"
+#include "nes_ppu.h"
+#include "../libsnss/libsnss.h"
+#include "../log.h"
+#include "mmclist.h"
+#include "nes_rom.h"
 
 #define  MMC_8KROM         (mmc.cart->rom_banks * 2)
 #define  MMC_16KROM        (mmc.cart->rom_banks)
@@ -101,7 +102,7 @@ void mmc_bankvrom(int size, uint32 address, int bank)
       break;
 
    default:
-      log_printf("invalid VROM bank size %d\n", size);
+      nofrendo_log_printf("invalid VROM bank size %d\n", size);
    }
 }
 
@@ -152,7 +153,7 @@ void mmc_bankrom(int size, uint32 address, int bank)
       break;
 
    default:
-      log_printf("invalid ROM bank size %d\n", size);
+      nofrendo_log_printf("invalid ROM bank size %d\n", size);
       break;
    }
 
@@ -176,7 +177,7 @@ bool mmc_peek(int map_num)
 
 static void mmc_setpages(void)
 {
-   log_printf("setting up mapper %d\n", mmc.intf->number);
+   nofrendo_log_printf("setting up mapper %d\n", mmc.intf->number);
 
    /* Switch ROM into CPU space, set VROM/VRAM (done for ALL ROMs) */
    mmc_bankrom(16, 0x8000, 0);
@@ -217,14 +218,14 @@ void mmc_reset(void)
    if (mmc.intf->init)
       mmc.intf->init();
 
-   log_printf("reset memory mapper\n");
+   nofrendo_log_printf("reset memory mapper\n");
 }
 
 
 void mmc_destroy(mmc_t **nes_mmc)
 {
    if (*nes_mmc)
-      free(*nes_mmc);
+      NOFRENDO_FREE(*nes_mmc);
 }
 
 mmc_t *mmc_create(rominfo_t *rominfo)
@@ -238,7 +239,7 @@ mmc_t *mmc_create(rominfo_t *rominfo)
          return NULL; /* Should *never* happen */
    }
 
-   temp = malloc(sizeof(mmc_t));
+   temp = NOFRENDO_MALLOC(sizeof(mmc_t));
    if (NULL == temp)
       return NULL;
 
@@ -249,7 +250,7 @@ mmc_t *mmc_create(rominfo_t *rominfo)
 
    mmc_setcontext(temp);
 
-   log_printf("created memory mapper: %s\n", (*map_ptr)->name);
+   nofrendo_log_printf("created memory mapper: %s\n", (*map_ptr)->name);
 
    return temp;
 }

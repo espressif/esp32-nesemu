@@ -26,18 +26,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <noftypes.h>
-#include "nes6502.h"
-#include <log.h>
-#include <osd.h>
-#include <gui.h>
-#include <nes.h>
-#include <nes_apu.h>
-#include <nes_ppu.h>
-#include <nes_rom.h>
-#include <nes_mmc.h>
-#include <vid_drv.h>
-#include <nofrendo.h>
+
+#include "../noftypes.h"
+#include "../cpu/nes6502.h"
+#include "../log.h"
+#include "../osd.h"
+#include "../gui.h"
+#include "nes.h"
+#include "../sndhrdw/nes_apu.h"
+#include "nes_ppu.h"
+#include "nes_rom.h"
+#include "nes_mmc.h"
+#include "../vid_drv.h"
+#include "../nofrendo.h"
 
 
 #define  NES_CLOCK_DIVIDER    12
@@ -343,8 +344,8 @@ static void system_video(bool draw)
    }
 
    /* blit the NES screen to our video surface */
-//   vid_blit(nes.vidbuf, 0, (NES_SCREEN_HEIGHT - NES_VISIBLE_HEIGHT) / 2,
-//            0, 0, NES_SCREEN_WIDTH, NES_VISIBLE_HEIGHT);
+//   vid_blit(nes.vidbuf, 0, (NES_SCREEN_HEIGHT - NES_SCREEN_HEIGHT) / 2,
+//            0, 0, NES_SCREEN_WIDTH, NES_SCREEN_HEIGHT);
 
    /* overlay our GUI on top of it */
    gui_frame(true);
@@ -442,11 +443,11 @@ void nes_destroy(nes_t **machine)
       if ((*machine)->cpu)
       {
          if ((*machine)->cpu->mem_page[0])
-            free((*machine)->cpu->mem_page[0]);
-         free((*machine)->cpu);
+            NOFRENDO_FREE((*machine)->cpu->mem_page[0]);
+         NOFRENDO_FREE((*machine)->cpu);
       }
 
-      free(*machine);
+      NOFRENDO_FREE(*machine);
       *machine = NULL;
    }
 }
@@ -509,7 +510,7 @@ nes_t *nes_create(void)
    sndinfo_t osd_sound;
    int i;
 
-   machine = malloc(sizeof(nes_t));
+   machine = NOFRENDO_MALLOC(sizeof(nes_t));
    if (NULL == machine)
       return NULL;
 
@@ -524,14 +525,14 @@ nes_t *nes_create(void)
    machine->autoframeskip = true;
 
    /* cpu */
-   machine->cpu = malloc(sizeof(nes6502_context));
+   machine->cpu = NOFRENDO_MALLOC(sizeof(nes6502_context));
    if (NULL == machine->cpu)
       goto _fail;
 
    memset(machine->cpu, 0, sizeof(nes6502_context));
    
    /* allocate 2kB RAM */
-   machine->cpu->mem_page[0] = malloc(NES_RAMSIZE);
+   machine->cpu->mem_page[0] = NOFRENDO_MALLOC(NES_RAMSIZE);
    if (NULL == machine->cpu->mem_page[0])
       goto _fail;
 

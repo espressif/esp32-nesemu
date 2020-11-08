@@ -26,8 +26,8 @@
 #ifndef _PCX_H_
 #define _PCX_H_
 
-#include <osd.h>
-#include <bitmap.h>
+#include "osd.h"
+#include "bitmap.h"
 
 /* Got these out of ZSoft's document */
 typedef struct pcxheader_s

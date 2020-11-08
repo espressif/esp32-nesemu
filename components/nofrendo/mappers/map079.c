@@ -23,8 +23,8 @@
 ** $Id: map079.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
 
 /* mapper 79: NINA-03/06 */
 static void map79_write(uint32 address, uint8 value)

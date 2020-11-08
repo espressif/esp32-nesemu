@@ -26,17 +26,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <noftypes.h>
-#include <nofrendo.h>
-#include <event.h>
-#include <nofconfig.h>
-#include <log.h>
-#include <osd.h>
-#include <gui.h>
-#include <vid_drv.h>
+
+#include "noftypes.h"
+#include "nofrendo.h"
+#include "event.h"
+#include "nofconfig.h"
+#include "log.h"
+#include "osd.h"
+#include "gui.h"
+#include "vid_drv.h"
 
 /* emulated system includes */
-#include <nes.h>
+#include "nes/nes.h"
 
 /* our global machine structure */
 static struct
@@ -67,12 +68,12 @@ static void shutdown_everything(void)
 {
    if (console.filename)
    {
-      free(console.filename);
+      NOFRENDO_FREE(console.filename);
       console.filename = NULL;
    }
    if (console.nextfilename)
    {
-      free(console.nextfilename);
+      NOFRENDO_FREE(console.nextfilename);
       console.nextfilename = NULL;
    }
 
@@ -99,7 +100,7 @@ void main_eject(void)
 
    if (NULL != console.filename)
    {
-      free(console.filename);
+      NOFRENDO_FREE(console.filename);
       console.filename = NULL;
    }
    console.type = system_unknown;
@@ -115,7 +116,7 @@ void main_quit(void)
    /* if there's a pending filename / system, clear */
    if (NULL != console.nextfilename)
    {
-      free(console.nextfilename);
+      NOFRENDO_FREE(console.nextfilename);
       console.nextfilename = NULL;
    }
    console.nexttype = system_unknown;
@@ -149,7 +150,7 @@ static int internal_insert(const char *filename, system_t type)
    if (system_autodetect == type)
       type = detect_systemtype(filename);
 
-   console.filename = strdup(filename);
+   console.filename = NOFRENDO_STRDUP(filename);
    console.type = type;
 
    /* set up the event system for this system type */
@@ -163,14 +164,14 @@ static int internal_insert(const char *filename, system_t type)
       console.machine.nes = nes_create();
       if (NULL == console.machine.nes)
       {
-         log_printf("Failed to create NES instance.\n");
+         nofrendo_log_printf("Failed to create NES instance.\n");
          return -1;
       }
 
       if (nes_insertcart(console.filename, console.machine.nes))
          return -1;
 
-      vid_setmode(NES_SCREEN_WIDTH, NES_VISIBLE_HEIGHT);
+      vid_setmode(NES_SCREEN_WIDTH, NES_SCREEN_HEIGHT);
 
       if (install_timer(NES_REFRESH_RATE))
          return -1;
@@ -180,9 +181,9 @@ static int internal_insert(const char *filename, system_t type)
    
    case system_unknown:
    default:
-      log_printf("system type unknown, playing nofrendo NES intro.\n");
+      nofrendo_log_printf("system type unknown, playing nofrendo NES intro.\n");
       if (NULL != console.filename)
-         free(console.filename);
+         NOFRENDO_FREE(console.filename);
 
       /* oooh, recursion */
       return internal_insert(filename, system_nes);
@@ -194,7 +195,7 @@ static int internal_insert(const char *filename, system_t type)
 /* This tells main_loop to load this next image */
 void main_insert(const char *filename, system_t type)
 {
-   console.nextfilename = strdup(filename);
+   console.nextfilename = NOFRENDO_STRDUP(filename);
    console.nexttype = type;
 
    main_eject();
@@ -240,7 +241,7 @@ int main_loop(const char *filename, system_t type)
       return -1;
 	printf("vid_init done\n");
 
-   console.nextfilename = strdup(filename);
+   console.nextfilename = NOFRENDO_STRDUP(filename);
    console.nexttype = type;
 
    while (false == console.quit)

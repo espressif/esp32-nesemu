@@ -5,12 +5,14 @@
 ** $Id: nofconfig.h,v 1.1 2001/04/27 14:37:11 neil Exp $
 */
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef _NOFCONFIG_H_
+#define _NOFCONFIG_H_
 
 #ifndef CONFIG_FILE
 #define CONFIG_FILE "nofrendo.cfg"
 #endif
+
+#include "noftypes.h"
 
 typedef struct config_s
 {
@@ -47,7 +49,7 @@ typedef struct config_s
 
 extern config_t config;
 
-#endif /* !_CONFIG_H_ */
+#endif /* _NOFCONFIG_H_ */
 
 /*
 ** $Log: nofconfig.h,v $

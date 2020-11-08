@@ -25,14 +25,15 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <noftypes.h>
-#include <nesstate.h>
-#include <gui.h>
-#include <nes.h>
-#include <log.h>
-#include <osd.h>
-#include <libsnss.h>
-#include "nes6502.h"
+
+#include "../noftypes.h"
+#include "nesstate.h"
+#include "../gui.h"
+#include "nes.h"
+#include "../log.h"
+#include "../osd.h"
+#include "../libsnss/libsnss.h"
+#include "../cpu/nes6502.h"
 
 #define  FIRST_STATE_SLOT  0
 #define  LAST_STATE_SLOT   9
@@ -99,7 +100,7 @@ static bool save_vramblock(nes_t *state, SNSS_FILE *snssFile)
 
    if (state->rominfo->vram_banks > 2)
    {
-      log_printf("too many VRAM banks: %d\n", state->rominfo->vram_banks);
+      nofrendo_log_printf("too many VRAM banks: %d\n", state->rominfo->vram_banks);
       return -1;
    }
 
@@ -134,7 +135,7 @@ static int save_sramblock(nes_t *state, SNSS_FILE *snssFile)
 
    if (state->rominfo->sram_banks > 8)
    {
-      log_printf("Unsupported number of SRAM banks: %d\n", state->rominfo->sram_banks);
+      nofrendo_log_printf("Unsupported number of SRAM banks: %d\n", state->rominfo->sram_banks);
       return -1;
    }
 
@@ -474,7 +475,7 @@ int state_load(void)
       
       case SNSS_UNKNOWN_BLOCK:
       default:
-         log_printf("unknown SNSS block type\n");
+         nofrendo_log_printf("unknown SNSS block type\n");
          break;
       }
    }

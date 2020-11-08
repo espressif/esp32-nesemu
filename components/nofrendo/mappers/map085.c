@@ -23,10 +23,10 @@
 ** $Id: map085.c,v 1.3 2001/05/06 01:42:03 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes.h>
-#include <log.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes.h"
+#include "../log.h"
 
 static struct
 {
@@ -127,7 +127,7 @@ static void map85_write(uint32 address, uint8 value)
 
    default:
 #ifdef NOFRENDO_DEBUG
-      log_printf("unhandled vrc7 write: $%02X to $%04X\n", value, address);
+      nofrendo_log_printf("unhandled vrc7 write: $%02X to $%04X\n", value, address);
 #endif /* NOFRENDO_DEBUG */
       break;
    }

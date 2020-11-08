@@ -23,8 +23,8 @@
 ** $Id: map094.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
 
 /* mapper 94: Senjou no Ookami */
 static void map94_write(uint32 address, uint8 value)

@@ -26,7 +26,7 @@
 #ifndef _BITMAP_H_
 #define _BITMAP_H_
 
-#include <noftypes.h>
+#include "noftypes.h"
 
 /* a bitmap rectangle */
 typedef struct rect_s

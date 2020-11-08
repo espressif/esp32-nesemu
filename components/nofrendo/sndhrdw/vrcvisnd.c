@@ -23,9 +23,9 @@
 ** $Id: vrcvisnd.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <vrcvisnd.h>
-#include <nes_apu.h>
+#include "../noftypes.h"
+#include "vrcvisnd.h"
+#include "nes_apu.h"
 
 typedef struct vrcvirectangle_s
 {

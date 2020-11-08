@@ -26,7 +26,7 @@
 #ifndef _VID_DRV_H_
 #define _VID_DRV_H_
 
-#include <bitmap.h>
+#include "bitmap.h"
 
 typedef struct viddriver_s
 {

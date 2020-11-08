@@ -50,7 +50,7 @@ extern char *nes6502_disasm(uint32 PC, uint8 P, uint8 A, uint8 X, uint8 Y, uint8
 ** made sure last line of all source files is a newline
 **
 ** Revision 1.5  2000/07/11 04:26:23  matt
-** rewrote to fill up a static buffer, rather than use log_printf
+** rewrote to fill up a static buffer, rather than use nofrendo_log_printf
 **
 ** Revision 1.4  2000/06/09 15:12:25  matt
 ** initial revision

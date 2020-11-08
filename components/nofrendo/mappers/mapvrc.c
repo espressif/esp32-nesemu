@@ -23,10 +23,10 @@
 ** $Id: mapvrc.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes.h>
-#include <log.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes.h"
+#include "../log.h"
 
 #define VRC_VBANK(bank, value, high) \
 { \
@@ -151,8 +151,8 @@ static void map21_write(uint32 address, uint8 value)
 
    default:
 #ifdef NOFRENDO_DEBUG
-      log_printf("wrote $%02X to $%04X", value, address);
-#endif
+      nofrendo_log_printf("wrote $%02X to $%04X", value, address);
+#endif /* !NOFRENDO_DEBUG */
       break;
    }
 }
@@ -295,8 +295,8 @@ static void map23_write(uint32 address, uint8 value)
 
    default:
 #ifdef NOFRENDO_DEBUG
-      log_printf("wrote $%02X to $%04X",value,address);
-#endif
+      nofrendo_log_printf("wrote $%02X to $%04X",value,address);
+#endif /* !NOFRENDO_DEBUG */
       break;
    }
 }

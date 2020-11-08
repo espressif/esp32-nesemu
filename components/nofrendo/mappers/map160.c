@@ -23,10 +23,10 @@
 ** $Id: map160.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes_ppu.h>
-#include <nes.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes_ppu.h"
+#include "../nes/nes.h"
 
 static struct
 {
@@ -71,7 +71,7 @@ static void map160_write(uint32 address, uint8 value)
 #ifdef NOFRENDO_DEBUG
    else
    {
-      log_printf("mapper 160: untrapped write $%02X to $%04X\n", value, address);
+      nofrendo_log_printf("mapper 160: untrapped write $%02X to $%04X\n", value, address);
    }
 #endif /* NOFRENDO_DEBUG */
 }

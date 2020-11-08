@@ -24,9 +24,10 @@
 */
 
 #include <stdlib.h>
-#include <noftypes.h>
-#include <gui.h>
-#include <gui_elem.h>
+
+#include "noftypes.h"
+#include "gui.h"
+#include "gui_elem.h"
 
 #define  SMALL_FONT_KERN   6
 #define  SMALL_FONT_HEIGHT 6

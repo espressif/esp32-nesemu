@@ -27,7 +27,8 @@
 #define _NES_ROM_H_
 
 #include <unistd.h>
-#include <osd.h>
+
+#include "../osd.h"
 
 typedef enum
 {

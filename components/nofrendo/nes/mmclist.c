@@ -23,8 +23,8 @@
 ** $Id: mmclist.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
+#include "../noftypes.h"
+#include "nes_mmc.h"
 
 /* mapper interfaces */
 extern mapintf_t map0_intf;
@@ -36,6 +36,7 @@ extern mapintf_t map5_intf;
 extern mapintf_t map7_intf;
 extern mapintf_t map8_intf;
 extern mapintf_t map9_intf;
+extern mapintf_t map10_intf;
 extern mapintf_t map11_intf;
 extern mapintf_t map15_intf;
 extern mapintf_t map16_intf;

@@ -25,18 +25,19 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <noftypes.h>
-#include <nes_ppu.h>
-#include <nes.h>
-#include <gui.h>
-#include "nes6502.h"
-#include <log.h>
-#include <nes_mmc.h>
 
-#include <bitmap.h>
-#include <vid_drv.h>
-#include <nes_pal.h>
-#include <nesinput.h>
+#include "../noftypes.h"
+#include "nes_ppu.h"
+#include "nes.h"
+#include "../gui.h"
+#include "../cpu/nes6502.h"
+#include "../log.h"
+#include "nes_mmc.h"
+
+#include "../bitmap.h"
+#include "../vid_drv.h"
+#include "nes_pal.h"
+#include "nesinput.h"
 
 
 /* PPU access */
@@ -125,7 +126,7 @@ ppu_t *ppu_create(void)
    static bool pal_generated = false;
    ppu_t *temp;
 
-   temp = malloc(sizeof(ppu_t));
+   temp = NOFRENDO_MALLOC(sizeof(ppu_t));
    if (NULL == temp)
       return NULL;
 
@@ -152,7 +153,7 @@ void ppu_destroy(ppu_t **src_ppu)
 {
    if (*src_ppu)
    {
-      free(*src_ppu);
+      NOFRENDO_FREE(*src_ppu);
       *src_ppu = NULL;
    }
 }
@@ -372,8 +373,8 @@ uint8 ppu_read(uint32 address)
       if ((ppu.bg_on || ppu.obj_on) && !ppu.vram_accessible)
       {
          ppu.vdata_latch = 0xFF;
-         log_printf("VRAM read at $%04X, scanline %d\n", 
-                    ppu.vaddr, nes_getcontextptr()->scanline);
+         // nofrendo_log_printf("VRAM read at $%04X, scanline %d\n", 
+         //            ppu.vaddr, nes_getcontextptr()->scanline);
       }
       else
       {
@@ -485,7 +486,7 @@ void ppu_write(uint32 address, uint8 value)
          /* VRAM only accessible during scanlines 241-260 */
          if ((ppu.bg_on || ppu.obj_on) && !ppu.vram_accessible)
          {
-            log_printf("VRAM write to $%04X, scanline %d\n", 
+            nofrendo_log_printf("VRAM write to $%04X, scanline %d\n", 
                        ppu.vaddr, nes_getcontextptr()->scanline);
             PPU_MEM(ppu.vaddr) = 0xFF; /* corrupt */
          }
@@ -787,7 +788,7 @@ typedef struct obj_s
 static void ppu_renderoam(uint8 *vidbuf, int scanline)
 {
    uint8 *buf_ptr;
-   uint32 vram_offset, savecol[2];
+   uint32 vram_offset, savecol[2] = {0};
    int sprite_num, spritecount;
    obj_t *sprite_ptr;
    uint8 sprite_height;
@@ -1080,7 +1081,8 @@ void ppu_checknmi(void)
 
 void ppu_scanline(bitmap_t *bmp, int scanline, bool draw_flag)
 {
-   if (scanline < 240)
+   // if (scanline < 240)
+   if (scanline < NES_SCREEN_HEIGHT)
    {
       /* Lower the Max Sprite per scanline flag */
       ppu.stat &= ~PPU_STATF_MAXSPRITE;

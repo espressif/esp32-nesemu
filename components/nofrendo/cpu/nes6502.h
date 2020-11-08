@@ -29,7 +29,7 @@
 #ifndef _NES6502_H_
 #define _NES6502_H_
 
-#include <noftypes.h>
+#include "../noftypes.h"
 
 /* Define this to enable decimal mode in ADC / SBC (not needed in NES) */
 /*#define  NES6502_DECIMAL*/

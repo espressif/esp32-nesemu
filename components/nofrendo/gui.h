@@ -52,7 +52,7 @@ enum
 #define  GUI_TOTALCOLORS   (GUI_LASTENTRY - GUI_FIRSTENTRY)
 
 /* TODO: bleh */
-#include <bitmap.h>
+#include "bitmap.h"
 extern rgb_t gui_pal[GUI_TOTALCOLORS];
 
 #define  MAX_MSG_LENGTH 256

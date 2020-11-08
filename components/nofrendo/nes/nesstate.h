@@ -26,7 +26,7 @@
 #ifndef _NESSTATE_H_
 #define _NESSTATE_H_
 
-#include <nes.h>
+#include "nes.h"
 
 extern void state_setslot(int slot);
 extern int state_load();

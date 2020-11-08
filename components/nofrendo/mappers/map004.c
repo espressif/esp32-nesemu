@@ -23,10 +23,10 @@
 ** $Id: map004.c,v 1.2 2001/04/27 14:37:11 neil Exp $
 */
 
-#include <noftypes.h>
-#include <nes_mmc.h>
-#include <nes.h>
-#include <libsnss.h>
+#include "../noftypes.h"
+#include "../nes/nes_mmc.h"
+#include "../nes/nes.h"
+#include "../libsnss/libsnss.h"
 
 static struct
 {
@@ -138,6 +138,11 @@ static void map4_write(uint32 address, uint8 value)
       break;
 
    default:
+      //printf("map004: unhandled write: address=%p, value=0x%x\n", (void*)address, value);
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
+      __asm__("nop");
       break;
    }
 

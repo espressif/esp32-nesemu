@@ -26,19 +26,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include <noftypes.h>
-#include <nes_ppu.h>
-#include <nes_apu.h>
-#include <nesinput.h>
-#include <nes.h>
-#include <log.h>
-#include <osd.h>
 
-#include <bitmap.h>
+#include "noftypes.h"
+#include "nes/nes_ppu.h"
+#include "sndhrdw/nes_apu.h"
+#include "nes/nesinput.h"
+#include "nes/nes.h"
+#include "log.h"
+#include "osd.h"
 
-#include <gui.h>
-#include <gui_elem.h>
-#include <vid_drv.h>
+#include "bitmap.h"
+
+#include "gui.h"
+#include "gui_elem.h"
+#include "vid_drv.h"
 
 /* TODO: oh god */
 /* 8-bit GUI color table */
@@ -61,8 +62,8 @@ rgb_t gui_pal[GUI_TOTALCOLORS] =
 };
 
 /**************************************************************/
-#include <pcx.h>
-#include <nesstate.h>
+#include "pcx.h"
+#include "nes/nesstate.h"
 static bool option_drawsprites = true;
 
 /* save a PCX snapshot */
@@ -346,7 +347,7 @@ static void gui_tickdec(void)
 {
 #ifdef NOFRENDO_DEBUG
    static int hertz_ticks = 0;
-#endif
+#endif /* !NOFRENDO_DEBUG */
    int ticks = gui_ticks;
 
    if (0 == ticks)
@@ -360,9 +361,9 @@ static void gui_tickdec(void)
    if (hertz_ticks >= (10 * gui_refresh))
    {
       hertz_ticks -= (10 * gui_refresh);
-      mem_checkblocks(); 
+      // mem_checkblocks(); 
    }
-#endif
+#endif /* !NOFRENDO_DEBUG */
 
    /* TODO: bleh */
    if (msg.ttl > 0)
@@ -592,7 +593,7 @@ void gui_sendmsg(int color, char *format, ...)
    log_print("GUI: ");
    log_print(msg.text);
    log_print("\n");
-#endif
+#endif /* !NOFRENDO_DEBUG */
 
    va_end(arg);
 

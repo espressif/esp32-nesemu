@@ -26,8 +26,8 @@ extern "C"
 {
 #endif
 
-void ili9341_write_frame(const uint16_t x, const uint16_t y, const uint16_t width, const uint16_t height, const uint8_t *data[]);
-void ili9341_init();
+void lcd_write_frame(const uint16_t x, const uint16_t y, const uint16_t width, const uint16_t height, const uint8_t *data[]);
+void lcd_init();
 
 
 #ifdef __cplusplus
