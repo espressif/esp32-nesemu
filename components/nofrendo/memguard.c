@@ -33,9 +33,10 @@
 #undef free
 #undef strdup
 
-#include <string.h>
-#include <stdlib.h>
-#include <log.h>
+#include "string.h"
+#include "stddef.h"
+#include "log.h"
+#include "esp_heap_caps.h"
 
 
 /* Maximum number of allocated blocks at any one time */
@@ -127,7 +128,7 @@ static void *mem_guardalloc(int alloc_size, int guard_size)
    alloc_size = (alloc_size + 3) & ~3;
 
    /* allocate memory */
-   orig = malloc(alloc_size + (guard_size * 2));
+   orig = heap_caps_malloc(alloc_size + (guard_size * 2), MALLOC_CAP_DEFAULT);
    if (NULL == orig)
       return NULL;
 
@@ -190,7 +191,7 @@ static void mem_init(void)
 
    mem_blockcount = 0;
 
-   mem_record = malloc(MAX_BLOCKS * sizeof(memblock_t));
+   mem_record = heap_caps_malloc(MAX_BLOCKS * sizeof(memblock_t), MALLOC_CAP_DEFAULT);
    ASSERT(mem_record);
    memset(mem_record, 0, MAX_BLOCKS * sizeof(memblock_t));
 }
@@ -259,7 +260,7 @@ void *_my_malloc(int size, char *file, int line)
    if (false != mem_debug)
       temp = mem_guardalloc(size, GUARD_LENGTH);
    else
-      temp = malloc(size);
+      temp = heap_caps_malloc(size, MALLOC_CAP_DEFAULT);
 
    printf("Malloc: %d at %s:%d\n", size, file, line);
    if (NULL == temp)
@@ -329,12 +330,12 @@ char *_my_strdup(const char *string, char *file, int line)
 #else /* !NOFRENDO_DEBUG */
 
 /* allocates memory and clears it */
-void *_my_malloc(int size)
+void *_my_malloc(size_t size)
 {
    void *temp;
    char fail[256];
 
-   temp = malloc(size);
+   temp = heap_caps_malloc(size, MALLOC_CAP_DEFAULT);
 
    if (NULL == temp)
    {

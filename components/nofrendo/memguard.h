@@ -26,6 +26,9 @@
 #ifndef  _MEMGUARD_H_
 #define  _MEMGUARD_H_
 
+#include <stddef.h>
+#include "esp_heap_caps.h"
+
 #ifdef strdup
 #undef strdup
 #endif
@@ -43,11 +46,17 @@ extern char *_my_strdup(const char *string, char *file, int line);
 #else /* !NORFRENDO_DEBUG */
 
 /* Non-debugging versions of calls */
-#define  malloc(s)   _my_malloc((s))
-#define  free(d)     _my_free((void **) &(d))
+#define  malloc(s)   _my_malloc(s)
+//#define  free(d)     free(d);d=NULL
 #define  strdup(s)   _my_strdup((s))
 
-extern void *_my_malloc(int size);
+#define free(d) \
+    do { \
+        free(d); \
+        d = NULL; \
+    } while (0)
+
+extern void *_my_malloc(size_t size);
 extern void _my_free(void **data);
 extern char *_my_strdup(const char *string);
 

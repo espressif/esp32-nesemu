@@ -3,4 +3,6 @@
 nvs,      data, nvs,     0x9000,  0x6000
 phy_init, data, phy,     0xf000,  0x1000
 factory,  app,  factory, 0x10000, 0x0E0000
-nesgame,  0x40, 0x01,    0x100000, 0x300000
+nesrom1,   data, spiffs,  0x100000,0x100000
+nesrom2,   data, spiffs,  0x200000,0x100000
+nesrom3,   data, spiffs,  0x300000,0x100000

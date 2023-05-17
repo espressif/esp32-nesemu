@@ -1,0 +1,4 @@
+description: NES Emulator
+
+dependencies:
+  idf: ">=5.0"
