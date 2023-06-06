@@ -1,0 +1,8 @@
+version: "1.0.0"
+description: esp_nes
+dependencies:
+  idf: ">=5.0"
+  ws_7inch:
+    version: "bsp/7inch_update"
+    path: "SquareLine/boards/custom_waveshare_7inch/components/ws_7inch/"
+    git: https://github.com/espressif/esp-bsp.git

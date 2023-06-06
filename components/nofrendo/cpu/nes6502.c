@@ -1,4 +1,4 @@
-/*
+    /*
 ** Nofrendo (c) 1998-2000 Matthew Conte (matt@conte.com)
 **
 **
@@ -24,7 +24,7 @@
 */
 
 
-#include <noftypes.h>
+#include "noftypes.h"
 #include "nes6502.h"
 #include "dis6502.h"
 

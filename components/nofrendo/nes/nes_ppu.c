@@ -701,6 +701,8 @@ static void ppu_renderbg(uint8 *vidbuf)
    uint8 tile_index, x_tile, y_tile;
    uint8 col_high, attrib, attrib_shift;
 
+    ASSERT(vidbuf);
+
    /* draw a line of transparent background color if bg is disabled */
    if (false == ppu.bg_on)
    {
@@ -787,7 +789,7 @@ typedef struct obj_s
 static void ppu_renderoam(uint8 *vidbuf, int scanline)
 {
    uint8 *buf_ptr;
-   uint32 vram_offset, savecol[2];
+   uint32 vram_offset, savecol[2] = {0};
    int sprite_num, spritecount;
    obj_t *sprite_ptr;
    uint8 sprite_height;

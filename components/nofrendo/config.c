@@ -207,7 +207,7 @@ static int load_config(char *filename)
          do 
          {
             /* eat up whitespace */
-            while (isspace(*s))
+            while (isspace((int)*s))
                s++;
 
             switch (*s) 
@@ -255,13 +255,13 @@ static int load_config(char *filename)
                   *s++ = '\0';
                }
 
-               while (strlen(key) && isspace(key[strlen(key) - 1])) 
+               while (strlen(key) && isspace((int)key[strlen(key) - 1])) 
                   key[strlen(key) - 1] = '\0';
 
-               while (isspace(*s)) 
+               while (isspace((int)*s)) 
                   s++;
                
-               while (strlen(s) && isspace(s[strlen(s) - 1])) 
+               while (strlen(s) && isspace((int)s[strlen(s) - 1])) 
                   s[strlen(s) - 1]='\0';
 
                {

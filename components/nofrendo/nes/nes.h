@@ -36,7 +36,7 @@
 
 /* Visible (NTSC) screen height */
 #ifndef NES_VISIBLE_HEIGHT
-#define  NES_VISIBLE_HEIGHT   224
+#define  NES_VISIBLE_HEIGHT   240
 #endif /* !NES_VISIBLE_HEIGHT */
 #define  NES_SCREEN_WIDTH     256
 #define  NES_SCREEN_HEIGHT    240
@@ -45,7 +45,7 @@
 #ifdef PAL
 #define  NES_REFRESH_RATE     50
 #else /* !PAL */
-#define  NES_REFRESH_RATE     60
+#define  NES_REFRESH_RATE     40
 #endif /* !PAL */
 
 #define  MAX_MEM_HANDLERS     32
